@@ -1,0 +1,24 @@
+#Rutas en el servidor
+##RUTAS WEBLOGIC TEST SERVERTEST2
+domain=/u/home/avaluos/
+log=/home/app/wlogic/Oracle/Middleware/user_projects/domains/wltest/servers/Srvtest2/tmp/_WL_user/avaluosWeb/x7ld5v/war/log/logavaluos.log
+ruta.cargue.masivo=/home/app/wlogic/Oracle/Middleware/user_projects/domains/wltest/servers/Srvtest2/tmp/_WL_user/avaluosWeb/x7ld5v/war
+nueva.ruta.cargue.masivo=/home/app/wlogic/Oracle/Middleware/user_projects/domains/wltest/servers/Srvtest2/tmp/_WL_user/avaluosWeb/x7ld5v/war/cargues
+ruta.archivos.procedatos=/u/home/avaluos/procedatos/
+#url.archivo=http://10.1.0.184:6011/avaluosWeb
+url.archivo=https://ambientepruebas.segurosbolivar.com/avaluosWeb
+#url.webservice.terceros=https://ambientepruebas.segurosbolivar.com/ServiciosGeneralesTercerosWS/ServiciosTercerosWSPort
+url.webservice.terceros=http://10.1.0.184:7005/ServiciosGeneralesTercerosWS/ServiciosTercerosWSPort
+#url.webservice.terceros=http://10.1.0.184:6005/ServiciosGeneralesTercerosWS/ServiciosTercerosWSPort
+url.logout=https://ambientepruebas.segurosbolivar.com/nidp/app/logout
+dirservidor.weblogic=10.1.0.184
+url.keystore=/home/app/wlogic/certificados/pruebas/ambpruebas.jks
+pass.keystore=Amp11B0l1v4r
+datasource=jdbc/avaluosDS
+#Local 1 ,Servidor 0
+ambiente.local=0
+
+reportes=reportes
+tmp=tmp/
+procedatos=procedatos
+ziptmp=ziptmp

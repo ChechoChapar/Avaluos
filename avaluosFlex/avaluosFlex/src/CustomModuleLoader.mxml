@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!--- 
+Componente para la carga de modulos en la interfaz
+http://help.adobe.com/en_US/flex/using/WS2db454920e96a9e51e63e3d11c0bf64277-7ff8.html
+http://livedocs.adobe.com/flex/3/html/help.html?content=modular_6.html
+@see mx.modules.ModuleLoader
+-->
+<mx:ModuleLoader xmlns:fx="http://ns.adobe.com/mxml/2009"
+				 xmlns:s="library://ns.adobe.com/flex/spark"
+				 xmlns:mx="library://ns.adobe.com/flex/mx"
+				 xmlns:services="services.*"
+				 xmlns:comp="com.segurosbolivar.avaluos.componentes.*"
+				 xmlns="*" creationComplete="init()" xmlns:valueObjects="valueObjects.*">
+	<fx:Script>
+		<![CDATA[
+			import com.segurosbolivar.avaluos.modulos.Utilidad;
+			
+			import flash.net.URLRequest;
+			import flash.net.navigateToURL;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.events.CloseEvent;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			[Bindable]
+			public var selectafirmacion:ArrayCollection = new ArrayCollection();
+			
+			[Bindable]
+			public var selectvalueMRB:ArrayCollection = new ArrayCollection();
+			
+			[Bindable]
+			public var selectafirmacionDos:ArrayCollection = new ArrayCollection();
+			
+			[Bindable]
+			public var selectInfoConstruccion:ArrayCollection = new ArrayCollection();
+			
+			[Bindable]
+			public var selectCalidad:ArrayCollection = new ArrayCollection();
+			
+			[Bindable]
+			public var selectDepartamento:ArrayCollection = new ArrayCollection() ;
+			
+			/**
+			 * Inicializacion de Eventos del Componente 
+			 **/
+			
+			public function init():void {
+				addEventListener("urlChanged", onUrlChanged);
+				addEventListener("loading", onLoading);
+				addEventListener("progress", onProgress);
+				addEventListener("setup", onSetup);
+				addEventListener("ready", onReady);
+				addEventListener("error", onError);
+				addEventListener("unload", onUnload);
+				
+				standin = panel;
+				removeChild(standin);        
+			}
+			
+			public function onUrlChanged(event:Event):void {
+				if (url == null) {
+					if (contains(standin))
+						removeChild(standin);
+				} else {
+					if (!contains(standin))
+						addChild(standin);
+				}
+				progress.indeterminate=true;
+				unload.enabled=false;
+				reload.enabled=false;
+			}
+			
+			public function onLoading(event:Event):void {
+				progress.label="Loading module " + url;
+				if (!contains(standin))
+					addChild(standin);
+				
+				progress.indeterminate=true;
+				unload.enabled=false;
+				reload.enabled=false;
+			}
+			
+			public function onProgress(event:Event):void {
+				progress.label="Loaded %1 of %2 bytes...";
+				progress.indeterminate=false;
+				unload.enabled=true;
+				reload.enabled=false;
+			}
+			
+			public function onSetup(event:Event):void {
+				progress.label="Module " + url + " initialized!";
+				progress.indeterminate=false;
+				unload.enabled=true;
+				reload.enabled=true;
+			}
+			
+			public function onReady(event:Event):void {
+				progress.label="Module " + url + " successfully loaded!";
+				unload.enabled=true;
+				reload.enabled=true;
+				
+				if (contains(standin))
+					removeChild(standin);
+			}
+			
+			public function onError(event:Event):void {
+				progress.label="Error. posiblemente se termino su sesion " + url;
+				unload.enabled=false;
+				reload.enabled=true;
+				var alert:Alert = Alert.show("Error. posiblemente se termino su sesion " + url);
+				alert.addEventListener( Event.CLOSE, alertCloseHandler );	
+			}
+			
+			private function alertCloseHandler( e:Event ):void  				
+			{  
+				var u:URLRequest = new URLRequest("login.html");
+				navigateToURL(u,"_self");
+			}
+			
+			public function onUnload(event:Event):void {
+				if (url == null) {
+					if (contains(standin))
+						removeChild(standin);
+				} else {
+					if (!contains(standin))
+						addChild(standin);
+				}
+				progress.indeterminate=true;
+				progress.label="Module " + url + " was unloaded!";
+				unload.enabled=false;
+				reload.enabled=true;
+			}
+			
+			public var standin:DisplayObject;
+			
+			protected function genericService_faultHandler(event:FaultEvent,service:String):void
+			{
+				
+				var errorFull:String = event.fault.toString(); 
+				var error:String = event.fault.faultString.toString();
+				
+				var descripcionError:Array = new Array();
+				var errorMessage:String = "";  
+				
+				if(error != null && error.length > 0){
+					descripcionError = error.split(":"); 
+				}
+				
+				if(descripcionError.length>1){
+					errorMessage = descripcionError[1];
+					Utilidad.imprimirMensaje(errorMessage, "Validación de registros"); 
+					// limpiarControles();  
+				}
+				//Gardar Log en Tabla 				
+			}
+			
+			protected function getValoresDominioResult33_resultHandler(event:ResultEvent):void
+			{
+				selectafirmacion = getValoresDominioResult33.lastResult;
+			}
+			
+			protected function getValoresDominioResult41_resultHandler(event:ResultEvent):void
+			{
+				selectvalueMRB = getValoresDominioResult41.lastResult;
+			}
+			
+			protected function getValoresDominioResult45_resultHandler(event:ResultEvent):void
+			{
+				selectafirmacionDos = getValoresDominioResult45.lastResult;
+			}
+			
+			protected function getValoresDominioResult53_resultHandler(event:ResultEvent):void
+			{
+				selectInfoConstruccion = getValoresDominioResult53.lastResult;
+			}
+			
+			protected function getValoresDominioResult59_resultHandler(event:ResultEvent):void
+			{
+				selectCalidad = getValoresDominioResult59.lastResult;
+			}
+			
+			
+			
+			protected function consultaDepartamentosResult_resultHandler(event:ResultEvent):void
+			{
+				selectDepartamento = consultaDepartamentosResult.lastResult;				
+			}
+			
+			protected function getAvaluosPorIdResult_resultHandler(event:ResultEvent):void
+			{
+				//Se instancian nuevamente todos los objetos
+				avaluoVO = getAvaluosPorIdResult.lastResult as Avaluo;
+			}
+			
+			protected function prevalidarResult_resultHandler(event:ResultEvent):void
+			{
+				var res:String = prevalidarResult.lastResult;
+				if((res != null) && (res.length > 0) && (res == "true"))
+				{
+					//Alert.show("Proceso realizado satisfactoriamente","INFO");
+					// if(isValidAprobador){ 
+					Alert.show("Desea aprobar e imprimir el avalúo?", "Confirmación de aprobación?",Alert.OK | Alert.CANCEL, this, alertListener, null, Alert.OK);
+					// }else{
+					// imprimirMensaje("La validaciòn del avaluo se encuentra correcta","RESULTADO VALIDACION");  
+					// }
+					// transaccionSatisfactoria();
+				}
+				else {
+					
+					Alert.show(res,"RESULTADO VALIDACION", null, null, null, null, Alert.OK);
+					
+					var categoria:int=0;
+					
+					// if((cbxCategoria != null) && (cbxCategoria.selectedIndex > -1)) {
+					// categoria = cbxCategoria.selectedItem.rvLowValue;
+					validarCampos(categoria,false);
+					// }
+					
+				}
+			}
+			
+			private function alertListener(eventObj:CloseEvent):void {
+				// Check to see if the OK button was pressed.
+				if (eventObj.detail==Alert.OK) {
+					/* aprobarPostValidar = new Boolean(true);
+					btnAprobarAvaluo_clickHandler(null);*/			
+				}
+			}
+			
+			protected function validarCampos(categoria:int, todos:Boolean):void
+			{			
+				
+			}
+			
+			protected function campoRequeridoDTOListResult_resultHandler(event:ResultEvent):void
+			{
+				var arrayDtoValida : ArrayCollection;
+				arrayDtoValida=campoRequeridoDTOListResult.lastResult;				
+			}
+			
+			public function nextTabAvaluo():void
+			{
+				if(parentDocument.parentDocument.tn.selectedIndex<parentDocument.parentDocument.tn.numChildren){
+					if(parentDocument.parentDocument.tn.selectedIndex<parentDocument.parentDocument.tn.numElements)
+					{
+						if(parentDocument.parentDocument.tn.selectedIndex+1 != 7){
+							parentDocument.parentDocument.tn.selectedIndex = parentDocument.parentDocument.tn.selectedIndex+1;
+						}else {
+							if(isEnabledImagesUpload()){
+								parentDocument.parentDocument.tn.selectedIndex = parentDocument.tn.selectedIndex+1;								
+							}else{
+								// imprimirEstadoProceso("Por favor, guarde el avaluo antes de subir las imagenes"); 
+							}
+						}
+					}
+					
+				}
+			}
+			
+			private function isEnabledImagesUpload():Boolean{ 
+				if(avaluoVO.idAvaluo == null){
+					return false; 
+				}
+				return true; 
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<valueObjects:Avaluo id="avaluo"></valueObjects:Avaluo>
+		
+		<services:TercerosWebService id="tercerosWebService" fault="genericService_faultHandler(event,'tercerosWebService')" showBusyCursor="true"/>
+		<services:DominiosAuxDao id="dominiosAuxDao" fault="genericService_faultHandler(event,'dominiosAuxDao')" showBusyCursor="true"/>
+		<services:AvaluosService id="avaluosService" fault="genericService_faultHandler(event,'avaluosService')"  showBusyCursor="true" />
+		<services:LiquidacionTotalService id="liquidacionTotalService" fault="genericService_faultHandler(event,'liquidacionTotalService')" showBusyCursor="true"/>
+		<services:DepartamentoService id="departamentoService" fault="genericService_faultHandler(event,'departamentoService')" showBusyCursor="true"/>
+		<services:BarrioService id="barrioService" fault="genericService_faultHandler(event,'barrioService')" showBusyCursor="true"/>
+		
+		<valueObjects:Avaluo id="avaluoVO"></valueObjects:Avaluo>
+		
+		<s:CallResponder id="getValoresDominioResult33" result="getValoresDominioResult33_resultHandler(event)"/>
+		<s:CallResponder id="getValoresDominioResult41" result="getValoresDominioResult41_resultHandler(event)" />
+		<s:CallResponder id="getValoresDominioResult45" result="getValoresDominioResult45_resultHandler(event)" />
+		<s:CallResponder id="getValoresDominioResult53" result="getValoresDominioResult53_resultHandler(event)" />
+		<s:CallResponder id="getValoresDominioResult59" result="getValoresDominioResult59_resultHandler(event)" />
+		
+		<s:CallResponder id="getAvaluosPorIdResult" result="getAvaluosPorIdResult_resultHandler(event)"/>
+		
+		<s:CallResponder id="consultaDepartamentosResult" result="consultaDepartamentosResult_resultHandler(event)" />
+		<s:CallResponder id="prevalidarResult" result="prevalidarResult_resultHandler(event)"/>
+		<s:CallResponder id="campoRequeridoDTOListResult" result="campoRequeridoDTOListResult_resultHandler(event)"/>
+		
+		
+	</fx:Declarations>
+		
+	<!--- 
+	Elementos visuales del componente
+	-->
+	<mx:Panel id="panel" width="100%">
+		<mx:ProgressBar width="100%" id="progress" source="{this}"/>
+		<mx:HBox width="100%">
+			<mx:Button id="unload" 
+					   label="Unload Module" 
+					   click="unloadModule()"
+					   />
+			<mx:Button id="reload" 
+					   label="Reload Module" 
+					   click="unloadModule();loadModule()"
+					   />
+		</mx:HBox>
+	</mx:Panel>
+</mx:ModuleLoader>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		   xmlns:s="library://ns.adobe.com/flex/spark" 
+		   xmlns:mx="library://ns.adobe.com/flex/mx" layout="absolute" width="326" height="118"
+		   xmlns:upload="*">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<!--upload:FileUpload id="fileUpload" creationComplete="fileUpload.init(uploadProgress, cancelUpload);" />!-->
+	<upload:FileUploadAnexosPdf id="fileUpload" creationComplete="fileUpload.init(uploadProgress, cancelUpload);" />
+	<mx:HBox width="263"  height="22" x="20" y="3">
+		<mx:ProgressBar id="uploadProgress" label="" mode="manual"  height="21"/>
+		<mx:Button id="startUpload" click="init();fileUpload.startUploadImgs();"
+				   skin="@Embed(source='assets/icons/adjuntar.gif')"
+				   toolTip="Cargar..."				   
+				   />
+		<mx:Button id="cancelUpload" click="fileUpload.cancelUpload()" enabled="false" 
+				   skin="@Embed(source='assets/icons/cancelar.gif')"
+				   toolTip="Cancelar"				   
+				   width="20" height="20"/>
+	</mx:HBox>
+	<mx:ControlBar horizontalAlign="right">
+	</mx:ControlBar>
+</mx:Panel>

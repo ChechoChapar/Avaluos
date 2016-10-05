@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--- 
+Modulo para la consulta de históricos de avalúos
+@see mx.modules.Module
+-->
+<mx:Module xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		   xmlns:s="library://ns.adobe.com/flex/spark" 
+		   xmlns:mx="library://ns.adobe.com/flex/mx" layout="absolute" width="600" height="550" 
+		   xmlns:services="services.*" 
+		   xmlns:valueObjects="valueObjects.*"
+		   xmlns:componentes="com.segurosbolivar.avaluos.componentes.*"
+		   implements="modulos.IModule"
+		   initialize="module1_initializeHandler(event)">
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.events.CloseEvent;
+			import mx.events.FlexEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.ResultEvent;
+			
+			import permisos.Permiso;
+			
+			import spark.events.IndexChangeEvent;
+			
+			import valueObjects.Ciudad;
+			import valueObjects.Departamento;
+			import valueObjects.DominiosAux;
+			import valueObjects.Dominios;
+			import valueObjects.EmpresasAvaluos;
+			import valueObjects.Usuario;
+			import valueObjects.UsuarioAvaluo;
+			
+			[Bindable]
+			public var selectDepartamento:ArrayCollection = new ArrayCollection() ;
+			
+			[Bindable]
+			public var selectCiudad:ArrayCollection = new ArrayCollection() ;
+			
+			[Bindable]
+			public var selectTipoId:ArrayCollection = new ArrayCollection() ;
+			
+			[Bindable]
+			public var selectUsuario:ArrayCollection = new ArrayCollection() ;
+			
+			[Bindable]
+			public var selectAprueba:ArrayCollection = new ArrayCollection() ;
+			
+			[Bindable]
+			public var selectEstado:ArrayCollection = new ArrayCollection() ;
+			
+			public var titleWindow:WndResultaHistoricos;
+			
+			[Bindable]
+			public var myUsuario:Usuario;
+			
+			[Bindable]
+			var myListaPermisos:Permiso;
+			
+			[Bindable]
+			public var repositorioHistoricos:ArrayCollection = new ArrayCollection() ;
+			
+			public function setTexto(t:String):void
+			{
+			}
+			
+			public function setPermisos(listaPermisos:Permiso):void
+			{
+				myListaPermisos = listaPermisos;
+			}	
+			
+			public function getPermisos():Permiso
+			{
+				return myListaPermisos;
+			}
+			
+			public function ejecutar():void
+			{ 	  
+			}
+			
+			public function adicionar():void
+			{ 
+			}
+			
+			/**
+			 * Envía los parámetros para la consulta de los históricos
+			 **/ 
+			public function consultar():void
+			{  
+				if(cmbTipoDocumento.selectedIndex == -1)
+				{ historicoAuxDao.tipoDocumento = null;
+				}
+				else
+				{ historicoAuxDao.tipoDocumento = (Dominios)(cmbTipoDocumento.selectedItem).rvLowValue;
+				}	
+				
+				historicoAuxDao.nombreSolicitante = nombreSolicitanteTextInput.text;
+				
+				if(numeroIdentificacionTextInput.text != null)
+				{ historicoAuxDao.numeroIdentificacion = numeroIdentificacionTextInput.text;
+				}	
+				
+				if(ddlDepartamento.selectedIndex == -1)
+				{ historicoAuxDao.idDepartamento = null;
+				}
+				else
+				{ historicoAuxDao.idDepartamento = (Departamento)(ddlDepartamento.selectedItem).codAsobancaria;
+				}
+				
+				if(ddlCiudades.selectedItem == null)
+				{ historicoAuxDao.idCiudad = null;
+				}
+				else
+				{ historicoAuxDao.idCiudad = (Ciudad)(ddlCiudades.selectedItem).codAsobancaria;
+				}	
+				
+				historicoAuxDao.matriculaInmobiliaria = matriculaInmobiliariaTextInput.text.concat(matriculaSegundaParte.text);
+				historicoAuxDao.fechaAvaluoDesde = fechaAvaluoDesdeDateField.selectedDate;
+				historicoAuxDao.fechaAvaluoHasta = fechaAvaluoHastaDateField.selectedDate;
+				historicoAuxDao.direccionInmueble = direccionInmuebleTextInput.text;
+				
+				if(cmbEstadoAvaluo.selectedIndex == -1)
+				{ historicoAuxDao.estadoAvaluo = null;
+				}
+				else
+				{ historicoAuxDao.estadoAvaluo = (Dominios)(cmbEstadoAvaluo.selectedItem).rvLowValue;
+				}	
+				
+				if(cmbUsuarioAprueba.selectedIndex == -1)
+				{ historicoAuxDao.usuarioAprueba = null;
+				}
+				else
+				{ historicoAuxDao.usuarioAprueba = (EmpresasAvaluos)(cmbUsuarioAprueba.selectedItem).numeroDocumento;
+				}	
+				
+				historicoAuxDao.fechaCreacionDesde = fechaCreacionDesdeDateField.selectedDate;
+				historicoAuxDao.fechaCreacionHasta = fechaCreacionHastaDateField.selectedDate;
+				
+				if(cmbUsuarioTrans.selectedIndex == -1)
+				{ historicoAuxDao.usuarioTransaccion = null;
+				}
+				else
+				{ historicoAuxDao.usuarioTransaccion = (UsuarioAvaluo)(cmbUsuarioTrans.selectedItem).codigoUsuario;
+				}	
+				
+				historicoAuxDao.fechaTransaccionDesde = fechaTransaccionDesdeDateField.selectedDate;
+				historicoAuxDao.fechaTransaccionHasta = fechaTransaccionHastaDateField.selectedDate;
+				consultaHistoricosResult.token = historicoAvaluos.consultaHistoricos(historicoAuxDao);
+			}
+			
+			public function imprimir():void
+			{
+			}
+			
+			public function editar():void
+			{   
+			}
+			
+			public function eliminar():void
+			{ 
+			}
+			
+			
+			protected function module1_initializeHandler(event:FlexEvent):void
+			{ consultaDepartamentosResult.token = departamentoService.consultaDepartamentos();
+				getValoresDominio('TIPOIDENTIFICACION');
+				consultaTodosUsuariosResult.token = usuarioAvaluosService.consultaTodosUsuarios();
+				retornaEmpresasResult.token = empresasAvaluosService.retornaEmpresas();
+				getValoresDominio2('ESTADOAVALUO')
+			}
+			
+			public function getItemIndex(target:String, fields:ArrayCollection,propiedad:String ):int { 
+				for(var x:int=0; x<fields.length; x++) { 
+					if(fields[x][propiedad] == target) 
+					{ return x; 
+					} 
+				} 
+				return -1; 
+			} 
+			
+			protected function getValoresDominio(arg0:String):void
+			{ getValoresDominioResult.token = dominiosAuxDao.getValoresDominio(arg0);
+			}
+			
+			private function closeMe(e:CloseEvent):void {
+				PopUpManager.removePopUp(titleWindow);
+				titleWindow.removeEventListener(CloseEvent.CLOSE, closeMe);
+			}	
+			
+			protected function consultaDepartamentosResult_resultHandler(event:ResultEvent):void
+			{ selectDepartamento = consultaDepartamentosResult.lastResult;
+			}
+			
+			protected function ddlDepartamento_focusOutHandler(event:FocusEvent):void
+			{  if(ddlDepartamento.selectedIndex != -1)
+			{ var dpto:Departamento = ddlDepartamento.selectedItem as Departamento;
+				selectCiudad = dpto.ciudadesDepto as ArrayCollection;
+			}	
+			}
+			
+			protected function getValoresDominioResult_resultHandler(event:ResultEvent):void
+			{ selectTipoId = getValoresDominioResult.lastResult;
+			}
+			
+			protected function consultaTodosUsuariosResult_resultHandler(event:ResultEvent):void
+			{ selectUsuario = consultaTodosUsuariosResult.lastResult;
+			}
+			
+			protected function retornaEmpresasResult_resultHandler(event:ResultEvent):void
+			{ selectAprueba = retornaEmpresasResult.lastResult;			
+			}
+			
+			protected function getValoresDominio2(arg0:String):void
+			{ getValoresDominioResult2.token = dominiosAuxDao.getValoresDominio(arg0);
+			}
+			
+			protected function getValoresDominioResult2_resultHandler(event:ResultEvent):void
+			{ selectEstado = getValoresDominioResult2.lastResult;
+			}
+			
+			
+			protected function ddlCiudades_clickHandler(event:MouseEvent):void
+			{ if(ddlDepartamento.selectedIndex == -1)
+			{ Alert.show('Debe seleccionar primero el Departamento');
+			}	
+			}
+			
+			private function dateChooser_init(dt:DateField):void {
+				dt.dayNames=['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'];
+				dt.monthNames=[	'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+					'Julio', 'Agosto', 'Septiembre', 'Octubre',
+					'Noviembre', 'Diciembre'];
+				dt.firstDayOfWeek = 1;
+				dt.formatString = "DD/MM/YYYY";
+			}
+			
+			protected function consultaHistoricosResult_resultHandler(event:ResultEvent):void
+			{ //Alert.show('Entra a consultar históricos');
+				repositorioHistoricos = consultaHistoricosResult.lastResult;
+				
+				
+				titleWindow = PopUpManager.createPopUp(DisplayObject(systemManager),WndResultaHistoricos, true, null, moduleFactory) as WndResultaHistoricos;
+				PopUpManager.centerPopUp(titleWindow);
+				titleWindow.addEventListener(CloseEvent.CLOSE, closeMe, false, 0, true);
+				titleWindow.selectHistoricos = repositorioHistoricos;
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<s:CallResponder id="consultaHistoricosResult" result="consultaHistoricosResult_resultHandler(event)"/>
+		<services:HistoricoAvaluos id="historicoAvaluos" fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)" showBusyCursor="true"/>
+		<valueObjects:HistoricoAuxDao id="historicoAuxDao"/>
+		<s:CallResponder id="consultaDepartamentosResult" result="consultaDepartamentosResult_resultHandler(event)"/>
+		<services:DepartamentoService id="departamentoService" fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)" showBusyCursor="true"/>
+		<services:DominiosAuxDao id="dominiosAuxDao" fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)" showBusyCursor="true"/>
+		<s:CallResponder id="getValoresDominioResult" result="getValoresDominioResult_resultHandler(event)"/>
+		<s:CallResponder id="consultaTodosUsuariosResult" result="consultaTodosUsuariosResult_resultHandler(event)"/>
+		<services:UsuarioAvaluosService id="usuarioAvaluosService" fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)" showBusyCursor="true"/>
+		<s:CallResponder id="retornaEmpresasResult" result="retornaEmpresasResult_resultHandler(event)"/>
+		<services:EmpresasAvaluosService id="empresasAvaluosService" fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)" showBusyCursor="true"/>
+		<s:CallResponder id="getValoresDominioResult2" result="getValoresDominioResult2_resultHandler(event)"/>
+		<componentes:WndResultaHistoricos id="pantallaHistoricos"/>
+		<mx:DateFormatter id="formatDate" formatString="DD/MM/YYYY" />
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Style source="assets/css/AvaluosBolivar.css"/>
+	<fx:Style source="assets/css/AvaluosBolivarPanel.css"/>
+	<mx:Form width="100%" height="100%" x="0" y="1">
+		<mx:FormItem label="Tipo Documento">
+			<s:ComboBox id="cmbTipoDocumento" dataProvider="{selectTipoId}" labelField="rvMeaning"></s:ComboBox>
+		</mx:FormItem>
+		<mx:FormItem label="Numero Identificacion">
+			<s:TextInput id="numeroIdentificacionTextInput" text="@{historicoAuxDao.numeroIdentificacion}" maxChars="10"/>
+		</mx:FormItem>
+		<mx:FormItem label="Nombre Solicitante">
+			<s:TextInput id="nombreSolicitanteTextInput" text="@{historicoAuxDao.nombreSolicitante}" width="297"/>
+		</mx:FormItem>
+		<mx:FormItem label="Fecha Avaluo Desde">
+			<mx:DateField id="fechaAvaluoDesdeDateField" selectedDate="@{historicoAuxDao.fechaAvaluoDesde}" creationComplete="dateChooser_init(fechaAvaluoDesdeDateField)" formatString="DD/MM/YYYY"/>
+		</mx:FormItem>
+		<mx:FormItem label="Fecha Avaluo Hasta">
+			<mx:DateField id="fechaAvaluoHastaDateField" selectedDate="@{historicoAuxDao.fechaAvaluoHasta}" creationComplete="dateChooser_init(fechaAvaluoHastaDateField)" formatString="DD/MM/YYYY"/>
+		</mx:FormItem>
+		<mx:FormItem label="Departamento">
+			<s:ComboBox x="144" y="12" id="ddlDepartamento" dataProvider="{selectDepartamento}" labelField="departamento"  focusOut="ddlDepartamento_focusOutHandler(event)">
+			</s:ComboBox>
+		</mx:FormItem>
+		<mx:FormItem label="Ciudad">
+			<s:ComboBox id="ddlCiudades" dataProvider="{selectCiudad}" labelField="ciudad" click="ddlCiudades_clickHandler(event)"></s:ComboBox>
+		</mx:FormItem>
+		<mx:FormItem label="Direccion Inmueble">
+			<s:TextInput id="direccionInmuebleTextInput" text="@{historicoAuxDao.direccionInmueble}" width="264"/>
+		</mx:FormItem>
+		<mx:FormItem label="Matrícula Inmobiliaria" width="421">
+			<mx:HBox>	
+				<s:TextInput id="matriculaInmobiliariaTextInput" width="54" maxChars="4" restrict="0-9,a-z,A-Z"/>
+				<s:Label text="_" />
+				<s:TextInput id="matriculaSegundaParte" maxChars="9" restrict="0-9,a-z,A-Z"/>
+			</mx:HBox>			 
+		</mx:FormItem>
+		<mx:FormItem label="Estado Avalúo">
+			<s:ComboBox id="cmbEstadoAvaluo" dataProvider="{selectEstado}" selectedItem="@{historicoAuxDao.estadoAvaluo}" labelField="rvMeaning"></s:ComboBox>
+		</mx:FormItem>
+		<mx:FormItem label="Usuario Aprueba">
+			<s:ComboBox id="cmbUsuarioAprueba" dataProvider="{selectAprueba}" width="274" selectedItem="@{historicoAuxDao.usuarioAprueba}" labelField="descEmpresa"></s:ComboBox>
+		</mx:FormItem>
+		<mx:FormItem label="Fecha Creacion Desde">
+			<mx:DateField id="fechaCreacionDesdeDateField" selectedDate="@{historicoAuxDao.fechaCreacionDesde}" creationComplete="dateChooser_init(fechaCreacionDesdeDateField)" formatString="DD/MM/YYYY"/>
+		</mx:FormItem>
+		<mx:FormItem label="Fecha Creacion Hasta">
+			<mx:DateField id="fechaCreacionHastaDateField" selectedDate="@{historicoAuxDao.fechaCreacionHasta}" creationComplete="dateChooser_init(fechaCreacionHastaDateField)" formatString="DD/MM/YYYY"/>
+		</mx:FormItem>
+		<mx:FormItem label="Usuario Transacción">
+			<s:ComboBox  id="cmbUsuarioTrans" dataProvider="{selectUsuario}" width="273" selectedItem="@{historicoAuxDao.usuarioTransaccion}"  labelField="nombreEmpleado"></s:ComboBox>
+		</mx:FormItem>
+		<mx:FormItem label="Fecha Transaccion Desde">
+			<mx:DateField id="fechaTransaccionDesdeDateField" selectedDate="@{historicoAuxDao.fechaTransaccionDesde}" creationComplete="dateChooser_init(fechaTransaccionDesdeDateField)" formatString="DD/MM/YYYY"/>
+		</mx:FormItem>
+		<mx:FormItem label="Fecha Transaccion Hasta">
+			<mx:DateField id="fechaTransaccionHastaDateField" selectedDate="@{historicoAuxDao.fechaTransaccionHasta}" creationComplete="dateChooser_init(fechaTransaccionHastaDateField)" formatString="DD/MM/YYYY"/>
+		</mx:FormItem>
+	</mx:Form>
+</mx:Module>

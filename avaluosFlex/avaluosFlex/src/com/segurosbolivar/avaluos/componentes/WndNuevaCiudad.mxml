@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--- 
+Modulo para el ingreso de ciudades
+@see mx.modules.Module
+-->
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="324" xmlns:valueObjects="valueObjects.*"
+			   initialize="titlewindow1_initializeHandler(event)" xmlns:services="services.*">
+	
+	<fx:Metadata>
+		[Event (name = "refrescarDatos")]
+	</fx:Metadata>
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			import mx.events.FlexEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.ResultEvent;
+			
+			import permisos.Permiso;
+			
+			import valueObjects.Ciudad;
+			import valueObjects.Usuario;
+			
+			[Bindable]
+			public var myUsuario:Usuario;
+			
+			[Bindable]
+			public var mensaje:String = new String();
+			
+			[Bindable]
+			var myListaPermisos:Permiso;
+			
+			public function setTexto(t:String):void
+			{
+			}
+			
+			public function setPermisos(listaPermisos:Permiso):void
+			{
+				myListaPermisos = listaPermisos;
+			}	
+			
+			public function getPermisos():Permiso
+			{
+				return myListaPermisos;
+			}
+			
+			public function ejecutar():void
+			{ 	  
+			}
+			
+			public function adicionar():void
+			{
+			} 
+			
+			public function consultar():void
+			{ 
+			}
+			
+			public function imprimir():void
+			{
+			}
+			
+			public function editar():void
+			{	
+			}
+			
+			public function eliminar():void
+			{ 
+			}
+			
+			/**
+			 * Envía parametros y el objeto Ciudad
+			 **/ 
+			protected function button_clickHandler(event:MouseEvent):void
+			{   var fechaActual:Date = new Date();
+				ciudad.departamento = departamento;
+				ciudad.ciudad = ciudadTextInput.text;
+				ciudad.codAsobancaria = codAsobancariaTextInput.text;
+				ciudad.codDane = codDaneTextInput.text;
+				ciudad.usuarioCreacion = myUsuario.codigoUsuario;
+				ciudad.fechaCreacion = fechaActual;
+				ciudad.usuarioTransaccion = myUsuario.codigoUsuario;
+				ciudad.fechaTransaccion = fechaActual;
+				insertaCiudadResult.token = ciudadService.insertaCiudad(ciudad);				
+				//dispatchEvent(new Event("refrescarDatos"));
+			}
+
+			protected function titlewindow1_initializeHandler(event:FlexEvent):void
+			{ myUsuario = parentApplication.getUsuarioActual();
+			}
+
+			/**
+			 * Retorna el resultado de la transacción
+			 **/ 
+			protected function getMensajeTransaccionResult_resultHandler(event:ResultEvent):void
+			{  mensaje = getMensajeTransaccionResult.lastResult as String;
+			   if(mensaje!=null)
+			   { Alert.show(mensaje);
+			   }
+			}
+
+			protected function codAsobancariaTextInput_keyDownHandler(event:KeyboardEvent):void
+			{ codAsobancariaTextInput.restrict = "0-9";
+			}
+
+
+			protected function codDaneTextInput_keyDownHandler(event:KeyboardEvent):void
+			{ codDaneTextInput.restrict = "0-9";
+			}
+
+			protected function insertaCiudadResult_resultHandler(event:ResultEvent):void
+			{
+				// TODO Auto-generated method stub
+				getMensajeTransaccionResult.token = ciudadService.getMensajeTransaccion();
+				dispatchEvent(new Event("refrescarDatos"));
+			}
+
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<s:CallResponder id="insertaCiudadResult" result="insertaCiudadResult_resultHandler(event)"/>
+		<services:CiudadService id="ciudadService" fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)" showBusyCursor="true"/>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<valueObjects:Departamento id="departamento"/>
+		<valueObjects:Ciudad id="ciudad"/>
+		<s:CallResponder id="getMensajeTransaccionResult" result="getMensajeTransaccionResult_resultHandler(event)"/>
+	</fx:Declarations>
+	<fx:Style source="assets/css/AvaluosBolivar.css"/>
+	<fx:Style source="assets/css/AvaluosBolivarPanel.css"/>
+
+	<mx:Form defaultButton="{button}" width="389" height="252" x="0" y="0">
+		<mx:FormItem label="Departamento" width="290">
+			<s:Label id="idDepartamentoLabel" text="{departamento.departamento}"/>
+		</mx:FormItem>
+		<mx:FormItem label="Nombre Ciudad">
+			<s:TextInput id="ciudadTextInput" text="{ciudad.ciudad}" width="155"/>
+		</mx:FormItem>
+		<mx:FormItem label="Código Asobancaria">
+			<s:TextInput id="codAsobancariaTextInput" text="{ciudad.codAsobancaria}" width="154" keyDown="codAsobancariaTextInput_keyDownHandler(event)" restrict="0-9"/>
+		</mx:FormItem>
+		<mx:FormItem label="Código Dane">
+			<s:TextInput id="codDaneTextInput" text="{ciudad.codDane}" width="153"  keyDown="codDaneTextInput_keyDownHandler(event)" restrict="0-9"/>
+		</mx:FormItem>
+		<mx:FormItem label="Usuario Creacion" width="287">
+			<s:Label id="usuarioCreacionLabel" text="{ciudad.usuarioCreacion}"/>
+		</mx:FormItem>
+		<mx:FormItem label="Fecha Creacion" width="287">
+			<s:Label id="fechaCreacionLabel" text="{ciudad.fechaCreacion}"/>
+		</mx:FormItem>
+		<mx:FormItem label="Usuario Transaccion" width="289">
+			<s:Label id="usuarioTransaccionLabel" text="{ciudad.usuarioTransaccion}"/>
+		</mx:FormItem>
+		<mx:FormItem label="Fecha Transaccion" width="290">
+			<s:Label id="fechaTransaccionLabel" text="{ciudad.fechaTransaccion}"/>
+		</mx:FormItem>
+	</mx:Form>
+	<s:Button id="button" label="Guardar Ciudad" click="button_clickHandler(event)" x="145" y="260"/>
+	<s:Label x="10" y="2" text="Nueva Ciudad" fontWeight="bold"/>
+</s:TitleWindow>

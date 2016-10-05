@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" width="852" height="599"  close="title_close();">
+	<mx:Script>
+		<![CDATA[
+			import mx.managers.PopUpManager;
+			
+			[Bindable]
+			public var textoErrValidacionAvaluo:String;
+			
+			public function title_close():void{
+				PopUpManager.removePopUp(this);
+			}
+
+			
+			public function setTextoErrValidacionAvaluo(valor:String)
+			{
+				textoErrValidacionAvaluo = valor;
+			}
+			
+			public function getTextoErrValidacionAvaluo()
+			{
+				return textoErrValidacionAvaluo;
+			}
+		]]>
+	</mx:Script>
+	<mx:TextArea width="841" height="512" text="{textoErrValidacionAvaluo}" color="#006926"/>
+	<mx:Button label="Cancelar" click="PopUpManager.removePopUp(this);"/>
+</mx:TitleWindow>
+

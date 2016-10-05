@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Module xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		   xmlns:s="library://ns.adobe.com/flex/spark" 
+		   xmlns:mx="library://ns.adobe.com/flex/mx"
+		   xmlns:valueObjects="valueObjects.*"
+		   xmlns:comp="com.segurosbolivar.avaluos.componentes.*"
+		   width="100%" height="100%">
+	<fx:Script>
+		<![CDATA[
+			import com.segurosbolivar.avaluos.modulos.Utilidad;
+			
+			import mx.collections.ArrayCollection;
+			import mx.events.FlexEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			import valueObjects.Avaluo;
+			import valueObjects.CampoRequeridoDTO;
+			import valueObjects.Usuario;
+			
+			/**
+			 * Crea o actualiza la sección oferta demanda
+			 * */
+			public function guarfarOfertaDemanda(avaluo:Avaluo, myUsuario:Usuario):ComportamientoOfertaDemanda{
+				try{
+					comportamientoOfertaDemandaVO.avaluo = avaluo;
+					
+					if(avaluo.compOfertaDemanda != null && avaluo.compOfertaDemanda.length > 0){
+						var comportamiento:ComportamientoOfertaDemanda = avaluo.compOfertaDemanda.getItemAt(0) as ComportamientoOfertaDemanda ; 
+						if(comportamiento != null){
+							comportamientoOfertaDemandaVO.idComportamientoOfertaDemanda = comportamiento.idComportamientoOfertaDemanda;
+							comportamientoOfertaDemandaVO.fechaCreacion = comportamiento.fechaCreacion ; 
+							comportamientoOfertaDemandaVO.usuarioCreacion = comportamiento.usuarioCreacion ; 
+						}
+					}
+					
+					comportamientoOfertaDemandaVO.actualidadEdificadora = actualidadEdificadoraTextInput.text;
+					comportamientoOfertaDemandaVO.comportamientoOfertaDemanda = comportamientoOfertaDemandaTextInput.text;
+					comportamientoOfertaDemandaVO.tipoComercializacion = tipoComercializacionTextInput.text;
+					
+					comportamientoOfertaDemandaVO.usuarioTransaccion = myUsuario.codigoUsuario;
+					
+					if(comportamientoOfertaDemandaVO.idComportamientoOfertaDemanda == null){
+						comportamientoOfertaDemandaVO.usuarioTransaccion = myUsuario.codigoUsuario;
+					}					
+				}catch(error:Error){
+					error.getStackTrace(); 
+					trace(error.message); 
+					parentDocument.imprimirEstadoProceso(error.message);
+				}
+				return comportamientoOfertaDemandaVO;
+			}
+			
+			public function validarCamposVacios():Boolean{
+				return true; 
+			}	
+			
+			public function ejecutarValidacionCamposObligatorios(categoria:int):void{
+				Utilidad.validarCamposObligarios(Utilidad.obtenerCamposVacios(getListaCampos(categoria), this),this); 
+			}
+			
+			protected function getListaCampos(categoria:int):ArrayCollection
+			{
+				var arrayDto : ArrayCollection = new ArrayCollection();
+				var mapCampos:Object = new Object();
+				
+				mapCampos["tipoComercializacionTextInput"] = "N_TIPOCOMERCIALIZA";
+				//OJO
+				mapCampos["actualidadEdificadoraTextInput"] = "T_ACTEDIFICADORA";
+				//OJO
+				mapCampos["comportamientoOfertaDemandaTextInput"] = "T_COMPORTAOD";				
+				
+				for (var key:String in mapCampos) {
+					trace(" " + key + " - " +mapCampos[key]);
+					var campoDto:CampoRequeridoDTO = new CampoRequeridoDTO();
+					campoDto.nombretablaBD="PGB_COMP_OFERTA_DEMANDA";
+					campoDto.nombrecampoBD=mapCampos[key];
+					campoDto.nombreComponente=key;
+					campoDto.categoriaInmueble=categoria.toString();
+					
+					arrayDto.addItem(campoDto);
+					
+				}
+				
+				return arrayDto;
+			}
+			
+			protected function button1_clickHandler(event:MouseEvent):void{
+				if(!validarCamposFormultario()){
+					return; 
+				}
+				var mensajeTransaccion:String = "Transacción exitosa. Bloque: Información Básica"; 
+				var avaluoTmp:Avaluo = new Avaluo();
+				
+				/**
+				 if(informacionInmueblePanelVO != null){
+				 mensajeTransaccion = "Transacción exitosa. Bloque: Información Inmueble";
+				 
+				 var inmuebleList:ArrayCollection = new ArrayCollection();
+				 
+				 if(avaluoVO == null)
+				 avaluoTmp = informacionBasicaPanelVO.avaluo2; 
+				 else 
+				 avaluoTmp = avaluoVO ;
+				 
+				 inmuebleList.addItem(informacionInmueblePanelVO.guardarInmueble(avaluoTmp,myUsuario)); 
+				 avaluoTmp.informacionInmueble = inmuebleList;
+				 avaluoVO = avaluoTmp ;
+				 }
+				 
+				 if(informacionConstruccionPanelVO != null){
+				 mensajeTransaccion = "Transacción exitosa. Bloque: Información Construcción";
+				 
+				 var construccionList:ArrayCollection = new ArrayCollection(); 
+				 
+				 if(avaluoVO == null)
+				 avaluoTmp = informacionBasicaPanelVO.avaluo2; 
+				 else 
+				 avaluoTmp = avaluoVO ;
+				 
+				 construccionList.addItem(informacionConstruccionPanelVO.guardarInformacionConstruccion(avaluoTmp,myUsuario)); 
+				 avaluoTmp.informacionConstruccion = construccionList;
+				 
+				 var condicionList:ArrayCollection = new ArrayCollection(); 
+				 condicionList.addItem(informacionConstruccionPanelVO.guardarInformacionCondicionesSalubridad(avaluoTmp,myUsuario));
+				 avaluoTmp.condicionSalubridad =  condicionList; 
+				 avaluoVO = avaluoTmp ;
+				 }
+				 
+				 if(ofertaDemandaPanelVO != null){
+				 mensajeTransaccion = "Transacción exitosa. Bloque: Información Oferta y Demanda";
+				 
+				 var ofertademandaList:ArrayCollection = new ArrayCollection(); 
+				 
+				 if(avaluoVO == null)
+				 avaluoTmp = informacionBasicaPanelVO.avaluo2; 
+				 else 
+				 avaluoTmp = avaluoVO ;
+				 
+				 ofertademandaList.addItem(ofertaDemandaPanelVO.guarfarOfertaDemanda(avaluoTmp,myUsuario)); 
+				 avaluoTmp.compOfertaDemanda = ofertademandaList ; 
+				 avaluoVO = avaluoTmp ;
+				 }
+				 
+				 if(liquidacionPanelVO != null){
+				 mensajeTransaccion = "Transacción exitosa. Bloque: Liquidación";
+				 
+				 avaluoTmp.liquidacionAvaluos = liquidacionPanelVO.guardarLiquidacion(avaluoTmp,myUsuario);
+				 
+				 var liquidacionTotalList:ArrayCollection = new ArrayCollection(); 
+				 
+				 if(avaluoVO == null)
+				 avaluoTmp = informacionBasicaPanelVO.avaluo2; 
+				 else 
+				 avaluoTmp = avaluoVO ;
+				 
+				 liquidacionTotalList.addItem(liquidacionPanelVO.guardarTotalLiquidacion(avaluoTmp,myUsuario)); 
+				 avaluoTmp.liquidacionTotal = liquidacionTotalList ; 
+				 avaluoVO = avaluoTmp ;
+				 }
+				 
+				 if(observacionPanelVO != null){
+				 mensajeTransaccion = "Transacción exitosa. Bloque: Observación ";
+				 var observacionList:ArrayCollection = new ArrayCollection(); 
+				 
+				 if(avaluoVO == null)
+				 avaluoTmp = informacionBasicaPanelVO.avaluo2; 
+				 else 
+				 avaluoTmp = avaluoVO ;
+				 
+				 observacionList.addItem(observacionPanelVO.guardarObservacion(avaluoTmp,myUsuario)); 
+				 avaluoTmp.observacion = observacionList ; 
+				 avaluoVO = avaluoTmp ;
+				 }
+				 imprimirEstadoProceso(mensajeTransaccion);
+				 if(informacionBasicaPanelVO != null)
+				 informacionBasicaPanelVO.guardarInformacionBasica(avaluoVO, myUsuario);
+				 
+				 if(avaluoVO.usuarioCreacion == null)
+				 auditoriaAvaluo.usuarioCreacion.text = myUsuario.cedulaEmpleado ; 
+				 else 
+				 auditoriaAvaluo.usuarioCreacion.text = avaluoVO.usuarioCreacion ;
+				 
+				 if(avaluoVO.fechaCreacion != null)
+				 auditoriaAvaluo.fechaCreacion.selectedDate = avaluoVO.fechaCreacion ; 
+				 else 
+				 auditoriaAvaluo.fechaCreacion.selectedDate = new Date() ;
+				 
+				 auditoriaAvaluo.usuarioTransaccion.text = myUsuario.cedulaEmpleado ; 
+				 auditoriaAvaluo.fechaTransaccion.selectedDate = new Date() ;
+				 */
+			}
+			
+			private function validarCamposFormultario():Boolean{
+				try{
+					validarCamposVacios(); 
+					return true; 
+				}catch(e:Error){
+					imprimirEstadoProceso(e.message);
+				}	
+				return false;
+			}
+			
+			protected function getAvaluosPorIdResult_resultHandler(event:ResultEvent):void
+			{
+				//Se instancian nuevamente todos los objetos
+				comportamientoOfertaDemandaVO = new ComportamientoOfertaDemanda();
+				// avaluoVO = getAvaluosPorIdResult.lastResult as Avaluo;
+				
+			}
+			
+			protected function tn_currentStateChangeHandler(event:FlexEvent):void
+			{
+				
+					/**	switch(tn.selectedIndex){
+							
+							
+							case 4: 
+								if(ofertaDemandaPanelVO != null && avaluoVO.compOfertaDemanda != null && avaluoVO.compOfertaDemanda.length > 0)
+									ofertaDemandaPanelVO.comportamientoOfertaDemandaVO = avaluoVO.compOfertaDemanda.getItemAt(0) as ComportamientoOfertaDemanda;
+								break;
+							
+							
+						}*/ 
+					
+			}
+			
+			protected function validarCampos(categoria:int, todos:Boolean):void
+			{			
+				ejecutarValidacionCamposObligatorios(categoria); 
+			}
+			
+			/**
+			 *  Imprime estado de las novedades durante el registro del formultario 
+			 **/			
+			public function imprimirEstadoProceso(mensaje:String):void{
+				mensajes.text = mensaje ; 
+			}
+			
+			protected function button2_clickHandler(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<valueObjects:ComportamientoOfertaDemanda id="comportamientoOfertaDemandaVO"/>
+	</fx:Declarations>
+	<s:Group>
+		<s:layout>
+			<s:VerticalLayout/>
+		</s:layout>
+		
+		<mx:HBox width="100%">
+			<s:Label text="Tiempo Comercialización (en meses)" width="200"/>
+			<s:TextInput id="tipoComercializacionTextInput" text="{comportamientoOfertaDemandaVO.tipoComercializacion}" width="46" restrict="0-9" enabled="true" maxChars="3" tabIndex="228"/>
+		</mx:HBox>
+		<mx:HBox width="100%">
+			<s:Label text="Actualidad Edificadora" width="200"/>
+			<s:TextArea id="actualidadEdificadoraTextInput" text="{comportamientoOfertaDemandaVO.actualidadEdificadora}" restrict="{Utilidad.restrict_}" maxChars="500" width="590" enabled="true" height="127" tabIndex="229"/>	
+		</mx:HBox>
+		<mx:HBox width="100%">
+			<s:Label text="Comportamiento Oferta Demanda" width="200"/>
+			<s:TextArea id="comportamientoOfertaDemandaTextInput" text="{comportamientoOfertaDemandaVO.comportamientoOfertaDemanda}" restrict="{Utilidad.restrict_}" maxChars="500" width="590" enabled="true" height="127" tabIndex="230"/>
+		</mx:HBox>			
+		<comp:AuditoriaPanel id="auditoriaAvaluo">
+			
+		</comp:AuditoriaPanel>
+		<s:HGroup>				 
+			<mx:Button id="btGuardar" label="Guardar"  click="button1_clickHandler(event)"/>
+			<mx:Button label="Cancelar" click="button2_clickHandler(event)"/>
+			<s:Label text="Select the tabs to change the panel." paddingLeft="10" width="100%" 
+					 id="mensajes" color="#FD0000" fontWeight="bold" textDecoration="underline" height="15"/>
+		</s:HGroup>
+		
+	</s:Group>
+	
+</mx:Module>

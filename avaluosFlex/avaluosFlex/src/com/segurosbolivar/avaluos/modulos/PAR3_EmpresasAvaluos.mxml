@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--- 
+Modulo para la parametrización de Alarmas
+@implements modulos.IModule
+@see mx.modules.Module
+-->
+<mx:Module xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		   xmlns:s="library://ns.adobe.com/flex/spark" 
+		   xmlns:mx="library://ns.adobe.com/flex/mx" layout="absolute" width="100%" height="100%" 
+		   xmlns:services="services.*" 
+		   xmlns:componentes="com.segurosbolivar.avaluos.componentes.*"
+		   implements="modulos.IModule"
+		   initialize="module1_initializeHandler(event)">
+	<fx:Script>
+		<![CDATA[
+			import com.segurosbolivar.avaluos.modulos.FileDownload;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.events.CloseEvent;
+			import mx.events.FlexEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.ResultEvent;
+			import mx.skins.halo.WindowBackground;
+			
+			import permisos.Permiso;
+			
+			import spark.components.TitleWindow;
+			
+			import valueObjects.Archivo;
+			import valueObjects.EmpresasAvaluos;
+			import valueObjects.Usuario;
+			
+			public var titleWindow:wndEmpresaNueva;
+			public var titleWindowPerito:TitleWindow;
+			
+			
+			[Bindable]
+			public var idLogo:String;
+
+			[Bindable]
+			public var idFirma:String;
+			
+			[Bindable]
+			public var contenidoLogo:ByteArray;
+			
+			[Bindable]
+			public var contenidoFirma:ByteArray;
+			
+			[Bindable]
+			public var myUsuario:Usuario;
+			
+			[Bindable]
+			public var mensaje:String = new String();
+			
+			[Bindable]
+			var myListaPermisos:Permiso;
+			
+			[Bindable]
+			var emp:EmpresasAvaluos = new EmpresasAvaluos();
+			
+			[Bindable]
+			var ventanaPerito:wndPeritosporEmpresa;
+			
+			private function closeMe(e:CloseEvent):void {
+				PopUpManager.removePopUp(titleWindow);
+				titleWindow.removeEventListener(CloseEvent.CLOSE, closeMe);
+				//Cambio para refrescar la ventana de empresas cuando se ingresa o edita una empresa
+				//Cambio 10/02/2011 para probar el refresco de la empresa
+				//retornaEmpresasResult.token = empresasAvaluosService.retornaEmpresas();
+			}	
+			
+			
+			public function setTexto(t:String):void
+			{
+			}
+			
+			public function setPermisos(listaPermisos:Permiso):void
+			{
+				myListaPermisos = listaPermisos;
+			}	
+			
+			public function getPermisos():Permiso
+			{
+				return myListaPermisos;
+			}
+			
+			public function ejecutar():void
+			{ 	  
+			}
+			
+			/**
+			 * Adiciona una nueva empresa en una ventana popup y cierra la ventana hija 
+			 **/ 
+			public function adicionar():void
+			{ titleWindow = PopUpManager.createPopUp(DisplayObject(systemManager),wndEmpresaNueva, true, null, moduleFactory) as wndEmpresaNueva;
+			  PopUpManager.centerPopUp(titleWindow);
+			  titleWindow.addEventListener(CloseEvent.CLOSE, closeMe, false, 0, true);
+			  titleWindow.addEventListener("refrescarDatos",pantallaEmpresas_refrescarDatosHandler);
+			  titleWindow.empresasAvaluos = new EmpresasAvaluos();
+			}
+			
+		
+			/**
+			 * Consulta las empresas disponibles 
+			 **/ 
+			public function consultar():void
+			{ retornaEmpresasResult.token = empresasAvaluosService.retornaEmpresas();
+			  dataGrid.dataProvider = retornaEmpresasResult.lastResult;
+			}
+			
+			public function imprimir():void
+			{
+			}
+			
+			/**
+			 * Retorna la empresa a editar 
+			 **/ 
+			public function editar():void
+			{   emp = arrEmpresas.getItemAt(dataGrid.selectedIndex) as EmpresasAvaluos;
+				consultaLogoResult.token = empresasAvaluosService.consultaLogo(emp);
+				consultaFirmaResult.token = empresasAvaluosService.consultaFirma(emp);
+  		     }
+			
+			/**
+			 * Elimina una empresa 
+			 **/
+			public function eliminar():void
+			{ emp = arrEmpresas.getItemAt(dataGrid.selectedIndex) as EmpresasAvaluos;
+			  borraEmpresaResult.token = empresasAvaluosService.borraEmpresa(emp);
+			  getMensajeTransaccionResult.token = empresasAvaluosService.getMensajeTransaccion();
+			  arrEmpresas.removeItemAt(dataGrid.selectedIndex);
+			  arrEmpresas.refresh();
+			}
+			
+			protected function dataGrid_creationCompleteHandler(event:FlexEvent):void
+			{ retornaEmpresasResult.token = empresasAvaluosService.retornaEmpresas();
+  		    }
+			
+
+			protected function module1_initializeHandler(event:FlexEvent):void
+			{ myUsuario = parentApplication.getUsuarioActual();
+			}
+
+			/**
+			 * Llama a la ventana de asociación de peritos a la empresa 
+			 **/
+			protected function button1_clickHandler(event:MouseEvent):void
+			{   if(dataGrid.selectedItem != null)
+			    { ventanaPerito = wndPeritosporEmpresa(PopUpManager.createPopUp(this, wndPeritosporEmpresa, true));
+				  ventanaPerito.empresa = dataGrid.selectedItem as EmpresasAvaluos;
+				  ventanaPerito.addEventListener("refrescarDatos",pantallaEmpresas_refrescarDatosHandler);
+				  ventanaPerito.addEventListener(CloseEvent.CLOSE, closeMeAsociaPerito, false, 0, true);
+			    }
+				else
+				{ Alert.show('Debe seleccionar primero la empresa');
+				}
+			}
+
+			/**
+			 * Cierra la ventana de Asociación de Perito 
+			 **/
+			private function closeMeAsociaPerito(e:CloseEvent):void {
+				PopUpManager.removePopUp(ventanaPerito);
+				ventanaPerito.removeEventListener(CloseEvent.CLOSE, closeMeAsociaPerito);
+				//Cambio 10/02/2011 para probar el refresco de la empresa
+				/*retornaEmpresasResult.token = empresasAvaluosService.retornaEmpresas();
+				arrEmpresas = retornaEmpresasResult.lastResult as ArrayCollection;*/
+				var emp:EmpresasAvaluos = dataGrid.selectedItem as EmpresasAvaluos;
+				emp.peritosEmpresas.addItem(pantallaPeritos.peritosEmpresa);
+			}
+			
+			[Bindable]
+			var ventana:WndDetalleEmpresasAvaluos;
+			
+			/**
+			 * Abre la ventana de consulta de peritos por empresa 
+			 **/
+			protected function dataGrid_doubleClickHandler(event:MouseEvent):void
+			{ //Cambio 10/02/2011 para probar el refresco de la empresa
+			  //retornaEmpresasResult.token = empresasAvaluosService.retornaEmpresas();
+			  ventana = WndDetalleEmpresasAvaluos(PopUpManager.createPopUp(this, WndDetalleEmpresasAvaluos, true));
+			  ventana.empresaAvaluos = dataGrid.selectedItem as EmpresasAvaluos; 
+			  ventana.addEventListener(CloseEvent.CLOSE, closeMePerito, false, 0, true);
+			}
+			
+			private function closeMePerito(e:CloseEvent):void {
+				PopUpManager.removePopUp(ventana);
+				ventana.removeEventListener(CloseEvent.CLOSE, closeMePerito);
+			}
+
+			protected function retornaEmpresasResult_resultHandler(event:ResultEvent):void
+			{ arrEmpresas = retornaEmpresasResult.lastResult as ArrayCollection;
+			}
+			
+			protected function descargarArchivoId(arg0:String):void
+			{
+				descargarArchivoIdResult.token = archivoService.descargarArchivoId(arg0);
+				var nombre:String = descargarArchivoIdResult.lastResult;
+				var fileDown:FileDownload = new FileDownload();
+				fileDown.startDownload(nombre);
+			}
+			
+
+			protected function consultaLogoResult_resultHandler(event:ResultEvent):void
+			{ idLogo = consultaLogoResult.lastResult as String;
+			  obtieneContenidoResult.token = archivoService.obtieneContenido(idLogo);
+			}
+
+
+			protected function obtieneContenidoResult_resultHandler(event:ResultEvent):void
+			{  contenidoLogo = obtieneContenidoResult.lastResult as ByteArray;
+			}
+
+			protected function obtieneContenidoResult2_resultHandler(event:ResultEvent):void
+			{
+				contenidoFirma = obtieneContenidoResult2.lastResult as ByteArray;
+				var titleWindow:wndEmpresaNueva = wndEmpresaNueva(PopUpManager.createPopUp(this, wndEmpresaNueva, true));
+				PopUpManager.centerPopUp(titleWindow);
+				
+				titleWindow.contenidoLogo = contenidoLogo;
+				titleWindow.contenidoFirma = contenidoFirma;
+				
+				titleWindow.empresa = emp;
+			}
+
+			
+			protected function consultaFirmaResult_resultHandler(event:ResultEvent):void
+			{	idFirma = consultaFirmaResult.lastResult as String;
+				obtieneContenidoResult2.token = archivoService.obtieneContenido(idFirma);
+			}
+
+
+			protected function getMensajeTransaccionResult_resultHandler(event:ResultEvent):void
+			{
+				mensaje = getMensajeTransaccionResult.lastResult as String;
+				if(mensaje!=null)
+				{
+					Alert.show(mensaje);
+				}
+			}
+
+
+			/**
+			 * Refresca las empresas en el datagrid 
+			 **/
+			protected function pantallaEmpresas_refrescarDatosHandler(event):void
+			{ retornaEmpresasResult.token = empresasAvaluosService.retornaEmpresas();
+			  dataGrid.dataProvider = retornaEmpresasResult.lastResult;
+			  arrEmpresas = retornaEmpresasResult.lastResult as ArrayCollection;
+			}
+			
+			/**
+			 * Formato de la fecha de Creación 
+			 **/
+			protected function labelFechaC(item:Object, column:DataGridColumn):String
+			{ if(item.fechaCreacion != null)
+			  { return formatDateTime.format(item.fechaCreacion);
+			  }else 
+			    return "";				
+			}
+
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<s:CallResponder id="retornaEmpresasResult" result="retornaEmpresasResult_resultHandler(event)"/>
+		<services:EmpresasAvaluosService id="empresasAvaluosService" fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)" showBusyCursor="true"/>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	    <componentes:wndEmpresaNueva id="pantallaEmpresas" />
+		<componentes:wndPeritosporEmpresa id="pantallaPeritos" empresa="{dataGrid.selectedItem as EmpresasAvaluos}"/>
+		<componentes:WndDetalleEmpresasAvaluos id="pantallaDetallePeritos" empresaAvaluos="{dataGrid.selectedItem as EmpresasAvaluos}"/>
+		<s:ArrayCollection id="arrEmpresas"/>
+		<s:CallResponder id="borraEmpresaResult"/>
+		<s:CallResponder id="getMensajeTransaccionResult" result="getMensajeTransaccionResult_resultHandler(event)"/>
+		<services:ArchivoService id="archivoService" fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)" showBusyCursor="true"/>
+		<s:CallResponder id="descargarArchivoIdResult"/>
+		<s:CallResponder id="consultaLogoResult" result="consultaLogoResult_resultHandler(event)"/>
+		<s:CallResponder id="obtieneContenidoResult" result="obtieneContenidoResult_resultHandler(event)"/>
+		<s:CallResponder id="obtieneContenidoResult2" result="obtieneContenidoResult2_resultHandler(event)"/>
+		<s:CallResponder id="consultaFirmaResult" result="consultaFirmaResult_resultHandler(event)"/>		
+		<mx:DateFormatter id="formatDateTime" formatString="DD-MMM-YYYY J:NN:SS" />
+    </fx:Declarations>
+	<fx:Style source="assets/css/AvaluosBolivar.css"/>
+	<fx:Style source="assets/css/AvaluosBolivarPanel.css"/>
+	<s:VGroup x="2" y="-2" width="100%" height="100%" horizontalAlign="center">
+		<s:HGroup width="100%" height="90%">
+			<mx:DataGrid id="dataGrid" creationComplete="dataGrid_creationCompleteHandler(event)" dataProvider="{arrEmpresas}" verticalScrollPolicy="on" horizontalScrollPolicy="on" width="100%" height="100%" doubleClick="dataGrid_doubleClickHandler(event)" doubleClickEnabled="true">
+				<mx:columns>
+					<mx:DataGridColumn headerText="Tipo Documento" dataField="tipoDocumento"/>
+					<mx:DataGridColumn headerText="Numero Documento" dataField="numeroDocumento"/>
+					<mx:DataGridColumn headerText="Razón Social" dataField="descEmpresa"/>
+					<mx:DataGridColumn headerText="Estado" dataField="estado"/>
+					<mx:DataGridColumn headerText="Sucursal Davivienda" dataField="sucursalDavivienda"/>
+					<mx:DataGridColumn headerText="Registro SIC" dataField="registroSic"/>
+					<mx:DataGridColumn headerText="Registro Privado" dataField="registroPrivado"/>
+					<mx:DataGridColumn headerText="Carga Archivo Plano" dataField="cargaArchivoPlano"/>
+					<mx:DataGridColumn headerText="Logo" dataField="logo"/>
+					<mx:DataGridColumn headerText="Firma" dataField="firma"/>
+					<mx:DataGridColumn headerText="Usuario Creacion" dataField="usuarioCreacion" />
+					<mx:DataGridColumn headerText="Fecha Creacion" dataField="fechaCreacion" labelFunction="labelFechaC"/>
+					<mx:DataGridColumn headerText="Usuario Transaccion" dataField="usuarioTransaccion"/>
+					<mx:DataGridColumn headerText="Fecha Transaccion" dataField="fechaTransaccion"/>					
+				</mx:columns>
+			</mx:DataGrid>
+		</s:HGroup>
+		<s:Button label="Asociar Nuevo Perito" click="button1_clickHandler(event)"/>
+	</s:VGroup>
+</mx:Module>

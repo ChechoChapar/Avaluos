@@ -1,0 +1,413 @@
+/**
+* @file AvaluosBolivar.css
+* Hoja de estilos para la interfaz de usuario Avaluos
+*/
+/**
+* Namespaces Para todos los componentes usados para el aplicativo
+* @namespace mx "library://ns.adobe.com/flex/mx";
+* @namespace s "library://ns.adobe.com/flex/spark";
+* @namespace upload "com.segurosbolivar.componentes.upload.*";
+* @namespace example "com.segurosbolivar.avaluos.modulos.*";
+* @namespace file "com.segurosbolivar.avaluos.modulos.*";
+* @namespace custom "*";
+*/
+@namespace mx "library://ns.adobe.com/flex/mx";
+@namespace s "library://ns.adobe.com/flex/spark";
+@namespace upload "com.segurosbolivar.componentes.upload.*";
+@namespace example "com.segurosbolivar.avaluos.modulos.*";
+@namespace file "com.segurosbolivar.avaluos.modulos.*";
+@namespace custom "*";
+@namespace viewContainer "aurora.controls.viewContainer.*";
+/**
+* ESTILO GLOBAL 
+**/
+global
+{
+	focus-color: #FFDF3C;
+	selection-color: #006926;
+	roll-over-color: #FFDF3C;
+	/*GRIS*/
+	chrome-color: #cccccc;
+	symbol-color: #000000;
+	color: #000000;
+	font-family: Tahoma;
+	font-size: 12px;
+}
+/*
+@font-face {
+	src:url("../fonts/tahoma.ttf");
+	fontFamily: Tahoma;
+	advancedAntiAliasing: false;
+}
+*/
+/*
+@font-face {
+	src:url("../fonts/tahomabd.ttf");
+	fontFamily: Tahoma;
+	fontWeight: bold;	
+	advancedAntiAliasing: false;
+}*/
+
+/**
+* Estilo nombrado Encabezado:
+* @style .myHeaderStyle
+*/
+.myHeaderStyle {
+	color: #FFFFFF;
+}
+/*.myPanelprincipalStyle
+{
+	color: #000000;
+	chrome-color: #CCCCCC;
+	symbol-color: #000000;
+	
+}*/
+/**
+* Estilo nombrado Custom Module Loader:
+* @style .myCustomModuleLoaderStyle
+*/
+.myCustomModuleLoaderStyle{
+	chrome-color: #006926;
+	symbol-color: #FFFFFF;
+	color: #FFFFFF;
+	/*Global*/
+	focus-color: #FFDF3C;
+	selection-color: #006926;
+	roll-over-color: #FFDF3C;
+}
+/**
+* Estilo nombrado boton:
+* @style .myButton
+*/
+.myButton{
+	color: #000000;
+	chrome-color: #CCCCCC;
+	symbol-color: #000000;
+}
+/**
+* Estilos para el namespace file
+* @namespace file "com.segurosbolivar.avaluos.modulos.*";
+* @group file
+*/
+file|FileDownload
+{
+	/*chrome-color: #006926;*/
+	/*symbol-color: #FFFFFF;*/
+	color: #000000;
+}
+file|FileUpload
+{
+	color: #000000;
+}
+/**
+* Estilos para el namespace upload
+* @namespace upload "com.segurosbolivar.componentes.upload.*";
+* @group upload
+*/
+upload|FileIO
+{
+	color: #000000;
+}
+/**
+* Estilos para el namespace custom
+* @namespace custom "*";
+* @group custom
+*/
+custom|CustomModuleLoader{
+chrome-color: #006926;
+symbol-color: #FFFFFF;
+color: #FFFFFF;
+/*Global*/
+focus-color: #FFDF3C;
+selection-color: #006926;
+roll-over-color: #FFDF3C;
+}
+/**
+* Estilos para el namespace mx
+* Componentes Adobe flex paquete mx.*
+* @namespace mx "library://ns.adobe.com/flex/mx";
+* @group mx
+*/
+mx|Application{
+	color: #000000;
+	chrome-color: #CCCCCC;
+	symbol-color: #000000;	
+}
+mx|Container {
+	color: #000000;
+	chrome-color: #CCCCCC;
+	symbol-color: #000000;
+}
+mx|Box{
+	color: #000000;
+	chrome-color: #CCCCCC;
+	symbol-color: #000000;
+}
+/*mx|DividedBox
+{
+	color: #000000;
+	chrome-color: #CCCCCC;
+	symbol-color: #000000;
+}*/
+mx|UIComponent
+{
+	color: #000000;
+	chrome-color: #CCCCCC;
+	symbol-color: #000000;
+}
+/*mx|UIComponent:disabled
+{
+	color: #000000;
+}*/
+mx|Tree
+{
+	color: #000000;
+	chrome-color: #CCCCCC;
+	symbol-color: #000000;	
+}
+/*mx|HDividedBox
+{
+	color: #000000;
+	chrome-color: #CCCCCC;
+	symbol-color: #000000;
+}
+mx|VDividedBox
+{
+	color: #000000;
+	chrome-color: #CCCCCC;
+	symbol-color: #000000;
+}*/
+mx|DataGrid {
+	color: #000000;
+	chrome-color: #006926;
+	symbol-color: #FFFFFF;
+	headerStyleName: myHeaderStyle;
+	textSelectedColor: #FFFFFF;
+	/*accentColor=#FFFFFF;*/ 
+}
+mx|DataGridColumn{
+	chrome-color: #006926;
+	symbol-color: #FFFFFF;
+	color: #000000;
+	headerStyleName: myHeaderStyle;
+}
+
+mx|ProgressBar
+{
+	chrome-color: #006926;
+	symbol-color: #FFFFFF;
+	/*color: #FFFFFF;*/
+}
+mx|Button
+{
+	chrome-color: #006926;
+	symbol-color: #FFFFFF;
+	color: #FFFFFF;
+}
+mx|ToggleButton
+{
+	chrome-color: #006926;
+	symbol-color: #FFFFFF;
+	color: #FFFFFF;
+}
+/*mx|Button:disabled{
+	
+	color:#000000;
+}*/
+mx|TextArea
+{
+	/*chrome-color: #006926;
+	symbol-color: #FFFFFF;*/
+}
+mx|ComboBox{
+	chrome-color: #006926;
+	symbol-color: #FFFFFF;
+	textSelectedColor: #FFFFFF;
+	color: #000000;
+}
+mx|ComboBox:normal{
+	color: #FFFFFF;
+}
+mx|DropDownList{
+	chrome-color: #006926;
+	symbol-color: #FFFFFF;
+	textSelectedColor: #FFFFFF;
+	color: #000000;
+}
+mx|DateChooser
+{
+	chrome-color: #006926;
+	/*symbol-color: #FFFFFF;*/
+	color: #000000;
+	text-selected-color: #FFFFFF;
+}
+mx|LinkButton{
+	chrome-color: #006926;
+	color: #000000;
+	text-selected-color: #FFFFFF;
+}
+
+mx|ModuleLoader{
+	chrome-color: #006926;
+	symbol-color: #FFFFFF;
+	color: #FFFFFF;
+	/*Global*/
+	focus-color: #FFDF3C;
+	selection-color: #006926;
+	roll-over-color: #FFDF3C;
+}
+mx|Alert
+{
+	chrome-color: #006926;
+	symbol-color: #FFFFFF;
+	color: #000000;	
+}
+/*mx|Panel
+{
+	chrome-color: #006926;
+	symbol-color: #FFFFFF;
+	color: #FFFFFF;	
+}*/
+mx|TitleWindow
+{
+	chrome-color: #006926;
+	symbol-color: #FFFFFF;
+	/*color: #000000;*/
+	color: #FFFFFF;
+	/*Global*/
+	focus-color: #FFDF3C;
+	selection-color: #006926;
+	roll-over-color: #FFDF3C;
+	
+}
+/**
+* Estilos para el namespace mx
+* Componentes Adobe flex paquete spark.*
+* @namespace s "library://ns.adobe.com/flex/spark";
+* @group spark
+*/
+/*s|Panel
+{
+chrome-color: #006926;
+symbol-color: #FFFFFF;
+color: #FFFFFF;	
+}*/
+s|TitleWindow
+{
+	chrome-color: #006926;
+	symbol-color: #FFFFFF;
+	/*color: #000000;*/
+	color: #FFFFFF;
+	/*Global*/
+	focus-color: #FFDF3C;
+	selection-color: #006926;
+	roll-over-color: #FFDF3C;	
+	
+}
+s|ComboBox{
+	chrome-color: #006926;
+	symbol-color: #FFFFFF;
+	textSelectedColor: #FFFFFF;
+	color: #000000;
+}
+s|DropDownList{
+	chrome-color: #006926;
+	symbol-color: #FFFFFF;
+	textSelectedColor: #FFFFFF;
+	color: #000000;
+}
+s|ButtonBase:disabled
+{
+	color: #000000;
+}
+s|Button
+{
+	chrome-color: #006926;
+	symbol-color: #FFFFFF;
+	color: #FFFFFF;
+}
+s|ToggleButton
+{
+	chrome-color: #006926;
+	symbol-color: #FFFFFF;
+	color: #FFFFFF;
+}
+/*s|Button:disabled{
+	
+	color:#000000;
+}*/
+
+/*s|ScrollBar
+{
+chrome-color: #006926;
+symbol-color: #FFFFFF;
+}*/
+s|TextInput
+{
+	/*chrome-color: #006926;
+	symbol-color: #FFFFFF;*/
+}
+/*s|TextArea
+{
+//chrome-color: #006926;
+//symbol-color: #FFFFFF;
+}*/
+s|DateChooser
+{
+	chrome-color: #006926;
+	/*symbol-color: #FFFFFF;*/
+	color: #000000;
+	text-selected-color: #FFFFFF;
+}
+
+s|Application{
+	color: #000000;
+	chrome-color: #CCCCCC;
+	symbol-color: #000000;	
+}
+s|Group {
+	color: #000000;
+	chrome-color: #CCCCCC;
+	symbol-color: #000000;
+}
+s|SkinnableContainerBase
+{
+	color: #000000;
+	chrome-color: #CCCCCC;
+	symbol-color: #000000;
+}
+s|SkinnableContainerBase:disabled
+{
+	color: #000000;
+}
+s|Range:disabled
+{
+	color: #000000;
+}
+/*
+s|SkinnableComponent{
+	color: #000000;
+	chrome-color: #CCCCCC;
+	symbol-color: #000000;
+}
+s|SkinnableComponent:disabled
+{
+	color: #FFFFFF;
+}
+s|SkinnableContainer{
+	color: #000000;
+	chrome-color: #CCCCCC;
+	symbol-color: #000000;
+}*/
+/*viewContainer|ViewNavigator
+{
+	backgroundAlpha: 0.0;
+	borderStyle: solid;
+}*/
+/*mx|Tree
+{
+	borderStyle: solid;
+	paddingBottom: 2;
+	paddingRight: 2;
+	chrome-color: #0000
+}*/

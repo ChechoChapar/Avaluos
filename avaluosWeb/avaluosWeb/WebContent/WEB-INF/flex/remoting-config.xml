@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<service id="remoting-service" class="flex.messaging.services.RemotingService">
+
+	<adapters>
+		<adapter-definition id="java-object"
+			class="flex.messaging.services.remoting.adapters.JavaAdapter"
+			default="true" />
+	</adapters>
+
+	<default-channels>
+		<!--<channel ref="my-secure-http" />
+		<channel ref="my-secure-amf" />-->
+		<channel ref="my-amf" />
+		<channel ref="my-http" />
+	</default-channels>
+
+	<destination id="ListaAnexosPdfService">
+		<properties>
+			<source>com.segurosbolivar.avaluos.daos.ListaAnexosDao</source>
+			<scope>session</scope>
+		</properties>
+	</destination>
+
+	<destination id="DominiosService">
+		<properties>
+			<source>com.segurosbolivar.avaluos.daos.DominiosDaos</source>
+			<scope>session</scope>
+		</properties>
+	</destination>
+
+	<destination id="CalendarioService">
+		<properties>
+			<source>com.segurosbolivar.avaluos.daos.CalendarioDao</source>
+			<scope>session</scope>
+		</properties>
+	</destination>
+	
+	<destination id="ComplementosService">
+		<properties>
+			<source>com.segurosbolivar.avaluos.daos.ComplementosExcelDao</source>
+			<scope>session</scope>
+		</properties>
+	</destination>
+
+	<destination id="AlarmaService">
+		<properties>
+			<source>com.segurosbolivar.avaluos.daos.AlarmaDao</source>
+			<scope>session</scope>
+		</properties>
+	</destination>
+
+	<destination id="EmpresasAvaluosService">
+		<properties>
+			<source>com.segurosbolivar.avaluos.daos.EmpresasAvaluosDao</source>
+			<scope>session</scope>
+		</properties>
+	</destination>
+
+	<destination id="DepartamentoService">
+		<properties>
+			<source>com.segurosbolivar.avaluos.daos.DepartamentoDao</source>
+			<scope>session</scope>
+		</properties>
+	</destination>
+
+	<destination id="PeritosEmpresaService">
+		<properties>
+			<source>com.segurosbolivar.avaluos.daos.PeritosEmpresaDao</source>
+			<scope>session</scope>
+		</properties>
+	</destination>
+
+	<destination id="UsuarioAvaluosService">
+		<properties>
+			<source>
+				com.segurosbolivar.avaluos.daos.UsuarioAvaluoDao		
+			</source>
+			<scope>session</scope>
+		</properties>
+	</destination>
+
+	<destination id="UsuarioService">
+		<properties>
+			<source>
+				com.segurosbolivar.plantillaSeguridad.DAOS.UsuarioDAO
+			</source>
+			<scope>request</scope>
+		</properties>
+		<channels>
+		    <!--<channel ref="my-secure-amf-no-cache" />-->
+		    <channel ref="my-amf-no-cache" />
+		 </channels>
+	</destination>
+
+
+	<destination id="ModulosPerfilService">
+		<properties>
+			<source>
+				com.segurosbolivar.plantillaSeguridad.DAOS.ModulosPerfilDAO
+			</source>
+			<scope>request</scope>
+		</properties>
+	</destination>
+
+	<destination id="MenuService">
+		<properties>
+			<source>
+				com.segurosbolivar.plantillaSeguridad.services.XMLMenuCreator
+			</source>
+			<scope>request</scope>
+		</properties>
+	</destination>
+
+	<destination id="ArchivoService">
+		<properties>
+			<source>com.segurosbolivar.avaluos.daos.ArchivoDao</source>
+			<scope>session</scope>
+		</properties>
+	</destination>
+	
+	<destination id="ArchivoProcedatosService">
+		<properties>
+			<source>com.segurosbolivar.avaluos.archivo.ArchivoService</source>
+			<scope>session</scope>
+		</properties>
+	</destination>
+
+	<destination id="CiudadService">
+		<properties>
+			<source>com.segurosbolivar.avaluos.daos.CiudadDao</source>
+			<scope>session</scope>
+		</properties>
+	</destination>
+	
+	<destination id="CarguePlano">
+      <properties>
+         <source>com.segurosbolivar.avaluos.daos.CarguePlanoDao</source>
+         <scope>session</scope>
+      </properties>
+    </destination>
+
+
+	<destination id="LogsArchivoService">
+		<properties>
+			<source>com.segurosbolivar.avaluos.daos.LogsGeneraArchivoDao</source>
+			<scope>request</scope>
+		</properties>
+	</destination>
+	
+	
+	
+	<destination id="DominiosAuxDao">
+		<properties>
+			<source>com.segurosbolivar.avaluos.daos.DominiosAuxDao</source>
+			<scope>request</scope>
+		</properties>
+	</destination>
+	
+	<destination id="HorasCorteService">
+		<properties>
+			<source>com.segurosbolivar.avaluos.daos.HorasCorteDao</source>
+			<scope>session</scope>
+		</properties>
+	</destination>
+	
+	<destination id="HistoricoAvaluos">
+		<properties>
+			<source>com.segurosbolivar.avaluos.daos.HistoricoAvaluosDao</source>
+			<scope>session</scope>
+		</properties>
+	</destination>
+	
+	<destination id="AvaluosService">
+		<properties>
+			<source>com.segurosbolivar.avaluos.daos.AvaluosDao</source>
+			<scope>request</scope>
+		</properties>
+	</destination>
+	
+	<destination id="BarrioService">
+		<properties>
+			<source>com.segurosbolivar.avaluos.daos.InformacionBarrioDao</source>
+			<scope>session</scope>
+		</properties>
+	</destination>
+	
+	<destination id="ConstruccionService">
+		<properties>
+			<source>com.segurosbolivar.avaluos.daos.InformacionConstruccionDao</source>
+			<scope>request</scope>
+		</properties>
+	</destination>
+	
+	<destination id="SalubridadService">
+		<properties>
+			<source>com.segurosbolivar.avaluos.daos.CondicionesSalubridadDao</source>
+			<scope>request</scope>
+		</properties>
+	</destination>
+	
+	<destination id="InmuebleService">
+		<properties>
+			<source>com.segurosbolivar.avaluos.daos.InformacionInmuebleDao</source>
+			<scope>request</scope>
+		</properties>
+	</destination>
+	
+	<destination id="OfertaDemandaService">
+		<properties>
+			<source>com.segurosbolivar.avaluos.daos.ComportamientoOfertaDemandaDao</source>
+			<scope>request</scope>
+		</properties>
+	</destination>
+	
+	<destination id="ObservacionesService">
+		<properties>
+			<source>com.segurosbolivar.avaluos.daos.ObservacionesDao</source>
+			<scope>request</scope>
+		</properties>
+	</destination>
+	
+	<destination id="LiquidacionService">
+		<properties>
+			<source>com.segurosbolivar.avaluos.daos.LiquidacionAvaluoDao</source>
+			<scope>request</scope>
+		</properties>
+	</destination>
+	
+	<destination id="LiquidacionTotalService">
+		<properties>
+			<source>com.segurosbolivar.avaluos.daos.LiquidacionAvaluoTotalDao</source>
+			<scope>request</scope>
+		</properties>
+	</destination>
+	
+		<destination id="TercerosWebService">
+		<properties>
+			<source>com.segurosbolivar.avaluos.ws.WSTerceros</source>
+			<scope>request</scope>
+		</properties>
+	</destination>
+
+</service>

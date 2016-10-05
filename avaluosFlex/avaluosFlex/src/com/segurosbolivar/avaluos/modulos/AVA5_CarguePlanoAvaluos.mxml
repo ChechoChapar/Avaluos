@@ -1,0 +1,923 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--- 
+Modulo para realizar el cargue masivo de Avaluos
+@implements modulos.IModule
+@see mx.modules.Module
+-->
+<mx:Module xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		   xmlns:s="library://ns.adobe.com/flex/spark" 
+		   xmlns:mx="library://ns.adobe.com/flex/mx" layout="absolute"
+		   updateComplete="inicializapadre()"  backgroundColor="#FFFFFF"
+		   implements="modulos.IModule"
+		   xmlns:upload="com.segurosbolivar.componentes.upload.*"
+		   creationComplete="module1_creationCompleteHandler(event)"
+		   verticalAlign="middle" textAlign="center" width="100%" height="100%" xmlns:services="services.*"
+		   remove="module1_removedHandler(event)" 
+		   >
+	<fx:Declarations>
+		<s:CallResponder id="obtenerReferenciaCargueResult" />
+		<services:CarguePlano id="carguePlano" fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)" showBusyCursor="true" result="carguePlano_resultHandler(event)"/>
+		<s:CallResponder id="obtenerConsecutivoBatchResult" result="obtenerConsecutivoBatchResult_resultHandler(event)"/>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[	
+			//import com.segurosbolivar.avaluos.componentes.WndResultadosCargueAvaluos;
+			import com.segurosbolivar.avaluos.componentes.WndResumenCargue;
+			
+			import flash.events.Event;
+			import flash.net.URLRequest;
+			import flash.utils.*;
+			
+			import mx.controls.Alert;
+			import mx.core.FlexGlobals;
+			import mx.events.CloseEvent;
+			import mx.events.FlexEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.ResultEvent;
+			
+			import permisos.Permiso;			
+			var jSess = FlexGlobals.topLevelApplication.parameters.jSessionId;
+			private var TARGET_URL:String = "poll.html;jsessionid="+jSess;
+			private var timerAsync:Timer = null;
+			private var urlReq:URLRequest;
+			private var urlLdr:URLLoader;			
+			
+			
+			/**
+			* Este llama al metodo que inicia el temporizador
+			* */
+			private function init(): void {
+				/* Initialize the URLLoader object, assign the various event listeners, and load the specified URLRequest object. */
+				startPolling();
+			}
+			/**
+			* Este metodo inicia el temporizador que genera trafico mientras  
+			* se ejecutan los procesos
+			* */
+			private function startPolling() : void
+			{
+				urlLdr = new URLLoader();
+				urlLdr.addEventListener(Event.COMPLETE, handlePollReq);
+				urlLdr.addEventListener(Event.OPEN, handlePollReq);
+				urlLdr.addEventListener(HTTPStatusEvent.HTTP_STATUS, handlePollReq);
+				urlLdr.addEventListener(IOErrorEvent.IO_ERROR, handlePollReq);
+				urlLdr.addEventListener(ProgressEvent.PROGRESS, handlePollReq);
+				urlLdr.addEventListener(SecurityErrorEvent.SECURITY_ERROR, handlePollReq);
+				
+				this.timerAsync = new Timer(30000, 0);
+				this.timerAsync.addEventListener(TimerEvent.TIMER, this.onPoll);
+				this.timerAsync.start();
+				
+				//Inicio temporizador en javascript smultaneamente
+				setPollTimeOutJS();
+				try { 
+					this.timerAsync.start();
+					
+				} catch (error:Error) {
+					trace(error)
+				}
+				try { 
+					setPollTimeOutJS();
+					
+				} catch (error:Error) {
+					trace(error)
+				}
+			}
+			/**
+			* Este metodo adiminstra las peticiones asincronas al temporizador
+			* */	
+			private function onPoll(param1:TimerEvent) : void
+			{
+				try {
+					trace("cargo pagina asincrona");
+					urlLdr.load(new URLRequest(TARGET_URL));
+					
+				} catch (error:SecurityError) { } 
+			}
+		    /**
+			* Este metodo adiminstra las peticiones asincronas al temporizador
+			* */	
+			private function handlePollReq(evt:Event) :void {
+				switch (evt.type) {
+					case Event.COMPLETE:
+						var ldr:URLLoader = evt.currentTarget as URLLoader;
+				}     
+			}
+			/**
+			* Este metodo detiene el temporizador que genera trafico mientras  
+			* se ejecutan los procesos
+			* */
+			private function stopPolling() : void
+			{
+				try { 
+					this.timerAsync.stop();
+					clearPollTimeOutJS();
+					
+				} catch (error:Error) {
+					trace(error)
+				}
+				try { 
+					clearPollTimeOutJS();
+					
+				} catch (error:Error) {
+					trace(error)
+				}
+			}			
+			/**
+			 * Este metodo permite usar un 
+			 * javascript externo a la pelicula para el poll
+			 * */
+			public function setPollTimeOutJS():void {
+				var s:String;
+				//Esta logica permite llamar a una funcion de javascript de Menuprincipal.jsp
+				if (ExternalInterface.available) {
+					var wrapperFunction:String = "setTimeOut1";
+					s = ExternalInterface.call(wrapperFunction);
+				} else {
+					s = "No se puede acceder a javascript";
+				}
+				trace(s); 
+			}
+			/**
+			 * Este metodo permite usar un 
+			 * javascript externo a la pelicula para el poll 
+			 * */			
+			public function clearPollTimeOutJS():void {
+				var s:String;
+				if (ExternalInterface.available) {
+					var wrapperFunction:String = "clearTimeOut1";
+					s = ExternalInterface.call(wrapperFunction);
+				} else {
+					s = "No se puede acceder a javascript";
+				}
+				trace(s); 
+			}
+			//
+			
+			[Bindable]
+			var myListaPermisos:Permiso=null;
+			
+			[Bindable]
+			private var _texto:String;
+			
+			public function setTexto(t:String):void
+			{
+				_texto = t;
+				inicializapadre();
+			}
+			
+			/**
+			 * setea los permisos del modulo
+			 */
+			public function setPermisos(listaPermisos:Permiso):void
+			{
+				myListaPermisos = listaPermisos;
+			}	
+			
+			public function getPermisos():Permiso
+			{
+				return myListaPermisos;
+			}			
+			
+			/**
+			 * Usado para probar la comunicacion con la aplicacion padre
+			 * @deprecated
+			 */
+			protected function inicializapadre():void
+			{
+				try{
+					parentApplication.setTextoP("Ejecuta");
+				}catch(e:Error)
+				{
+					null;
+				}
+			}
+			
+			/**
+			 * Funciones implementadas de la interface IModule
+			 * estas funciones aseguran que el modulo se pueda ejecutar en
+			 * el menu principal, se conoscan su permisos y puedan ser accedidas
+			 * desde la barra de botones
+			 * Solo se implementan las funcionalidades que aplican a este Modulo
+			 * @see modulos.IModule
+			 * */
+			
+			public function ejecutar():void
+			{
+				//Alert.show("Logica de Ejecutar Modulo2");
+				null;
+			}
+			public function adicionar():void
+			{
+				null;
+			}
+			public function consultar():void
+			{
+				null;
+			}
+			public function imprimir():void
+			{
+				null;
+			}
+			public function editar():void
+			{
+				null;
+			}
+			public function eliminar():void
+			{
+				//Alert.show("Logica de Eliminar Modulo2");
+				null;
+			}							
+			
+			/**
+			 * @deprecated 			 
+			 */
+			protected function fileio1_initializeHandler(event:FlexEvent):void
+			{
+				null;
+			}
+			
+			/**
+			 * Se ejecuta al terminar la carga del modulo, trae de los parametros la url del aplicativo para los cargues masivos
+			 * inicializa los componentes de cargue para permitirles solo cargar archivos .zip o .txt segun el caso
+			 */
+			protected function module1_creationCompleteHandler(event:FlexEvent):void
+			{
+				var url:String = FlexGlobals.topLevelApplication.parameters.urlArchivo+"/MultiUploadServlet";
+				var pdf:FileFilter = new FileFilter("Archivos PDF (*.pdf)", "*.pdf;");
+				var zip:FileFilter = new FileFilter("Archivos ZIP (*.zip)", "*.zip;");
+				var txt:FileFilter = new FileFilter("Archivos de Texto (*.txt)", "*.txt;");
+				up1.setUploadURL(url);
+				up2.setUploadURL(url);
+				up3.setUploadURL(url);
+				up4.setUploadURL(url);
+				up5.setUploadURL(url);
+				up6.setUploadURL(url);
+				up7.setUploadURL(url);
+				up8.setUploadURL(url);
+				up9.setUploadURL(url);
+				up10.setUploadURL(url);
+				up11.setUploadURL(url);
+				up12.setUploadURL(url);
+				up13.setUploadURL(url);				
+				up14.setUploadURL(url);
+				up15.setUploadURL(url);
+				up16.setUploadURL(url);
+				up17.setUploadURL(url);
+				up18.setUploadURL(url);
+				up19.setUploadURL(url);
+				up20.setUploadURL(url);
+				
+				up1.setTipos(txt);
+				up2.setTipos(txt);
+				up3.setTipos(txt);
+				up4.setTipos(txt);
+				up5.setTipos(txt);
+				up6.setTipos(txt);
+				up7.setTipos(txt);
+				up8.setTipos(txt);
+				up9.setTipos(txt);
+				up10.setTipos(txt);
+				up11.setTipos(zip);
+				up12.setTipos(zip);
+				up13.setTipos(zip);				
+				up14.setTipos(zip);
+				up15.setTipos(zip);
+				up16.setTipos(zip);
+				up17.setTipos(zip);
+				up18.setTipos(zip);
+				up19.setTipos(zip);
+				up20.setTipos(zip);				
+				
+			}			
+
+			/**
+			 * Se dispara al darc lick en el boton de cargar, valida la cantidad de archivos y llama al servicio
+			 * para obtener la referencia de todo este batch de archivos
+			 */
+			protected function button1_clickHandler(event:MouseEvent):void
+			{			
+				if(validaCantArchivos()==true)
+				{	
+					//
+					startPolling();
+					//
+					obtenerConsecutivoBatchResult.token = carguePlano.obtenerConsecutivoBatch();
+					button1.enabled=false;
+					chkConstructor.enabled=false;
+				}
+				else
+				{
+					Alert.show("Debe cargar la misma cantidad de archivos y de registros fotograficos .. ");
+				}	
+			}
+
+			/**
+			 * Verifica que haya la misma cantidad de archivos y registros fotograficos
+			 */
+			public function validaCantArchivos():Boolean
+			{
+				
+				if(up1.isInitialized()==true && up11.isInitialized()==false)
+					return false;
+				if(up1.isInitialized()==false && up11.isInitialized()==true)
+					return false;
+				if(up2.isInitialized()==true && up12.isInitialized()==false)
+					return false;
+				if(up2.isInitialized()==false && up12.isInitialized()==true)
+					return false;
+				if(up3.isInitialized()==true && up13.isInitialized()==false)
+					return false;
+				if(up3.isInitialized()==false && up13.isInitialized()==true)
+					return false;
+				if(up4.isInitialized()==true && up14.isInitialized()==false)
+					return false;
+				if(up4.isInitialized()==false && up14.isInitialized()==true)
+					return false;
+				if(up5.isInitialized()==true && up15.isInitialized()==false)
+					return false;
+				if(up5.isInitialized()==false && up15.isInitialized()==true)
+					return false;
+				if(up6.isInitialized()==true && up16.isInitialized()==false)
+					return false;
+				if(up6.isInitialized()==false && up16.isInitialized()==true)
+					return false;
+				if(up7.isInitialized()==true && up17.isInitialized()==false)
+					return false;
+				if(up7.isInitialized()==false && up17.isInitialized()==true)
+					return false;
+				if(up8.isInitialized()==true && up18.isInitialized()==false)
+					return false;
+				if(up8.isInitialized()==false && up18.isInitialized()==true)
+					return false;
+				if(up9.isInitialized()==true && up19.isInitialized()==false)
+					return false;
+				if(up9.isInitialized()==false && up19.isInitialized()==true)
+					return false;
+				if(up10.isInitialized()==true && up20.isInitialized()==false)
+					return false;
+				if(up10.isInitialized()==false && up20.isInitialized()==true)
+					return false;
+				
+				return true;
+			}
+			
+			/**
+			 * Se dispara asincronamente al obtener el consecutivo de este batch
+			 * carga primero Todos los anexos fotagraficos  hacia el servlet MultiUploadServlet
+			 * de java. Este orden de cargue es para poder validar
+			 * los anexos al cargar los planos
+			 */
+			protected function obtenerConsecutivoBatchResult_resultHandler(event:ResultEvent):void
+			{		
+				up11.upload(null,obtenerConsecutivoBatchResult.lastResult,chkConstructor.selected);
+				up12.upload(null,obtenerConsecutivoBatchResult.lastResult,chkConstructor.selected);
+				up13.upload(null,obtenerConsecutivoBatchResult.lastResult,chkConstructor.selected);				
+				up14.upload(null,obtenerConsecutivoBatchResult.lastResult,chkConstructor.selected);
+				up15.upload(null,obtenerConsecutivoBatchResult.lastResult,chkConstructor.selected);
+				up16.upload(null,obtenerConsecutivoBatchResult.lastResult,chkConstructor.selected);
+				up17.upload(null,obtenerConsecutivoBatchResult.lastResult,chkConstructor.selected);
+				up18.upload(null,obtenerConsecutivoBatchResult.lastResult,chkConstructor.selected);
+				up19.upload(null,obtenerConsecutivoBatchResult.lastResult,chkConstructor.selected);
+				up20.upload(null,obtenerConsecutivoBatchResult.lastResult,chkConstructor.selected);
+				up1.hideBtn();
+				up2.hideBtn();
+				up3.hideBtn();
+				up4.hideBtn();
+				up5.hideBtn();
+				up6.hideBtn();
+				up7.hideBtn();
+				up8.hideBtn();
+				up9.hideBtn();
+				up10.hideBtn();
+				up11.hideBtn();
+				up12.hideBtn();
+				up13.hideBtn();				
+				up14.hideBtn();
+				up15.hideBtn();
+				up16.hideBtn();
+				up17.hideBtn();
+				up18.hideBtn();
+				up19.hideBtn();
+				up20.hideBtn();								
+			}
+			
+			/**
+			 * Se dispara asincronamente al llamar al servicio carguePlano
+			 * @deprecated
+			 */
+			protected function carguePlano_resultHandler(event:ResultEvent):void
+			{
+			}
+
+			[Bindable]
+			/**
+			 * Bandera para saber si ya abrio la ventana resumen 
+			 */
+			var ventanaOpen:Boolean=false;
+
+			[Bindable]
+			var cargandoTxt:Boolean=false;
+			
+			[Bindable]
+			/**
+			 * Ventana resumen
+			 * @see com.segurosbolivar.avaluos.componentes.WndResumenCargue
+			 */
+			var ventana:WndResumenCargue;
+						
+			/**
+			 * Metodo para:
+			 * 1. Verificar si ya finalizo la carga de los anexos fotograficos y
+			 *    disparar el cargue de los planos hacia el servlet MultiUploadServlet 
+			 *    de java.
+			 * 2. Verificar cuando haya finalizado la carga de los planos y
+			 *    llamar a la ventana resumen con el resultado del cargue
+			 * 
+			 * @see  com.segurosbolivar.avaluos.componentes.WndResumenCargue
+			 */
+			public function notificar():void
+			{
+				if( cargandoTxt==false &&
+					up11.estado!="cargando" &&
+					up12.estado!="cargando"  && 
+					up13.estado!="cargando" &&
+					up14.estado!="cargando"  && 
+					up15.estado!="cargando" &&
+					up16.estado!="cargando"  && 
+					up17.estado!="cargando" &&										
+					up18.estado!="cargando"  && 
+					up19.estado!="cargando" &&					
+					up20.estado!="cargando"
+					/*
+					&&
+					up11.estado!="procesando" &&
+					up12.estado!="procesando"  && 
+					up13.estado!="procesando" &&
+					up14.estado!="procesando"  && 
+					up15.estado!="procesando" &&
+					up16.estado!="procesando"  && 
+					up17.estado!="procesando" &&										
+					up18.estado!="procesando"  && 
+					up19.estado!="procesando" &&					
+					up20.estado!="procesando"	*/				
+				)
+				{
+					up1.upload(null,obtenerConsecutivoBatchResult.lastResult,chkConstructor.selected);
+					up2.upload(null,obtenerConsecutivoBatchResult.lastResult,chkConstructor.selected);
+					up3.upload(null,obtenerConsecutivoBatchResult.lastResult,chkConstructor.selected);				
+					up4.upload(null,obtenerConsecutivoBatchResult.lastResult,chkConstructor.selected);
+					up5.upload(null,obtenerConsecutivoBatchResult.lastResult,chkConstructor.selected);
+					up6.upload(null,obtenerConsecutivoBatchResult.lastResult,chkConstructor.selected);
+					up7.upload(null,obtenerConsecutivoBatchResult.lastResult,chkConstructor.selected);
+					up8.upload(null,obtenerConsecutivoBatchResult.lastResult,chkConstructor.selected);
+					up9.upload(null,obtenerConsecutivoBatchResult.lastResult,chkConstructor.selected);
+					up10.upload(null,obtenerConsecutivoBatchResult.lastResult,chkConstructor.selected);
+					cargandoTxt=true;
+				}
+				
+				if(ventanaOpen==false &&
+					up1.estado!="cargando" &&
+					up2.estado!="cargando" &&
+					up3.estado!="cargando" &&
+					up4.estado!="cargando" &&
+					up5.estado!="cargando" &&
+					up6.estado!="cargando" &&
+					up7.estado!="cargando" &&
+					up8.estado!="cargando" &&
+					up9.estado!="cargando" &&
+					up10.estado!="cargando"  && 
+					up11.estado!="cargando" &&
+					up12.estado!="cargando"  && 
+					up13.estado!="cargando" &&
+					up14.estado!="cargando"  && 
+					up15.estado!="cargando" &&
+					up16.estado!="cargando"  && 
+					up17.estado!="cargando" &&										
+					up18.estado!="cargando"  && 
+					up19.estado!="cargando" &&					
+					up20.estado!="cargando"
+					/*
+					&&
+					up1.estado!="procesando" &&
+					up2.estado!="procesando" &&
+					up3.estado!="procesando" &&
+					up4.estado!="procesando" &&
+					up5.estado!="procesando" &&
+					up6.estado!="procesando" &&
+					up7.estado!="procesando" &&
+					up8.estado!="procesando" &&
+					up9.estado!="procesando" &&
+					up10.estado!="procesando"  && 
+					up11.estado!="procesando" &&
+					up12.estado!="procesando"  && 
+					up13.estado!="procesando" &&
+					up14.estado!="procesando"  && 
+					up15.estado!="procesando" &&
+					up16.estado!="procesando"  && 
+					up17.estado!="procesando" &&										
+					up18.estado!="procesando"  && 
+					up19.estado!="procesando" &&					
+					up20.estado!="procesando"*/
+					
+				  )
+				{	
+					
+					//
+					stopPolling();
+					//
+					/*
+					ventana = WndResumenCargue(PopUpManager.createPopUp(this, WndResumenCargue, true));
+					ventana.setConsecutivoBatch(obtenerConsecutivoBatchResult.lastResult);					
+					ventana.addEventListener(CloseEvent.CLOSE, closeMeCargue, false, 0, true);
+					ventanaOpen=true;
+					*/
+				}
+			}
+			/**
+			 * se dispara al cerrar la ventana de resumen
+			 * @see  com.segurosbolivar.avaluos.componentes.WndResumenCargue
+			 */
+			private function closeMeCargue(e:CloseEvent):void {
+				PopUpManager.removePopUp(ventana);
+				ventana.removeEventListener(CloseEvent.CLOSE, closeMeCargue);
+			}			
+
+			protected function module1_removedHandler(event:Event):void
+			{
+				//
+				stopPolling();
+				//
+			}
+			
+
+			protected function chkConstructor_clickHandler(event:MouseEvent):void
+			{
+			  if (chkConstructor.selected)
+			  {
+				up2.cancelaUpload();
+				up3.cancelaUpload();				
+				up4.cancelaUpload();
+				up5.cancelaUpload();
+				up6.cancelaUpload();
+				up7.cancelaUpload();
+				up8.cancelaUpload();
+				up9.cancelaUpload();
+				up10.cancelaUpload();
+
+				up12.cancelaUpload(); 
+				up13.cancelaUpload();
+				up14.cancelaUpload();
+				up15.cancelaUpload();
+				up16.cancelaUpload(); 
+				up17.cancelaUpload();										
+				up18.cancelaUpload(); 
+				up19.cancelaUpload();					
+				up20.cancelaUpload();
+
+				up2.enabled=false;
+				up3.enabled=false;				
+				up4.enabled=false;
+				up5.enabled=false;
+				up6.enabled=false;
+				up7.enabled=false;
+				up8.enabled=false;
+				up9.enabled=false;
+				up10.enabled=false;
+				
+				up12.enabled=false; 
+				up13.enabled=false;
+				up14.enabled=false;
+				up15.enabled=false;
+				up16.enabled=false; 
+				up17.enabled=false;										
+				up18.enabled=false; 
+				up19.enabled=false;					
+				up20.enabled=false;				
+			  }
+				else
+			  {
+				up2.enabled=true;
+				up3.enabled=true;				
+				up4.enabled=true;
+				up5.enabled=true;
+				up6.enabled=true;
+				up7.enabled=true;
+				up8.enabled=true;
+				up9.enabled=true;
+				up10.enabled=true;				
+				up12.enabled=true; 
+				up13.enabled=true;
+				up14.enabled=true;
+				up15.enabled=true;
+				up16.enabled=true; 
+				up17.enabled=true;										
+				up18.enabled=true; 
+				up19.enabled=true;					
+				up20.enabled=true;		
+			  }
+			}
+
+		]]>
+	</fx:Script>
+	
+	<!--- inclusion de los estilos -->
+	
+	<fx:Style source="assets/css/AvaluosBolivar.css"/>
+	<fx:Style source="assets/css/AvaluosBolivarPanel.css"/>
+	<s:Group top="66" horizontalCenter="0" id="grupo">
+		<s:layout>
+			<s:TileLayout orientation="columns" requestedColumnCount="2" verticalGap="0"/>
+		</s:layout>
+		<!--<upload:FileIO id="uploadField" initialize="fileio1_initializeHandler(event)">-->
+		<!---
+		Cada campo de cargue tiene 4 eventos:
+		cargando,error,completo,cancelado
+		Estos son disparados desde el componente de cargue para enviar mensajes 
+		al modulo sobre su estado actual
+		-->
+		<upload:FileIO 
+			cargando="{up1.estado='cargando'}"
+			error="{up1.estado='error'};if(ventanaOpen==false)notificar();"
+			completo="{up1.estado='completo'};notificar();"
+
+			cancelado="{up1.estado=null}"
+			id="up1" x="0" y="10" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+		</upload:FileIO>
+		<!---
+		Cada campo de cargue tiene 4 eventos:
+		cargando,error,completo,cancelado
+		Estos son disparados desde el componente de cargue para enviar mensajes 
+		al modulo sobre su estado actual
+		-->
+		<upload:FileIO
+			cargando="{up2.estado='cargando'}"
+			error="{up2.estado='error'}"
+			completo="{up2.estado='completo'};notificar();"
+
+			cancelado="{up2.estado=null}"
+			id="up2" x="1" y="48" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+		</upload:FileIO>
+		<!---
+		Cada campo de cargue tiene 4 eventos:
+		cargando,error,completo,cancelado
+		Estos son disparados desde el componente de cargue para enviar mensajes 
+		al modulo sobre su estado actual
+		-->
+		<upload:FileIO
+			cargando="{up3.estado='cargando'}"
+			error="{up3.estado='error'}"
+			completo="{up3.estado='completo'};notificar();"
+
+			cancelado="{up3.estado=null}"
+			id="up3" x="-1" y="87" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+		</upload:FileIO>
+		<!---
+		Cada campo de cargue tiene 4 eventos:
+		cargando,error,completo,cancelado
+		Estos son disparados desde el componente de cargue para enviar mensajes 
+		al modulo sobre su estado actual
+		-->
+		<upload:FileIO
+			cargando="{up4.estado='cargando'}"
+			error="{up4.estado='error'}"
+			completo="{up4.estado='completo'};notificar();"
+
+			cancelado="{up4.estado=null}"
+			id="up4" x="1" y="126" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+		</upload:FileIO>
+		<!---
+		Cada campo de cargue tiene 4 eventos:
+		cargando,error,completo,cancelado
+		Estos son disparados desde el componente de cargue para enviar mensajes 
+		al modulo sobre su estado actual
+		-->
+		<upload:FileIO
+			cargando="{up5.estado='cargando'}"
+			error="{up5.estado='error'}"
+			completo="{up5.estado='completo'};notificar();"
+
+			cancelado="{up5.estado=null}"
+			id="up5" x="1" y="164" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+		</upload:FileIO>
+		<!---
+		Cada campo de cargue tiene 4 eventos:
+		cargando,error,completo,cancelado
+		Estos son disparados desde el componente de cargue para enviar mensajes 
+		al modulo sobre su estado actual
+		-->
+		<upload:FileIO
+			cargando="{up6.estado='cargando'}"
+			error="{up6.estado='error'}"
+			completo="{up6.estado='completo'};notificar();"
+
+			cancelado="{up6.estado=null}"
+			id="up6" x="0" y="203" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+		</upload:FileIO>
+		<!---
+		Cada campo de cargue tiene 4 eventos:
+		cargando,error,completo,cancelado
+		Estos son disparados desde el componente de cargue para enviar mensajes 
+		al modulo sobre su estado actual
+		-->
+		<upload:FileIO
+			cargando="{up7.estado='cargando'}"
+			error="{up7.estado='error'}"
+			completo="{up7.estado='completo'};notificar();"
+
+			cancelado="{up7.estado=null}"
+			id="up7" x="0" y="246" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+		</upload:FileIO>
+		<!---
+		Cada campo de cargue tiene 4 eventos:
+		cargando,error,completo,cancelado
+		Estos son disparados desde el componente de cargue para enviar mensajes 
+		al modulo sobre su estado actual
+		-->
+		<upload:FileIO
+			cargando="{up8.estado='cargando'}"
+			error="{up8.estado='error'}"
+			completo="{up8.estado='completo'};notificar();"
+
+			cancelado="{up8.estado=null}"
+			id="up8" x="-1" y="280" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+		</upload:FileIO>
+		<!---
+		Cada campo de cargue tiene 4 eventos:
+		cargando,error,completo,cancelado
+		Estos son disparados desde el componente de cargue para enviar mensajes 
+		al modulo sobre su estado actual
+		-->
+		<upload:FileIO
+			cargando="{up9.estado='cargando'}"
+			error="{up9.estado='error'}"
+			completo="{up9.estado='completo'};notificar();"
+
+			cancelado="{up9.estado=null}"
+			id="up9" x="0" y="319" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+		</upload:FileIO>
+		<!---
+		Cada campo de cargue tiene 4 eventos:
+		cargando,error,completo,cancelado
+		Estos son disparados desde el componente de cargue para enviar mensajes 
+		al modulo sobre su estado actual
+		-->
+		<upload:FileIO
+			cargando="{up10.estado='cargando'}"
+			error="{up10.estado='error'}"
+			completo="{up10.estado='completo'};notificar();"
+
+			cancelado="{up10.estado=null}"
+			id="up10" x="0" y="357" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+		</upload:FileIO>
+		<!---
+		Cada campo de cargue tiene 4 eventos:
+		cargando,error,completo,cancelado
+		Estos son disparados desde el componente de cargue para enviar mensajes 
+		al modulo sobre su estado actual
+		-->
+		<upload:FileIO
+			cargando="{up11.estado='cargando'}"
+			error="{up11.estado='error'}"
+			completo="{up11.estado='completo'};notificar();"
+
+			cancelado="{up11.estado=null}"
+			id="up11" horizontalScrollPolicy="off" verticalScrollPolicy="off" x="376" y="12">
+		</upload:FileIO>
+		<!---
+		Cada campo de cargue tiene 4 eventos:
+		cargando,error,completo,cancelado
+		Estos son disparados desde el componente de cargue para enviar mensajes 
+		al modulo sobre su estado actual
+		-->
+		<upload:FileIO
+			cargando="{up12.estado='cargando'}"
+			error="{up12.estado='error'}"
+			completo="{up12.estado='completo'};notificar();"
+
+			cancelado="{up12.estado=null}"
+			id="up12" x="375" y="49" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+		</upload:FileIO>
+		<!---
+		Cada campo de cargue tiene 4 eventos:
+		cargando,error,completo,cancelado
+		Estos son disparados desde el componente de cargue para enviar mensajes 
+		al modulo sobre su estado actual
+		-->
+		<upload:FileIO
+			cargando="{up13.estado='cargando'}"
+			error="{up13.estado='error'}"
+			completo="{up13.estado='completo'};notificar();"
+
+			cancelado="{up13.estado=null}"
+			id="up13" x="373" y="88" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+		</upload:FileIO>
+		<!---
+		Cada campo de cargue tiene 4 eventos:
+		cargando,error,completo,cancelado
+		Estos son disparados desde el componente de cargue para enviar mensajes 
+		al modulo sobre su estado actual
+		-->
+		<upload:FileIO
+			cargando="{up14.estado='cargando'}"
+			error="{up14.estado='error'}"
+			completo="{up14.estado='completo'};notificar();"
+
+			cancelado="{up14.estado=null}"
+			id="up14" x="375" y="127" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+		</upload:FileIO>
+		<!---
+		Cada campo de cargue tiene 4 eventos:
+		cargando,error,completo,cancelado
+		Estos son disparados desde el componente de cargue para enviar mensajes 
+		al modulo sobre su estado actual
+		-->
+		<upload:FileIO
+			cargando="{up15.estado='cargando'}"
+			error="{up15.estado='error'}"
+			completo="{up15.estado='completo'};notificar();"
+
+			cancelado="{up15.estado=null}"
+			id="up15" x="375" y="165" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+		</upload:FileIO>
+		<!---
+		Cada campo de cargue tiene 4 eventos:
+		cargando,error,completo,cancelado
+		Estos son disparados desde el componente de cargue para enviar mensajes 
+		al modulo sobre su estado actual
+		-->
+		<upload:FileIO
+			cargando="{up16.estado='cargando'}"
+			error="{up16.estado='error'}"
+			completo="{up16.estado='completo'};notificar();"
+
+			cancelado="{up16.estado=null}"
+			id="up16" x="374" y="204" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+		</upload:FileIO>
+		<!---
+		Cada campo de cargue tiene 4 eventos:
+		cargando,error,completo,cancelado
+		Estos son disparados desde el componente de cargue para enviar mensajes 
+		al modulo sobre su estado actual
+		-->
+		<upload:FileIO
+			cargando="{up17.estado='cargando'}"
+			error="{up17.estado='error'}"
+			completo="{up17.estado='completo'};notificar();"
+	
+			cancelado="{up17.estado=null}"
+			id="up17" x="372" y="247" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+		</upload:FileIO>
+		<!---
+		Cada campo de cargue tiene 4 eventos:
+		cargando,error,completo,cancelado
+		Estos son disparados desde el componente de cargue para enviar mensajes 
+		al modulo sobre su estado actual
+		-->
+		<upload:FileIO
+			cargando="{up18.estado='cargando'}"
+			error="{up18.estado='error'}"
+			completo="{up18.estado='completo'};notificar();"
+			
+			cancelado="{up18.estado=null}"
+			id="up18" x="373" y="281" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+		</upload:FileIO>
+		<!---
+		Cada campo de cargue tiene 4 eventos:
+		cargando,error,completo,cancelado
+		Estos son disparados desde el componente de cargue para enviar mensajes 
+		al modulo sobre su estado actual
+		-->
+		<upload:FileIO
+			cargando="{up19.estado='cargando'}"
+			error="{up19.estado='error'}"
+			completo="{up19.estado='completo'};notificar();"
+
+			cancelado="{up19.estado=null}"
+			id="up19" x="374" y="320" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+		</upload:FileIO>
+		<!---
+		Cada campo de cargue tiene 4 eventos:
+		cargando,error,completo,cancelado
+		Estos son disparados desde el componente de cargue para enviar mensajes 
+		al modulo sobre su estado actual
+		-->
+		<upload:FileIO
+			cargando="{up20.estado='cargando'}"
+			error="{up20.estado='error'}"
+			completo="{up20.estado='completo'};notificar();"
+
+			cancelado="{up20.estado=null}"
+			id="up20" x="374" y="358" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+		</upload:FileIO>		
+	</s:Group>
+	<s:Button id="button1" label="Cargar todos los archivos" click="button1_clickHandler(event)" top="428" horizontalCenter="0"/>
+	<s:Label id="Mod2" y="453" text="{_texto}" fontSize="31" width="526" horizontalCenter="0" height="66" visible="false"/>
+	<s:Label text="Avaluos (TXT)" fontWeight="bold" top="8" horizontalCenter="-100"/>
+	<s:Label text="Registros Fotograficos (ZIP)" fontWeight="bold" top="7" horizontalCenter="100"/>
+	<s:Label text="Tamaño máximo por archivo: 50MB" horizontalCenter="6" top="458"/>	
+	<s:CheckBox x="10" y="31" label="Cargue de proyecto Constructor" click="chkConstructor_clickHandler(event)" id="chkConstructor"/>
+	
+</mx:Module>

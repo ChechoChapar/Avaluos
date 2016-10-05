@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Module xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		   xmlns:s="library://ns.adobe.com/flex/spark" 
+		   xmlns:mx="library://ns.adobe.com/flex/mx"
+		   xmlns:example="com.segurosbolivar.avaluos.modulos.*"
+		   implements="modulos.IModule"
+		   layout="absolute" width="446" height="150" xmlns:services="services.*">
+	<fx:Script>
+		<![CDATA[
+			
+			import permisos.Permiso;
+			
+			[Bindable]
+			var myListaPermisos:Permiso=null;
+			
+			public function setTexto(t:String):void
+			{
+				null;
+			}
+			
+			public function setPermisos(listaPermisos:Permiso):void
+			{
+				myListaPermisos = listaPermisos;
+			}	
+			
+			public function getPermisos():Permiso
+			{
+				return myListaPermisos;
+			}		
+			
+			
+			
+			public function ejecutar():void
+			{
+				null;
+			}
+			public function adicionar():void
+			{
+				null;
+			}
+			public function consultar():void
+			{
+				null;
+			}
+			public function imprimir():void
+			{
+				null;
+			}
+			public function editar():void
+			{
+				null;
+			}
+			public function eliminar():void
+			{
+				null;
+			}							
+			
+			
+			const LOG_FILE_NAME:String = "logavaluos.log";
+			/**
+			 * 
+			 * 
+			 */ 
+			protected function btnDescargar_clickHandler(event:MouseEvent):void
+			{
+				fileDownload.startDownload("logavaluos.log");
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!--<s:CallResponder id="descargarArchivoResult" result="descargarArchivoResult_resultHandler(event)"/>
+		<services:ArchivoService id="archivoService" fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)" showBusyCursor="true" />-->
+	</fx:Declarations>
+	
+	<fx:Style source="assets/css/AvaluosBolivar.css"/>
+	<fx:Style source="assets/css/AvaluosBolivarPanel.css"/>
+
+	<example:FileDownload id="fileDownload" creationComplete="fileDownload.init(downloadProgress, cancelDownload);"  />
+	<mx:Panel id="pnlDescarga" title="Descargar Log de la Aplicación" paddingTop="10" paddingBottom="10" paddingLeft="10" paddingRight="10" width="229" height="135"  dropShadowVisible="false" y="7" x="211">
+		<mx:ProgressBar id="downloadProgress" label="" mode="manual" />
+		<mx:ControlBar horizontalAlign="right">
+			<s:Button label="Descargar" id="btnDescargar" click="fileDownload.startLogDownload(LOG_FILE_NAME);"  />
+			<mx:Button id="cancelDownload" label="Cancel" click="fileDownload.cancelDownload();" enabled="false" />
+		</mx:ControlBar>
+	</mx:Panel>
+</mx:Module>

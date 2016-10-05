@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report3" language="groovy" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<queryString language="ejbql">
+		<![CDATA[select avaluo from Avaluo avaluo]]>
+	</queryString>
+	<field name="TUsuario" class="java.lang.String">
+		<fieldDescription><![CDATA[TUsuario]]></fieldDescription>
+	</field>
+	<field name="anexosFotograficos" class="java.util.List">
+		<fieldDescription><![CDATA[anexosFotograficos]]></fieldDescription>
+	</field>
+	<field name="barrio" class="java.lang.String">
+		<fieldDescription><![CDATA[barrio]]></fieldDescription>
+	</field>
+	<field name="celularSolicitante" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[celularSolicitante]]></fieldDescription>
+	</field>
+	<field name="ciudad" class="com.segurosbolivar.avaluos.entities.Ciudad">
+		<fieldDescription><![CDATA[ciudad]]></fieldDescription>
+	</field>
+	<field name="class" class="java.lang.Class">
+		<fieldDescription><![CDATA[class]]></fieldDescription>
+	</field>
+	<field name="codigoBanco" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[codigoBanco]]></fieldDescription>
+	</field>
+	<field name="codigoDaneCiudad" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[codigoDaneCiudad]]></fieldDescription>
+	</field>
+	<field name="codigoDaneDepartamento" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[codigoDaneDepartamento]]></fieldDescription>
+	</field>
+	<field name="compOfertaDemanda" class="java.util.List">
+		<fieldDescription><![CDATA[compOfertaDemanda]]></fieldDescription>
+	</field>
+	<field name="condicionSalubridad" class="java.util.List">
+		<fieldDescription><![CDATA[condicionSalubridad]]></fieldDescription>
+	</field>
+	<field name="consecutivoBanco" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[consecutivoBanco]]></fieldDescription>
+	</field>
+	<field name="correoSolicitante" class="java.lang.String">
+		<fieldDescription><![CDATA[correoSolicitante]]></fieldDescription>
+	</field>
+	<field name="direccionInmueble" class="java.lang.String">
+		<fieldDescription><![CDATA[direccionInmueble]]></fieldDescription>
+	</field>
+	<field name="estadoAvaluo" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[estadoAvaluo]]></fieldDescription>
+	</field>
+	<field name="fechaAvaluo" class="java.util.Date">
+		<fieldDescription><![CDATA[fechaAvaluo]]></fieldDescription>
+	</field>
+	<field name="fechaCreacion" class="java.util.Date">
+		<fieldDescription><![CDATA[fechaCreacion]]></fieldDescription>
+	</field>
+	<field name="fechaTransaccion" class="java.util.Date">
+		<fieldDescription><![CDATA[fechaTransaccion]]></fieldDescription>
+	</field>
+	<field name="historicosAvaluo" class="java.util.List">
+		<fieldDescription><![CDATA[historicosAvaluo]]></fieldDescription>
+	</field>
+	<field name="idAvaluo" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[idAvaluo]]></fieldDescription>
+	</field>
+	<field name="idMetodologia" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[idMetodologia]]></fieldDescription>
+	</field>
+	<field name="idObjetoAvaluo" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[idObjetoAvaluo]]></fieldDescription>
+	</field>
+	<field name="idTipoIdentificacion" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[idTipoIdentificacion]]></fieldDescription>
+	</field>
+	<field name="informacionBarrio" class="java.util.List">
+		<fieldDescription><![CDATA[informacionBarrio]]></fieldDescription>
+	</field>
+	<field name="informacionConstruccion" class="java.util.List">
+		<fieldDescription><![CDATA[informacionConstruccion]]></fieldDescription>
+	</field>
+	<field name="informacionInmueble" class="java.util.List">
+		<fieldDescription><![CDATA[informacionInmueble]]></fieldDescription>
+	</field>
+	<field name="justificacion" class="java.lang.String">
+		<fieldDescription><![CDATA[justificacion]]></fieldDescription>
+	</field>
+	<field name="liquidacionAvaluos" class="java.util.List">
+		<fieldDescription><![CDATA[liquidacionAvaluos]]></fieldDescription>
+	</field>
+	<field name="liquidacionTotal" class="java.util.List">
+		<fieldDescription><![CDATA[liquidacionTotal]]></fieldDescription>
+	</field>
+	<field name="logsGeneraArchivo" class="com.segurosbolivar.avaluos.entities.LogsGeneraArchivo">
+		<fieldDescription><![CDATA[logsGeneraArchivo]]></fieldDescription>
+	</field>
+	<field name="nombreBanco" class="java.lang.String">
+		<fieldDescription><![CDATA[nombreBanco]]></fieldDescription>
+	</field>
+	<field name="nombreConjuntoEdificio" class="java.lang.String">
+		<fieldDescription><![CDATA[nombreConjuntoEdificio]]></fieldDescription>
+	</field>
+	<field name="nombreSolicitante" class="java.lang.String">
+		<fieldDescription><![CDATA[nombreSolicitante]]></fieldDescription>
+	</field>
+	<field name="numeroIdentificacion" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[numeroIdentificacion]]></fieldDescription>
+	</field>
+	<field name="observacion" class="java.util.List">
+		<fieldDescription><![CDATA[observacion]]></fieldDescription>
+	</field>
+	<field name="sector" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[sector]]></fieldDescription>
+	</field>
+	<field name="telefonoSolicitante" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[telefonoSolicitante]]></fieldDescription>
+	</field>
+	<field name="tipoDocumento" class="java.lang.String">
+		<fieldDescription><![CDATA[tipoDocumento]]></fieldDescription>
+	</field>
+	<field name="tipoInforme" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[tipoInforme]]></fieldDescription>
+	</field>
+	<field name="ubicacionGps" class="java.math.BigDecimal">
+		<fieldDescription><![CDATA[ubicacionGps]]></fieldDescription>
+	</field>
+	<field name="usuarioCreacion" class="java.lang.String">
+		<fieldDescription><![CDATA[usuarioCreacion]]></fieldDescription>
+	</field>
+	<field name="usuarioTransaccion" class="java.lang.String">
+		<fieldDescription><![CDATA[usuarioTransaccion]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="752" splitType="Stretch">
+			<image>
+				<reportElement x="10" y="-2" width="570" height="752"/>
+				<imageExpression class="java.lang.String"><![CDATA["C:\\Users\\BOLIVAR\\Pictures\\diseño reporte.jpg"]]></imageExpression>
+			</image>
+			<frame>
+				<reportElement x="7" y="66" width="559" height="59"/>
+			</frame>
+			<frame>
+				<reportElement x="7" y="10" width="559" height="55"/>
+			</frame>
+			<frame>
+				<reportElement x="7" y="133" width="559" height="59"/>
+			</frame>
+			<frame>
+				<reportElement x="7" y="198" width="559" height="99"/>
+			</frame>
+			<frame>
+				<reportElement x="7" y="305" width="559" height="99"/>
+			</frame>
+			<frame>
+				<reportElement x="7" y="407" width="559" height="44"/>
+			</frame>
+			<frame>
+				<reportElement x="7" y="451" width="559" height="30"/>
+			</frame>
+			<frame>
+				<reportElement x="7" y="483" width="559" height="172"/>
+			</frame>
+			<frame>
+				<reportElement x="7" y="603" width="559" height="52"/>
+			</frame>
+			<frame>
+				<reportElement x="7" y="655" width="559" height="41"/>
+			</frame>
+			<frame>
+				<reportElement x="7" y="700" width="559" height="36"/>
+			</frame>
+			<staticText>
+				<reportElement x="7" y="2" width="96" height="10"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[INFORMACION BASICA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="66" width="96" height="10"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[INFORMACION DEL BARRIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="9" y="132" width="108" height="10"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[INFORMACION DEL INMUEBLE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="9" y="195" width="137" height="10"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[INFORMACION DE LA CONSTRUCCION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="265" y="297" width="44" height="10"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DEPENDENCIA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="265" y="366" width="44" height="10"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ACABADOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="12" y="371" width="44" height="10"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ESTADO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="288" y="371" width="44" height="10"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CALIDAD]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="56" y="404" width="80" height="10"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PROPIEDAD HORIZONTAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="309" y="404" width="80" height="10"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DOTACION CONTINUA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="7" y="481" width="80" height="10"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[LIQUIDACION AVALUO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="9" y="700" width="137" height="10"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NOMBRE Y FIRMA DEL PERITO AVALUADOR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="195" y="700" width="50" height="10"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[VISTO BUENO]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true" >
+				<reportElement x="314" y="17" width="42" height="7"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<textField isBlankWhenNull="true" Expression class="java.lang.String"><![CDATA[$F{nombreBanco}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true" >
+				<reportElement x="376" y="17" width="62" height="7"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<textField isBlankWhenNull="true" Expression class="java.util.Date"><![CDATA[$F{fechaAvaluo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="376" y="10" width="62" height="7"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[fechaAvaluo]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true" >
+				<reportElement x="468" y="17" width="84" height="7"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<textField isBlankWhenNull="true" Expression class="java.math.BigDecimal"><![CDATA[$F{consecutivoBanco}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true" >
+				<reportElement x="12" y="17" width="62" height="7"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<textField isBlankWhenNull="true" Expression class="java.lang.String"><![CDATA[$F{nombreSolicitante}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="169" y="10" width="39" height="7"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[tipoDocumento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="314" y="10" width="42" height="7"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[nombreBanco]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="12" y="10" width="62" height="7"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[nombreSolicitante]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true" >
+				<reportElement x="169" y="17" width="39" height="7"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<textField isBlankWhenNull="true" Expression class="java.lang.String"><![CDATA[$F{tipoDocumento}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="468" y="10" width="84" height="7"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[consecutivoBanco]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="213" y="10" width="62" height="7"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[numeroIdentificacion]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true" >
+				<reportElement x="213" y="17" width="62" height="7"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<textField isBlankWhenNull="true" Expression class="java.math.BigDecimal"><![CDATA[$F{numeroIdentificacion}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="181" y="-1" width="141" height="11"/>
+				<textElement>
+					<font fontName="Arial" size="9" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[INFORME AVALUO COMERCIAL]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

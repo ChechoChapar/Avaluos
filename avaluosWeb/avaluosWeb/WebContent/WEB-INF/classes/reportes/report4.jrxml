@@ -1,0 +1,673 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report4" language="groovy" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" scriptletClass="reportes.ScripletJpaReporteAvaluos" whenResourceMissingType="Empty">
+	<property name="ireport.zoom" value="0.424097618372485"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="reportes.*"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA["C:\\proyecto_avaluos_svn\\avaluosWeb\\src\\reportes\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="IS_APROBADO" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[true]]></defaultValueExpression>
+	</parameter>
+	<queryString language="ejbql">
+		<![CDATA[select avaluo from Avaluo avaluo]]>
+	</queryString>
+	<field name="TUsuario" class="java.lang.String"/>
+	<field name="anexosFotograficos" class="java.util.List"/>
+	<field name="barrio" class="java.lang.String"/>
+	<field name="celularSolicitante" class="java.math.BigDecimal"/>
+	<field name="class" class="java.lang.Class"/>
+	<field name="codigoBanco" class="java.math.BigDecimal"/>
+	<field name="codigoDaneCiudad" class="java.math.BigDecimal"/>
+	<field name="codigoDaneDepartamento" class="java.math.BigDecimal"/>
+	<field name="compOfertaDemanda" class="java.util.List"/>
+	<field name="condicionSalubridad" class="java.util.List"/>
+	<field name="consecutivoBanco" class="java.math.BigDecimal"/>
+	<field name="correoSolicitante" class="java.lang.String"/>
+	<field name="direccionInmueble" class="java.lang.String"/>
+	<field name="dominioMetodologia" class="com.segurosbolivar.avaluos.entities.Dominios"/>
+	<field name="dominioTipoIdentificacion" class="com.segurosbolivar.avaluos.entities.Dominios"/>
+	<field name="estadoAvaluo" class="java.math.BigDecimal"/>
+	<field name="fechaAvaluo" class="java.util.Date"/>
+	<field name="fechaCreacion" class="java.util.Date"/>
+	<field name="fechaTransaccion" class="java.util.Date"/>
+	<field name="historicosAvaluo" class="java.util.List"/>
+	<field name="idAvaluo" class="java.math.BigDecimal"/>
+	<field name="idCiudad" class="java.math.BigDecimal"/>
+	<field name="idDepartamento" class="java.math.BigDecimal"/>
+	<field name="idMetodologia" class="java.math.BigDecimal"/>
+	<field name="idObjetoAvaluo" class="java.math.BigDecimal"/>
+	<field name="idTipoIdentificacion" class="java.math.BigDecimal"/>
+	<field name="informacionBarrio" class="java.util.List"/>
+	<field name="informacionConstruccion" class="java.util.List"/>
+	<field name="informacionInmueble" class="java.util.List"/>
+	<field name="justificacion" class="java.lang.String"/>
+	<field name="liquidacionAvaluos" class="java.util.List"/>
+	<field name="liquidacionTotal" class="java.util.List"/>
+	<field name="logsGeneraArchivo" class="com.segurosbolivar.avaluos.entities.LogsGeneraArchivo"/>
+	<field name="matriculaInmobiliariaPpal1" class="java.lang.String"/>
+	<field name="nombreBanco" class="java.lang.String"/>
+	<field name="nombreConjuntoEdificio" class="java.lang.String"/>
+	<field name="nombreSolicitante" class="java.lang.String"/>
+	<field name="numLinea" class="java.math.BigDecimal"/>
+	<field name="numeroIdentificacion" class="java.lang.String"/>
+	<field name="objCiudad" class="com.segurosbolivar.avaluos.entities.Ciudad"/>
+	<field name="observacion" class="java.util.List"/>
+	<field name="sector" class="java.math.BigDecimal"/>
+	<field name="telefonoSolicitante" class="java.math.BigDecimal"/>
+	<field name="tipoDocumento" class="java.lang.String"/>
+	<field name="tipoInforme" class="java.math.BigDecimal"/>
+	<field name="ubicacionGps" class="java.lang.String"/>
+	<field name="usuarioCreacion" class="java.lang.String"/>
+	<field name="usuarioTransaccion" class="java.lang.String"/>
+	<background>
+		<band height="750" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Transparent" x="141" y="18" width="238" height="719" forecolor="#CCCCCC">
+					<printWhenExpression><![CDATA[$P{IS_APROBADO}==false]]></printWhenExpression>
+				</reportElement>
+				<textElement rotation="Left">
+					<font size="180"/>
+				</textElement>
+				<text><![CDATA[Borrador]]></text>
+			</staticText>
+		</band>
+	</background>
+	<detail>
+		<band height="751" splitType="Stretch">
+			<staticText>
+				<reportElement x="307" y="18" width="51" height="7"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[ENTIDAD]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="203" y="18" width="85" height="7"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[NUMERO IDENTIFICACION]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="12" y="25" width="147" height="9"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombreSolicitante}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="170" y="25" width="26" height="9"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tipoDocumento}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="378" y="18" width="62" height="7"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[FECHA AVALUO]]></text>
+			</staticText>
+			<subreport>
+				<reportElement x="1" y="93" width="571" height="67"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{informacionBarrio})]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "report4_subreport1.jasper"]]></subreportExpression>
+			</subreport>
+			<textField isBlankWhenNull="true">
+				<reportElement x="203" y="25" width="85" height="9"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numeroIdentificacion}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement x="1" y="166" width="571" height="69"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{informacionInmueble})]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "report4_subreport2.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement x="1" y="245" width="571" height="238"/>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="condicionSalubridad">
+					<subreportParameterExpression><![CDATA[$F{condicionSalubridad}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{informacionConstruccion})]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "report4_subreport3.jasper"]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement x="5" y="718" width="137" height="9"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[NÚMERO DE IDENTIFICACIÓN DEL PERITO]]></text>
+			</staticText>
+			<subreport>
+				<reportElement x="1" y="492" width="571" height="27"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{compOfertaDemanda})]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "report4_subreport4.jasper"]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement x="453" y="19" width="70" height="7"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[CONSECUTIVO]]></text>
+			</staticText>
+			<subreport>
+				<reportElement x="1" y="522" width="571" height="102"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{REPORT_SCRIPTLET}.llenarLiquidacionesAvaluo($F{liquidacionAvaluos}))]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "report4_subreport5.jasper"]]></subreportExpression>
+			</subreport>
+			<staticText>
+				<reportElement x="183" y="3" width="141" height="12"/>
+				<textElement>
+					<font size="9" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[INFORME AVALUO COMERCIAL]]></text>
+			</staticText>
+			<subreport>
+				<reportElement x="1" y="633" width="571" height="36"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{liquidacionTotal})]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "report4_subreport6.jasper"]]></subreportExpression>
+			</subreport>
+			<subreport>
+				<reportElement x="1" y="670" width="571" height="29"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{observacion})]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "report4_subreport7.jasper"]]></subreportExpression>
+			</subreport>
+			<textField isBlankWhenNull="true">
+				<reportElement x="88" y="44" width="200" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{direccionInmueble}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="452" y="43" width="102" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="5" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombreConjuntoEdificio}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="79" y="63" width="39" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{codigoDaneCiudad}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="307" y="62" width="71" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{telefonoSolicitante}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="452" y="61" width="102" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="5" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{correoSolicitante}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="378" y="61" width="71" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{celularSolicitante}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="12" y="81" width="134" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{REPORT_SCRIPTLET}.retornarDominioReporte("METODOLOGIA",$F{idMetodologia}.toString(),false)]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="159" y="80" width="395" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="5" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{justificacion}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="88" y="35" width="71" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[DIRECCION INMUEBLE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="452" y="36" width="102" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[NOMBRE DEL CONJUNTO/EDIFICIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="79" y="54" width="39" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[CODIGO]]></text>
+			</staticText>
+			<image scaleImage="RetainShape" hAlign="Right" vAlign="Middle">
+				<reportElement x="378" y="719" width="194" height="31"/>
+				<imageExpression><![CDATA[$P{REPORT_SCRIPTLET}.retornarImagenAvaluo($F{TUsuario})]]></imageExpression>
+			</image>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="370" y="26" width="79" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fechaAvaluo}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="12" y="44" width="71" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="5" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{REPORT_SCRIPTLET}.retornarDominioReporte("OBJETOAVALUO",$F{idObjetoAvaluo}.toString(),false)]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="307" y="43" width="142" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="5" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{barrio}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00000" isBlankWhenNull="true">
+				<reportElement x="250" y="62" width="56" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="4" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ubicacionGps}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="12" y="35" width="71" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[OBJETO AVALUO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="307" y="35" width="40" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[BARRIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="251" y="54" width="51" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[COORDENADAS]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="216" y="62" width="33" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="5" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{REPORT_SCRIPTLET}.retornarDominioReporte("SECTOR",$F{sector}.toString(),false)]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="216" y="54" width="33" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[SECTOR]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="75" y="743" width="84" height="8"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{REPORT_SCRIPTLET}.retornarRegistroPeritos($F{TUsuario},"registroPrivado")]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="75" y="735" width="84" height="8"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{REPORT_SCRIPTLET}.retornarRegistroPeritos($F{TUsuario},"registroSic")]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="14" y="743" width="60" height="8"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[REGISTRO PRIVADO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="14" y="735" width="60" height="8"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[REGISTRO SIC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="14" y="727" width="60" height="8"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[ID. DE QUIEN APRUEBA]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="75" y="727" width="84" height="8"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TUsuario}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="452" y="54" width="102" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[E-MAIL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="307" y="54" width="71" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[TEL FIJO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="175" y="54" width="39" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[CODIGO]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="175" y="62" width="39" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{codigoDaneDepartamento}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="12" y="54" width="39" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[CIUDAD]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="12" y="63" width="61" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{REPORT_SCRIPTLET}.retornarUbicacionGeograficaReporte(
+$P{REPORT_SCRIPTLET}.retornaridCodDane($F{codigoDaneCiudad}.toString(),"Ciudades")
+,"Ciudad","Ciudades")]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="124" y="54" width="43" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[DEPARTAMENTO]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="124" y="62" width="46" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="5" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{REPORT_SCRIPTLET}.retornarUbicacionGeograficaReporte(
+$P{REPORT_SCRIPTLET}.retornaridCodDane($F{codigoDaneDepartamento}.toString(),"Departamentos")
+,"Departamento","Departamentos")]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="188" y="719" width="84" height="9"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[FIRMA DEL PERITO]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement mode="Transparent" x="1" y="718" width="182" height="33"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="378" y="54" width="71" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[TEL CELULAR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="12" y="73" width="71" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[METODOLOGIA]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement mode="Transparent" x="183" y="718" width="195" height="33"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="1" y="16" width="574" height="77"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="159" y="73" width="122" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[JUSTIFICACION DE LA METODOLOGIA]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="453" y="26" width="101" height="9"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{consecutivoBanco}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="12" y="18" width="74" height="7"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[NOMBRE DEL SOLICITANTE]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="307" y="25" width="51" height="9"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombreBanco}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="9" y="6" width="96" height="10"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[INFORMACION BASICA]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement mode="Transparent" x="378" y="718" width="197" height="33">
+					<printWhenExpression><![CDATA[$P{IS_APROBADO}==true]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="171" y="18" width="25" height="7"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[ID.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="187" y="726" width="188" height="25"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Certifico que el valor total de avalúo reportado en este
+informe es real y fue validado con los criterios establecidos
+por el Banco.]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

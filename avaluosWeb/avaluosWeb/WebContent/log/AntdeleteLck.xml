@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." default="deletelck" name="avaluosWebLog">
+	<target description="Delete .lck files" name="deletelck">
+		<delete>
+			<fileset dir="." includes="*.lck"/>
+		</delete>
+		<echo message="Borrado OK"/>
+	</target>
+</project>

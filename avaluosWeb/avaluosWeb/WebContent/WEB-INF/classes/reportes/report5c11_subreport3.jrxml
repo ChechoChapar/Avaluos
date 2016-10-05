@@ -1,0 +1,2413 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report5c11_subreport3" language="groovy" pageWidth="752" pageHeight="572" orientation="Landscape" columnWidth="752" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" scriptletClass="reportes.ScripletJpaReporteAvaluos" whenResourceMissingType="Empty">
+	<property name="ireport.zoom" value="1.9965000000000015"/>
+	<property name="ireport.x" value="438"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="condicionSalubridad" class="java.util.List" isForPrompting="false"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["C:\\proyecto_avaluos_svn\\avaluosWeb\\src\\reportes\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString language="ejbql">
+		<![CDATA[select c from InformacionConstruccion c]]>
+	</queryString>
+	<field name="aireAcondicionado" class="java.math.BigDecimal"/>
+	<field name="altura" class="java.math.BigDecimal"/>
+	<field name="anoConstruccionBUA" class="java.math.BigDecimal"/>
+	<field name="ascensor" class="java.math.BigDecimal"/>
+	<field name="asentamientos" class="java.math.BigDecimal"/>
+	<field name="avaluo" class="com.segurosbolivar.avaluos.entities.Avaluo"/>
+	<field name="avanceObra" class="java.math.BigDecimal"/>
+	<field name="bahiaComunal" class="java.math.BigDecimal"/>
+	<field name="balcon" class="java.math.BigDecimal"/>
+	<field name="banioPrivado" class="java.math.BigDecimal"/>
+	<field name="banioServicio" class="java.math.BigDecimal"/>
+	<field name="banioSocial" class="java.math.BigDecimal"/>
+	<field name="bicicletero" class="java.math.BigDecimal"/>
+	<field name="bodega" class="java.math.BigDecimal"/>
+	<field name="bombaEyectora" class="java.math.BigDecimal"/>
+	<field name="calidMetal" class="java.math.BigDecimal"/>
+	<field name="calidadBanio" class="java.math.BigDecimal"/>
+	<field name="calidadCocina" class="java.math.BigDecimal"/>
+	<field name="calidadMadera" class="java.math.BigDecimal"/>
+	<field name="calidadMuro" class="java.math.BigDecimal"/>
+	<field name="calidadPiso" class="java.math.BigDecimal"/>
+	<field name="calidadTecho" class="java.math.BigDecimal"/>
+	<field name="canchaMultiple" class="java.math.BigDecimal"/>
+	<field name="citofono" class="java.math.BigDecimal"/>
+	<field name="class" class="java.lang.Class"/>
+	<field name="clubHouse" class="java.math.BigDecimal"/>
+	<field name="cocina" class="java.math.BigDecimal"/>
+	<field name="comedor" class="java.math.BigDecimal"/>
+	<field name="conjuntoAgrupacionCerrada" class="java.math.BigDecimal"/>
+	<field name="cuartoServicio" class="java.math.BigDecimal"/>
+	<field name="cubierta" class="java.math.BigDecimal"/>
+	<field name="cubierto" class="java.math.BigDecimal"/>
+	<field name="danoPrevio" class="java.math.BigDecimal"/>
+	<field name="danoPrevioBUA" class="java.math.BigDecimal"/>
+	<field name="danoPrevioSF" class="java.math.BigDecimal"/>
+	<field name="danoReparadoSF" class="java.math.BigDecimal"/>
+	<field name="deposito" class="java.math.BigDecimal"/>
+	<field name="descubierto" class="java.math.BigDecimal"/>
+	<field name="detalleMaterialSFBUA" class="java.math.BigDecimal"/>
+	<field name="doble" class="java.math.BigDecimal"/>
+	<field name="enObra" class="java.math.BigDecimal"/>
+	<field name="estadoBanios" class="java.math.BigDecimal"/>
+	<field name="estadoCocina" class="java.math.BigDecimal"/>
+	<field name="estadoConservacion" class="java.math.BigDecimal"/>
+	<field name="estadoConstruccion" class="java.math.BigDecimal"/>
+	<field name="estadoMadera" class="java.math.BigDecimal"/>
+	<field name="estadoMetal" class="java.math.BigDecimal"/>
+	<field name="estadoMuros" class="java.math.BigDecimal"/>
+	<field name="estadoPisos" class="java.math.BigDecimal"/>
+	<field name="estadoRemodelacion" class="java.math.BigDecimal"/>
+	<field name="estadoTerminadaNueva" class="java.math.BigDecimal"/>
+	<field name="estadoTerminadoUsado" class="java.math.BigDecimal"/>
+	<field name="estarHabitacion" class="java.math.BigDecimal"/>
+	<field name="estructura" class="java.math.BigDecimal"/>
+	<field name="estructuraReforzadaBUA" class="java.math.BigDecimal"/>
+	<field name="estructuraReforzadaSF" class="java.math.BigDecimal"/>
+	<field name="estructuraTechos" class="java.math.BigDecimal"/>
+	<field name="estudio" class="java.math.BigDecimal"/>
+	<field name="fachada" class="java.math.BigDecimal"/>
+	<field name="fechaCreacion" class="java.util.Date"/>
+	<field name="fechaTransaccion" class="java.util.Date"/>
+	<field name="garajeVisitante" class="java.math.BigDecimal"/>
+	<field name="gimnasio" class="java.math.BigDecimal"/>
+	<field name="golfito" class="java.math.BigDecimal"/>
+	<field name="golpeteo" class="java.math.BigDecimal"/>
+	<field name="idInformacionConstruccion" class="java.math.BigDecimal"/>
+	<field name="iluminacion" class="java.math.BigDecimal"/>
+	<field name="irregularidadAlturaBUA" class="java.math.BigDecimal"/>
+	<field name="irregularidadPlantaBUA" class="java.math.BigDecimal"/>
+	<field name="jardin" class="java.math.BigDecimal"/>
+	<field name="juegoNinos" class="java.math.BigDecimal"/>
+	<field name="local" class="java.math.BigDecimal"/>
+	<field name="luces" class="java.math.BigDecimal"/>
+	<field name="materialConstruccionBUA" class="java.math.BigDecimal"/>
+	<field name="materialConstruccionSF" class="java.math.BigDecimal"/>
+	<field name="materialEstructura" class="java.math.BigDecimal"/>
+	<field name="numeroAscensores" class="java.math.BigDecimal"/>
+	<field name="numeroEdificios" class="java.math.BigDecimal"/>
+	<field name="numeroHabitaciones" class="java.math.BigDecimal"/>
+	<field name="oficina" class="java.math.BigDecimal"/>
+	<field name="otraUbicacionTanque" class="java.lang.String"/>
+	<field name="otroMaterial" class="java.lang.String"/>
+	<field name="otrosDotacion" class="java.lang.String"/>
+	<field name="otrosDotacion2" class="java.lang.String"/>
+	<field name="parapetosCubierta" class="java.math.BigDecimal"/>
+	<field name="patioInterior" class="java.math.BigDecimal"/>
+	<field name="piscina" class="java.math.BigDecimal"/>
+	<field name="pisoInmueble" class="java.math.BigDecimal"/>
+	<field name="pisos" class="java.math.BigDecimal"/>
+	<field name="pisosBodega" class="java.math.BigDecimal"/>
+	<field name="planta" class="java.math.BigDecimal"/>
+	<field name="porteria" class="java.math.BigDecimal"/>
+	<field name="presion" class="java.math.BigDecimal"/>
+	<field name="privado" class="java.math.BigDecimal"/>
+	<field name="propiedadHorizontal" class="java.math.BigDecimal"/>
+	<field name="rangoConstruccionSF" class="java.math.BigDecimal"/>
+	<field name="reparadosBUA" class="java.math.BigDecimal"/>
+	<field name="sala" class="java.math.BigDecimal"/>
+	<field name="salonComunal" class="java.math.BigDecimal"/>
+	<field name="sencillo" class="java.math.BigDecimal"/>
+	<field name="servidumbre" class="java.math.BigDecimal"/>
+	<field name="shutBasuras" class="java.math.BigDecimal"/>
+	<field name="simetriaAltura" class="java.math.BigDecimal"/>
+	<field name="simetriaAlturaSF" class="java.math.BigDecimal"/>
+	<field name="simetriaPlanta" class="java.math.BigDecimal"/>
+	<field name="simetriaPlantaSF" class="java.math.BigDecimal"/>
+	<field name="sinTerminar" class="java.math.BigDecimal"/>
+	<field name="sobrePeso" class="java.math.BigDecimal"/>
+	<field name="sotanos" class="java.math.BigDecimal"/>
+	<field name="squash" class="java.math.BigDecimal"/>
+	<field name="tanqueAgua" class="java.math.BigDecimal"/>
+	<field name="terraza" class="java.math.BigDecimal"/>
+	<field name="textoCubierta" class="java.lang.String"/>
+	<field name="textoEstructura" class="java.lang.String"/>
+	<field name="textoFachada" class="java.lang.String"/>
+	<field name="tipoFachada" class="java.math.BigDecimal"/>
+	<field name="totalGarajes" class="java.math.BigDecimal"/>
+	<field name="totalUnidades" class="java.math.BigDecimal"/>
+	<field name="ubicacionFuentesHidricas" class="java.math.BigDecimal"/>
+	<field name="ubicacionInmueble" class="java.math.BigDecimal"/>
+	<field name="ubicacionNivelVia" class="java.math.BigDecimal"/>
+	<field name="ubicacionTanque" class="java.math.BigDecimal"/>
+	<field name="unidadPorPiso" class="java.math.BigDecimal"/>
+	<field name="usoExclusivo" class="java.math.BigDecimal"/>
+	<field name="usuarioCreacion" class="java.lang.String"/>
+	<field name="usuarioTransaccion" class="java.lang.String"/>
+	<field name="ventilacion" class="java.math.BigDecimal"/>
+	<field name="vetustez" class="java.math.BigDecimal"/>
+	<field name="zonaVerdePrivada" class="java.math.BigDecimal"/>
+	<field name="zonasVerdes" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="10" splitType="Stretch">
+			<staticText>
+				<reportElement x="2" y="2" width="119" height="8"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[INFORMACION DE LA CONSTRUCCION]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="236" splitType="Stretch">
+			<rectangle>
+				<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="0" y="-8" width="574" height="244"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<textField pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="184" y="43" width="20" height="10" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box leftPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="6" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{avanceObra}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="184" y="53" width="20" height="10" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box leftPadding="1" rightPadding="1"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="DejaVu Sans" size="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{estadoTerminadoUsado}==null?"\u2610":$F{estadoTerminadoUsado}.equals(new BigDecimal(1))? "\u2611" : "\u2610"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="127" y="25" width="58" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[TERMINADA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="127" y="34" width="58" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[EN OBRA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="127" y="43" width="58" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[AVANCE (%)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="127" y="53" width="58" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[TERMINADO]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="184" y="62" width="20" height="10" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box leftPadding="1" rightPadding="1"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="DejaVu Sans" size="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sinTerminar}==null?"\u2610":$F{sinTerminar}.equals(new BigDecimal(1))? "\u2611" : "\u2610"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="127" y="62" width="58" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[SIN TERMINAR]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="184" y="25" width="20" height="10" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box leftPadding="1" rightPadding="1"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="DejaVu Sans" size="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{estadoTerminadaNueva}==null?"\u2610":$F{estadoTerminadaNueva}.equals(new BigDecimal(1))? "\u2611" : "\u2610")]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="127" y="72" width="58" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[REMODELADO]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="184" y="72" width="20" height="10" forecolor="#000000" backcolor="#FFFFFF"/>
+				<box leftPadding="1" rightPadding="1"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="DejaVu Sans" size="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{estadoRemodelacion}==null?"\u2610":$F{estadoRemodelacion}.equals(new BigDecimal(1))? "\u2611" : "\u2610"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="127" y="15" width="77" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{estadoConstruccion}==null?"":$P{REPORT_SCRIPTLET}.retornarDominioReporte("ESTADOCONSTRUCCION",$F{estadoConstruccion}.toString(),false)]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="81" y="6" width="20" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pisos}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="81" y="16" width="20" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sotanos}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="81" y="26" width="20" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vetustez}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="81" y="36" width="20" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pisoInmueble}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="4" y="6" width="77" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[NUMERO DE PISOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="16" width="77" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[NUMERO DE SOTANOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="26" width="77" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[VETUSTEZ (En Años)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="36" width="77" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[PISO DEL INMUEBLE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="46" width="77" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[CERCA DE FUENTES HIDRICAS]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="81" y="46" width="20" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ubicacionFuentesHidricas}==null?"":$P{REPORT_SCRIPTLET}.retornarDominioReporte("AFIRMAR",$F{ubicacionFuentesHidricas}.toString(),false)]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="4" y="56" width="61" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[EDIFICACION VS VIA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="75" width="49" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[PISOS BODEGA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="66" width="49" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[ALTURA]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="66" y="74" width="35" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="6"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{pisosBodega}==null?"N/A":$P{REPORT_SCRIPTLET}.retornarDominioReporte("PISOSBODEGA",$F{pisosBodega}.toString(),false).equals("_")?"N/A":$P{REPORT_SCRIPTLET}.retornarDominioReporte("PISOSBODEGA",$F{pisosBodega}.toString(),false)]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="310" y="0" width="67" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{estadoConservacion}==null?"":$P{REPORT_SCRIPTLET}.retornarDominioReporte("ESTADOCONSERVACION",$F{estadoConservacion}.toString(),false)]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="310" y="50" width="67" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{fachada}==null?"":$P{REPORT_SCRIPTLET}.retornarDominioReporte("FACHADA",$F{fachada}.toString(),false)]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="310" y="10" width="67" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{estructura}==null?"":$P{REPORT_SCRIPTLET}.retornarDominioReporte("ESTRUCTURA",$F{estructura}.toString(),false)]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="310" y="70" width="67" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tipoFachada}==null?"":$P{REPORT_SCRIPTLET}.retornarDominioReporte("TIPOFACHADA",$F{tipoFachada}.toString(),false)]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="310" y="80" width="67" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cubierta}==null?"":$P{REPORT_SCRIPTLET}.retornarDominioReporte("CUBIERTA",$F{cubierta}.toString(),false)]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="310" y="30" width="67" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{materialEstructura}==null?"":$P{REPORT_SCRIPTLET}.retornarDominioReporte("MATEST",$F{materialEstructura}.toString(),false)]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="225" y="0" width="85" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[ESTADO DE CONSERVACION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="225" y="50" width="85" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[FACHADA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="225" y="10" width="85" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[ESTRUCTURA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="225" y="69" width="85" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[TIPO FACHADA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="225" y="78" width="85" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[CUBIERTA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="225" y="30" width="85" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[MATERIALES DE LA ESTRUCTURA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="225" y="19" width="85" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[OTRA ESTRUCTURA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="225" y="60" width="85" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[OTRA FACHADA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="225" y="87" width="85" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[OTRA CUBIERTA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="225" y="40" width="85" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[DETALLE MATERIAL]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="481" y="40" width="79" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{simetriaAltura}==null?"":$P{REPORT_SCRIPTLET}.retornarDominioReporte("SIMETRIA",$F{simetriaAltura}.toString(),false)]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="481" y="50" width="79" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{simetriaPlanta}==null?"":$P{REPORT_SCRIPTLET}.retornarDominioReporte("SIMETRIA",$F{simetriaPlanta}.toString(),false)]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="481" y="60" width="79" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sobrePeso}==null?"N/A":$P{REPORT_SCRIPTLET}.retornarDominioReporte("AFIRMAR",$F{sobrePeso}.toString(),false).equals("_")?"N/A":$P{REPORT_SCRIPTLET}.retornarDominioReporte("AFIRMAR",$F{sobrePeso}.toString(),false)]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="481" y="70" width="79" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{golpeteo}==null?"":$P{REPORT_SCRIPTLET}.retornarDominioReporte("GOLPETEO",$F{golpeteo}.toString(),false)]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="481" y="30" width="79" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{luces}==null?"N/A":$P{REPORT_SCRIPTLET}.retornarDominioReporte("LUCES",$F{luces}.toString(),false).equals("_")?"N/A":$P{REPORT_SCRIPTLET}.retornarDominioReporte("LUCES",$F{luces}.toString(),false)]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="481" y="90" width="79" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{danoPrevio}==null?"":$P{REPORT_SCRIPTLET}.retornarDominioReporte("DANOS",$F{danoPrevio}.toString(),false)]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="481" y="80" width="79" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{asentamientos}==null?"N/A":$P{REPORT_SCRIPTLET}.retornarDominioReporte("AFIRMAR",$F{asentamientos}.toString(),false).equals("_")?"N/A":$P{REPORT_SCRIPTLET}.retornarDominioReporte("AFIRMAR",$F{asentamientos}.toString(),false)]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement mode="Transparent" x="2" y="104" width="569" height="32"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="383" y="40" width="98" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[SIMETRIA EN ALTURA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="383" y="51" width="98" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[SIMETRIA EN PLANTA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="383" y="60" width="98" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[HAY SOBREPESO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="383" y="70" width="98" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[HAY GOLPETEO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="383" y="30" width="98" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[LONGITUD LUCES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="383" y="90" width="98" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[EXISTEN DAÑOS PREVIOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="383" y="80" width="98" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[HAY ASENTAMIENTOS]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement mode="Transparent" x="2" y="170" width="569" height="17"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<textField isBlankWhenNull="true">
+				<reportElement x="34" y="105" width="12" height="10"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sala}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="34" y="115" width="12" height="10"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{comedor}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="34" y="125" width="12" height="10"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{estudio}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="96" y="105" width="12" height="10"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{banioSocial}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="96" y="115" width="12" height="10"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{estarHabitacion}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="96" y="125" width="12" height="10"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numeroHabitaciones}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="225" y="105" width="12" height="10"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{banioServicio}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="225" y="115" width="12" height="10"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{patioInterior}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="225" y="125" width="12" height="10"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{terraza}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="296" y="105" width="12" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{jardin}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="296" y="115" width="12" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{balcon}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="296" y="125" width="12" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{zonaVerdePrivada}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="357" y="105" width="12" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{totalGarajes}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="357" y="115" width="12" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cubierto}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="357" y="125" width="12" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{descubierto}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="419" y="105" width="12" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{usoExclusivo}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="419" y="115" width="12" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{privado}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="419" y="125" width="12" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{bahiaComunal}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="477" y="105" width="12" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sencillo}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="477" y="115" width="12" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{doble}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="477" y="125" width="12" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{servidumbre}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="503" y="115" width="12" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{deposito}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="556" y="105" width="12" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{local}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="556" y="115" width="12" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{bodega}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="556" y="125" width="12" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{oficina}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="5" y="105" width="30" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[SALA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="115" width="30" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[COMEDOR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="125" width="30" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[ESTUDIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="54" y="105" width="43" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[BAÑO SOCIAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="54" y="115" width="42" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[ESTAR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="54" y="125" width="42" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[HABITACIONES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="183" y="105" width="42" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[BAÑO SERVICIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="183" y="115" width="42" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[PATIO INTERIOR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="183" y="125" width="42" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[TERRAZA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="245" y="105" width="30" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[JARDIN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="245" y="115" width="30" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[BALCON]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="245" y="125" width="51" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[Z. VERDE PRIVADA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="316" y="105" width="41" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[TOTAL GARAJES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="316" y="115" width="39" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[CUBIERTO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="316" y="125" width="39" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[DESCUBIERTO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="377" y="105" width="42" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[USO EXCLUSIVO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="377" y="115" width="42" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[PRIVADO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="377" y="125" width="42" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[BAHIA COMUN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="439" y="105" width="38" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[SENCILLO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="439" y="115" width="38" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[DOBLE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="439" y="125" width="38" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[SERVIDUMBRE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="497" y="105" width="30" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[DEPOSITO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="527" y="105" width="30" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[LOCAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="527" y="115" width="30" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[BODEGA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="527" y="125" width="30" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[OFICINA]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="39" y="142" width="25" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{iluminacion}==null?"":$P{REPORT_SCRIPTLET}.retornarDominioReporte("MBR",$F{ventilacion}.toString(),false)]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="39" y="153" width="25" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{iluminacion}==null?"":$P{REPORT_SCRIPTLET}.retornarDominioReporte("MBR",$F{iluminacion}.toString(),false)]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="4" y="144" width="34" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[VENTILACION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="4" y="153" width="34" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[ILUMINACION]]></text>
+			</staticText>
+			<subreport>
+				<reportElement x="67" y="138" width="507" height="31"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{condicionSalubridad})]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "report5c11_subreport3_subreport1.jasper"]]></subreportExpression>
+			</subreport>
+			<textField isBlankWhenNull="true">
+				<reportElement x="112" y="170" width="37" height="7"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="5" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{estadoPisos}==null?"":$P{REPORT_SCRIPTLET}.retornarDominioReporte("INFOCONSTR",$F{estadoPisos}.toString(),false)]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="180" y="170" width="37" height="7"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="5" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{estadoMuros}==null?"":$P{REPORT_SCRIPTLET}.retornarDominioReporte("INFOCONSTR",$F{estadoMuros}.toString(),false)]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="316" y="170" width="39" height="7"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="5" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{estadoMadera}==null?"":$P{REPORT_SCRIPTLET}.retornarDominioReporte("INFOCONSTR",$F{estadoMadera}.toString(),false)]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="385" y="170" width="38" height="7"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="5" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{estadoMetal}==null?"":$P{REPORT_SCRIPTLET}.retornarDominioReporte("INFOCONSTR",$F{estadoMetal}.toString(),false)]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="316" y="177" width="39" height="7"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="5" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{calidadMadera}==null?"":$P{REPORT_SCRIPTLET}.retornarDominioReporte("CALIDAD",$F{calidadMadera}.toString(),false)]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="385" y="177" width="38" height="7"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="5" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{calidMetal}==null?"":$P{REPORT_SCRIPTLET}.retornarDominioReporte("CALIDAD",$F{calidMetal}.toString(),false)]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="80" y="171" width="33" height="7"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[PISOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="151" y="171" width="27" height="7"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[MUROS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="284" y="171" width="32" height="7"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[C. MADERA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="356" y="171" width="27" height="7"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[C. METAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="284" y="179" width="32" height="7"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[C. MADERA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="356" y="179" width="27" height="7"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[C. METAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="219" y="171" width="27" height="7"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[TECHOS]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="112" y="177" width="37" height="7"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="5" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{calidadPiso}==null?"":$P{REPORT_SCRIPTLET}.retornarDominioReporte("CALIDAD",$F{calidadPiso}.toString(),false)]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="180" y="177" width="37" height="7"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="5" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{calidadMuro}==null?"":$P{REPORT_SCRIPTLET}.retornarDominioReporte("CALIDAD",$F{calidadMuro}.toString(),false)]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="247" y="177" width="36" height="7"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="5" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{calidadTecho}==null?"":$P{REPORT_SCRIPTLET}.retornarDominioReporte("CALIDAD",$F{calidadTecho}.toString(),false)]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="80" y="179" width="33" height="7"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[PISOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="151" y="179" width="27" height="7"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[MUROS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="219" y="179" width="27" height="7"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[TECHOS]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="454" y="170" width="40" height="7"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="5" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{estadoBanios}==null?"":$P{REPORT_SCRIPTLET}.retornarDominioReporte("INFOCONSTR",$F{estadoBanios}.toString(),false)]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="525" y="170" width="35" height="7"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="5" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{estadoCocina}==null?"":$P{REPORT_SCRIPTLET}.retornarDominioReporte("INFOCONSTR",$F{estadoCocina}.toString(),false)]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="454" y="177" width="40" height="7"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="5" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{calidadBanio}==null?"":$P{REPORT_SCRIPTLET}.retornarDominioReporte("CALIDAD",$F{calidadBanio}.toString(),false)]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="525" y="177" width="35" height="7"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="5" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{calidadCocina}==null?"":$P{REPORT_SCRIPTLET}.retornarDominioReporte("COCINA",$F{calidadCocina}.toString(),false)]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="496" y="171" width="27" height="7"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[COCINA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="425" y="179" width="27" height="7"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[BAÑOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="496" y="179" width="27" height="7"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[COCINA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="425" y="171" width="27" height="7"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[BAÑOS]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="78" y="201" width="15" height="10"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{propiedadHorizontal}==null?"":$P{REPORT_SCRIPTLET}.retornarDominioReporte("AFIRMAR",$F{propiedadHorizontal}.toString(),false)]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="78" y="211" width="15" height="10"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{conjuntoAgrupacionCerrada}==null?"":$P{REPORT_SCRIPTLET}.retornarDominioReporte("AFIRMAR",$F{conjuntoAgrupacionCerrada}.toString(),false)]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="63" y="221" width="30" height="10"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ubicacionInmueble}==null?"":$P{REPORT_SCRIPTLET}.retornarDominioReporte("UBICACION",$F{ubicacionInmueble}.toString(),false)]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="8" y="201" width="71" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[SOM. A PROP. HORIZONTAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="8" y="212" width="70" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[CONJ. O AGRUP. CERRADA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="8" y="222" width="55" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[UBICACION INMUEBLE]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="145" y="213" width="15" height="10"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{unidadPorPiso}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="145" y="223" width="15" height="9"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{totalUnidades}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="98" y="223" width="47" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[TOTAL UNIDADES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="98" y="213" width="47" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[UNID. POR PISO]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement mode="Transparent" x="165" y="194" width="406" height="42"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<textField isBlankWhenNull="true">
+				<reportElement x="205" y="194" width="12" height="10"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font fontName="DejaVu Sans" size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{porteria}==null?"\u2610":$F{porteria}.equals(new BigDecimal(1))? "\u2611" : "\u2610"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="256" y="194" width="12" height="10"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font fontName="DejaVu Sans" size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{piscina}==null?"\u2610":$F{piscina}.equals(new BigDecimal(1))? "\u2611" : "\u2610"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="319" y="194" width="12" height="10"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font fontName="DejaVu Sans" size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{garajeVisitante}==null?"\u2610":$F{garajeVisitante}.equals(new BigDecimal(1))? "\u2611" : "\u2610"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="383" y="194" width="12" height="10"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font fontName="DejaVu Sans" size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{bombaEyectora}==null?"\u2610":$F{bombaEyectora}.equals(new BigDecimal(1))? "\u2611" : "\u2610"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="429" y="194" width="12" height="10"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font fontName="DejaVu Sans" size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{zonasVerdes}==null?"\u2610":$F{zonasVerdes}.equals(new BigDecimal(1))? "\u2611" : "\u2610"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="494" y="194" width="12" height="10"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font fontName="DejaVu Sans" size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{salonComunal}==null?"\u2610":$F{salonComunal}.equals(new BigDecimal(1))? "\u2611" : "\u2610"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="557" y="194" width="12" height="10"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font fontName="DejaVu Sans" size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{planta}==null?"\u2610":$F{planta}.equals(new BigDecimal(1))? "\u2611" : "\u2610"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="171" y="194" width="35" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[PORTERIA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="217" y="194" width="40" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[PISCINA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="269" y="194" width="51" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[GJ VISITANTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="333" y="194" width="51" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[BOMBA EYECTORA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="397" y="194" width="33" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[Z. VERDES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="445" y="194" width="50" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[SALON COMUNAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="508" y="194" width="50" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[PLANTA ELECTRICA]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="205" y="203" width="12" height="10"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font fontName="DejaVu Sans" size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{citofono}==null?"\u2610":$F{citofono}.equals(new BigDecimal(1))? "\u2611" : "\u2610"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="256" y="203" width="12" height="10"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font fontName="DejaVu Sans" size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tanqueAgua}==null?"\u2610":$F{tanqueAgua}.equals(new BigDecimal(1))? "\u2611" : "\u2610"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="319" y="203" width="12" height="10"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font fontName="DejaVu Sans" size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{juegoNinos}==null?"\u2610":$F{juegoNinos}.equals(new BigDecimal(1))? "\u2611" : "\u2610"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="383" y="203" width="12" height="10"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font fontName="DejaVu Sans" size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{aireAcondicionado}==null?"\u2610":$F{aireAcondicionado}.equals(new BigDecimal(1))? "\u2611" : "\u2610"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="429" y="203" width="12" height="10"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font fontName="DejaVu Sans" size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{gimnasio}==null?"\u2610":$F{gimnasio}.equals(new BigDecimal(1))? "\u2611" : "\u2610"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="494" y="203" width="12" height="10"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font fontName="DejaVu Sans" size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{shutBasuras}==null?"\u2610":$F{shutBasuras}.equals(new BigDecimal(1))? "\u2611" : "\u2610"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="557" y="203" width="12" height="10"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font fontName="DejaVu Sans" size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ascensor}==null?"\u2610":$F{ascensor}.equals(new BigDecimal(1))? "\u2611" : "\u2610"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="171" y="203" width="35" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[CITOFONO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="217" y="203" width="40" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[TANQUE AGUA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="269" y="203" width="51" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[JUEGOS NIÑOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="333" y="203" width="51" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[A. ACOND. CENTRAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="397" y="203" width="33" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[GIMNASIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="445" y="203" width="50" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[SHUT BASURAS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="508" y="203" width="50" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[ASCENSOR]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="205" y="212" width="12" height="10"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font fontName="DejaVu Sans" size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{bicicletero}==null?"\u2610":$F{bicicletero}.equals(new BigDecimal(1))? "\u2611" : "\u2610"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="256" y="212" width="12" height="10"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font fontName="DejaVu Sans" size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{clubHouse}==null?"\u2610":$F{clubHouse}.equals(new BigDecimal(1))? "\u2611" : "\u2610"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="319" y="212" width="12" height="10"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font fontName="DejaVu Sans" size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{canchaMultiple}==null?"\u2610":$F{canchaMultiple}.equals(new BigDecimal(1))? "\u2611" : "\u2610"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="383" y="212" width="12" height="10"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font fontName="DejaVu Sans" size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{squash}==null?"\u2610":$F{squash}.equals(new BigDecimal(1))? "\u2611" : "\u2610"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="429" y="212" width="12" height="10"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font fontName="DejaVu Sans" size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{golfito}==null?"\u2610":$F{golfito}.equals(new BigDecimal(1))? "\u2611" : "\u2610"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="494" y="212" width="12" height="10"/>
+				<box>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font fontName="DejaVu Sans" size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{presion}==null?"\u2610":$F{presion}.equals(new BigDecimal(1))? "\u2611" : "\u2610"]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="554" y="212" width="15" height="10"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numeroAscensores}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="171" y="212" width="35" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[BICICLETERO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="217" y="212" width="40" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[CLUB HOUSE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="269" y="212" width="51" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[CANCHA MULTIPLE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="334" y="212" width="50" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[CANCHA SQUASH]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="397" y="212" width="33" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[GOLFITO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="445" y="212" width="50" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[EQ. PRESION CONS.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="508" y="212" width="46" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[ASCENSORES]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="207" y="222" width="153" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{otrosDotacion}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="384" y="222" width="143" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{otrosDotacion2}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="171" y="222" width="35" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[OTROS]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="481" y="0" width="79" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{parapetosCubierta}==null?"":$P{REPORT_SCRIPTLET}.retornarDominioReporte("AFIRMAR",$F{parapetosCubierta}.toString(),false)]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="481" y="10" width="79" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ubicacionTanque}==null?"N/A":$P{REPORT_SCRIPTLET}.retornarDominioReporte("TANQUES",$F{ubicacionTanque}.toString(),false).equals("_")?"N/A":$P{REPORT_SCRIPTLET}.retornarDominioReporte("TANQUES",$F{ubicacionTanque}.toString(),false).equals("_")]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="383" y="0" width="98" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[EXISTEN PARAPETOSEN LA CUBIERTA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="383" y="10" width="98" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[UBICACION TANQUES DE AGUA]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="481" y="20" width="79" height="10"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="6"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{otraUbicacionTanque}==null||$F{otraUbicacionTanque}.equals("")?"N/A":$F{otraUbicacionTanque}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="383" y="20" width="98" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[OTRA UBICACION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="127" y="6" width="77" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[ESTADO CONSTRUCCION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="122" y="95" width="56" height="10"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DEPENDENCIAS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="5" y="173" width="43" height="10"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ACABADOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="50" y="171" width="31" height="8"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ESTADO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="50" y="179" width="31" height="8"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CALIDAD]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="42" y="187" width="81" height="10"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[PROPIEDAD HORIZONTAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="315" y="187" width="65" height="10"/>
+				<textElement>
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DOTACION COMUNAL]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="66" y="56" width="35" height="10"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ubicacionNivelVia}==null?"":$P{REPORT_SCRIPTLET}.retornarDominioReporte("NIVEL",$F{ubicacionNivelVia}.toString(),false)]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="66" y="66" width="35" height="8"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="6"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{altura}==null?"N/A":$P{REPORT_SCRIPTLET}.retornarDominioReporte("ALTURA",$F{altura}.toString(),false).equals("_")?"N/A":$P{REPORT_SCRIPTLET}.retornarDominioReporte("ALTURA",$F{altura}.toString(),false)]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="310" y="20" width="67" height="10"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="6"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{textoEstructura}==null||$F{textoEstructura}.equals("")?"N/A":$F{textoEstructura}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="310" y="40" width="67" height="10"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="4"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{detalleMaterialSFBUA}==null?"":$P{REPORT_SCRIPTLET}.retornarDominioReporte("C_ESTRUCTURA_SF_BUA",$F{detalleMaterialSFBUA}.toString(),false)]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="310" y="60" width="67" height="10"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="6"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{textoFachada}==null||$F{textoFachada}.equals("")?"N/A":$F{textoFachada}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="310" y="90" width="67" height="10"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="6"/>
+					<paragraph leftIndent="2"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{textoCubierta}==null||$F{textoCubierta}.equals("")?"N/A":$F{textoCubierta}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="247" y="170" width="36" height="7"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="5" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{estructuraTechos}==null?"":$P{REPORT_SCRIPTLET}.retornarDominioReporte("INFOCONSTR",$F{estructuraTechos}.toString(),false)]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="145" y="203" width="15" height="10"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numeroEdificios}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="98" y="203" width="47" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[EDIFICIOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="116" y="105" width="47" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[BAÑO PRIVADO]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="163" y="115" width="12" height="10"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cocina}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="116" y="125" width="47" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[CUARTO SERVICIO]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="163" y="125" width="12" height="10"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cuartoServicio}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="163" y="105" width="12" height="10"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="5" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{banioPrivado}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="116" y="115" width="47" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[COCINA]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="184" y="34" width="20" height="10" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="DejaVu Sans" size="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{enObra}==null?"\u2610":$F{enObra}.equals(new BigDecimal(1))? "\u2611" : "\u2610"]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Module xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		   xmlns:s="library://ns.adobe.com/flex/spark" 
+		   xmlns:mx="library://ns.adobe.com/flex/mx" layout="absolute" width="552" height="256"
+		   implements="modulos.IModule" initialize="module1_initializeHandler(event)"
+		   xmlns:valueObjects="valueObjects.*"
+		    
+		   xmlns:services="services.*" creationComplete="module1_creationCompleteHandler(event)">
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			import mx.events.FlexEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			import permisos.Permiso;
+			
+			import valueObjects.Dominios;
+			import valueObjects.Usuario;
+			
+			[Bindable]
+			public var myUsuario:Usuario;
+			
+			[Bindable]
+			public var mensaje:String = new String();
+			
+			[Bindable]
+			var myListaPermisos:Permiso;
+			
+			private var isCommitDone:Boolean = new Boolean(true); 
+			
+			public function setTexto(t:String):void
+			{
+			}
+			
+			public function setPermisos(listaPermisos:Permiso):void
+			{
+				myListaPermisos = listaPermisos;
+			}	
+			
+			public function getPermisos():Permiso
+			{
+				return myListaPermisos;
+			}
+			
+			public function ejecutar():void
+			{    
+			}
+			
+			/**
+			 * Adiciona nuevos dominios y valores de dominio
+			 **/ 
+			public function adicionar():void
+			{ 
+				if(isCommitDone){
+                    //La lógica de adicionar se movió al método result del servicio que trae el Id puesto que al adicionar un nuevo registro se estaba generando error de Id entity unique
+					obtieneIdHorasCorteResult.token = horasCorteService.obtieneIdHorasCorte();
+				}
+				else
+				{
+					Alert.show("Hay registros pendientes por guardar.\n\nAntes de insertar un nuevo registro guarde los cambios realizados");
+					
+				}
+			} 
+			
+			/**
+			 * Consulta los valores de un dominio específico
+			 **/
+			public function consultar():void
+			{  
+			}
+			
+			public function imprimir():void
+			{
+			}
+			
+			/**
+			 * Actualiza un valor de dominio
+			 **/
+			public function editar():void
+			{	
+			}
+			
+			/**
+			 * Elimina un dominio y restringe la eliminación del dominio de Categoría
+			 **/
+			public function eliminar():void
+			{ 	
+			}
+			
+			protected function module1_initializeHandler(event:FlexEvent):void
+			{
+				dtgHorasCorteArchivo.invalidateList();
+				myUsuario = parentApplication.getUsuarioActual();
+			}
+			
+			
+			protected function dataGrid_creationCompleteHandler(event:FlexEvent):void
+			{
+				horasCorteService.getDataManager(horasCorteService.DATA_MANAGER_HORASCORTEARCHIVO).autoCommit=false; 
+				findAllHorasCorteResult.token = horasCorteService.findAllHorasCorte();
+			}
+			
+			
+			protected function button1_clickHandler(event:MouseEvent):void
+			{
+				horasCorteService.commit();
+				isCommitDone = true;
+				getMensajeTransaccionResult.token = horasCorteService.getMensajeTransaccion();
+			}
+			
+			protected function getMensajeTransaccionResult_resultHandler(event:ResultEvent):void
+			{
+				mensaje = getMensajeTransaccionResult.lastResult as String;
+				if(mensaje!=null)
+				{
+					Alert.show(mensaje);
+				}
+				mensaje = null;
+			}
+			
+			
+			protected function findAllHorasCorteResult_resultHandler(event:ResultEvent):void
+			{
+				dtgHorasCorteArchivo.dataProvider = findAllHorasCorteResult.lastResult;
+			}
+			
+			
+			
+
+			protected function obtieneIdHorasCorteResult_resultHandler(event:ResultEvent):void
+			{
+				var fechaActual:Date = new Date();	
+				var d:HorasCorteArchivo = new HorasCorteArchivo(); 
+				//Se coloca para solucionar bug en el datagrid de flex, alli se le debe asignar un id al objeto.					
+				d.idHorasCorteArchivo=obtieneIdHorasCorteResult.lastResult;
+				d.estado = '';
+				d.horaCorte = '';
+				d.minutosCorte = '';
+				d.usuarioCreacion = myUsuario.codigoUsuario;
+				d.usuarioTransaccion = myUsuario.codigoUsuario;
+				d.fechaCreacion=fechaActual;
+				d.fechaTransaccion=fechaActual;
+				dtgHorasCorteArchivo.dataProvider.addItem(d);
+				dtgHorasCorteArchivo.verticalScrollPosition = dtgHorasCorteArchivo.dataProvider.length -1;
+				isCommitDone = false;
+			}
+
+
+			protected function module1_creationCompleteHandler(event:FlexEvent):void
+			{
+				dtgHorasCorteArchivo.dataProvider.removeAll();
+				dtgHorasCorteArchivo.invalidateList();
+				
+				findAllHorasCorteResult.token = horasCorteService.findAllHorasCorte();
+			}
+
+
+			protected function button2_clickHandler(event:MouseEvent):void
+			{horasCorteService.getDataManager(horasCorteService.DATA_MANAGER_HORASCORTEARCHIVO).revertChanges();
+			 findAllHorasCorteResult.token = horasCorteService.findAllHorasCorte();				
+			}
+
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<valueObjects:HorasCorteArchivo id="horasCorteArchivo"/>
+		<s:CallResponder id="findAllHorasCorteResult" result="findAllHorasCorteResult_resultHandler(event)"/>
+		<services:HorasCorteService id="horasCorteService" fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)" showBusyCursor="true"/>
+		<s:CallResponder id="getMensajeTransaccionResult" result="getMensajeTransaccionResult_resultHandler(event)"/>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<fx:Component id="inlineEditor">
+			<mx:ComboBox selectedIndex="0">
+				<mx:dataProvider>
+					<fx:String>A</fx:String>
+					<fx:String>I</fx:String>
+				</mx:dataProvider>
+			</mx:ComboBox>
+		</fx:Component>
+		<s:CallResponder id="obtieneIdHorasCorteResult" result="obtieneIdHorasCorteResult_resultHandler(event)"/>
+	</fx:Declarations>
+	<fx:Style source="assets/css/AvaluosBolivar.css"/>
+	<fx:Style source="assets/css/AvaluosBolivarPanel.css"/>
+	<mx:DataGrid x="137" y="6" width="409" height="203" id="dtgHorasCorteArchivo" editable="true" creationComplete="dataGrid_creationCompleteHandler(event)" dataProvider="{findAllHorasCorteResult.lastResult}" >
+		<mx:columns>
+			<mx:DataGridColumn headerText="Hora" dataField="horaCorte" editorDataField="value">
+				<mx:itemEditor>
+					<fx:Component>
+						<mx:NumericStepper stepSize="1" maximum="23" />
+					</fx:Component>
+				</mx:itemEditor>
+			</mx:DataGridColumn>
+			<mx:DataGridColumn headerText="Minutos" dataField="minutosCorte" editorDataField="value">
+				<mx:itemEditor>
+					<fx:Component>
+						<mx:NumericStepper stepSize="1" maximum="59"/>
+					</fx:Component>
+				</mx:itemEditor>
+			</mx:DataGridColumn>
+			<mx:DataGridColumn headerText="Estado" dataField="estado" width="150" editorDataField="selectedItem" itemEditor="{inlineEditor}"/>
+		</mx:columns>
+	</mx:DataGrid>
+	<s:Button x="137" y="217" label="Guardar Cambios" click="button1_clickHandler(event)"/>
+	<s:Button x="285" y="219" label="Cancelar Cambios" click="button2_clickHandler(event)"/>
+</mx:Module>

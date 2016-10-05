@@ -1,0 +1,877 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="PdfAnexos" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.2100000000000057"/>
+	<property name="ireport.x" value="5"/>
+	<property name="ireport.y" value="147"/>
+	<import value="net.sf.jasperreports.engine.util.JRImageLoader"/>
+	<parameter name="ID_AVALUO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select
+(
+ select arch.contenido
+  from
+       archivos arch,
+       pgb_lst_anexos_pdf anx
+ where
+       arch.id_archivo = anx.id_archivo
+       and anx.id_Avaluo = av.id_avaluo
+       and anx.consecutivo_anexo = 1
+) as contenido1,
+(
+ select arch.contenido
+  from
+       archivos arch,
+       pgb_lst_anexos_pdf anx
+ where
+       arch.id_archivo = anx.id_archivo
+       and anx.id_Avaluo = av.id_avaluo
+       and anx.consecutivo_anexo = 2
+) as contenido2,
+(
+ select arch.contenido
+  from
+       archivos arch,
+       pgb_lst_anexos_pdf anx
+ where
+       arch.id_archivo = anx.id_archivo
+       and anx.id_Avaluo = av.id_avaluo
+       and anx.consecutivo_anexo = 3
+) as contenido3,
+(
+ select arch.contenido
+  from
+       archivos arch,
+       pgb_lst_anexos_pdf anx
+ where
+       arch.id_archivo = anx.id_archivo
+       and anx.id_Avaluo = av.id_avaluo
+       and anx.consecutivo_anexo = 4
+) as contenido4,
+(
+ select arch.contenido
+  from
+       archivos arch,
+       pgb_lst_anexos_pdf anx
+ where
+       arch.id_archivo = anx.id_archivo
+       and anx.id_Avaluo = av.id_avaluo
+       and anx.consecutivo_anexo = 5
+) as contenido5,
+(
+ select arch.contenido
+  from
+       archivos arch,
+       pgb_lst_anexos_pdf anx
+ where
+       arch.id_archivo = anx.id_archivo
+       and anx.id_Avaluo = av.id_avaluo
+       and anx.consecutivo_anexo = 6
+) as contenido6,
+(
+ select arch.contenido
+  from
+       archivos arch,
+       pgb_lst_anexos_pdf anx
+ where
+       arch.id_archivo = anx.id_archivo
+       and anx.id_Avaluo = av.id_avaluo
+       and anx.consecutivo_anexo = 7
+) as contenido7,
+(
+ select arch.contenido
+  from
+       archivos arch,
+       pgb_lst_anexos_pdf anx
+ where
+       arch.id_archivo = anx.id_archivo
+       and anx.id_Avaluo = av.id_avaluo
+       and anx.consecutivo_anexo = 8
+) as contenido8,
+(
+ select arch.contenido
+  from
+       archivos arch,
+       pgb_lst_anexos_pdf anx
+ where
+       arch.id_archivo = anx.id_archivo
+       and anx.id_Avaluo = av.id_avaluo
+       and anx.consecutivo_anexo = 9
+) as contenido9,
+(
+ select arch.contenido
+  from
+       archivos arch,
+       pgb_lst_anexos_pdf anx
+ where
+       arch.id_archivo = anx.id_archivo
+       and anx.id_Avaluo = av.id_avaluo
+       and anx.consecutivo_anexo = 10
+) as contenido10,
+(
+ select arch.contenido
+  from
+       archivos arch,
+       pgb_lst_anexos_pdf anx
+ where
+       arch.id_archivo = anx.id_archivo
+       and anx.id_Avaluo = av.id_avaluo
+       and anx.consecutivo_anexo = 11
+) as contenido11,
+(
+ select arch.contenido
+  from
+       archivos arch,
+       pgb_lst_anexos_pdf anx
+ where
+       arch.id_archivo = anx.id_archivo
+       and anx.id_Avaluo = av.id_avaluo
+       and anx.consecutivo_anexo = 12
+) as contenido12,
+(
+ select arch.contenido
+  from
+       archivos arch,
+       pgb_lst_anexos_pdf anx
+ where
+       arch.id_archivo = anx.id_archivo
+       and anx.id_Avaluo = av.id_avaluo
+       and anx.consecutivo_anexo = 13
+) as contenido13,
+(
+ select arch.contenido
+  from
+       archivos arch,
+       pgb_lst_anexos_pdf anx
+ where
+       arch.id_archivo = anx.id_archivo
+       and anx.id_Avaluo = av.id_avaluo
+       and anx.consecutivo_anexo = 14
+) as contenido14,
+(
+ select arch.contenido
+  from
+       archivos arch,
+       pgb_lst_anexos_pdf anx
+ where
+       arch.id_archivo = anx.id_archivo
+       and anx.id_Avaluo = av.id_avaluo
+       and anx.consecutivo_anexo = 15
+) as contenido15
+,
+(
+ select substr(arch.NOMBRE_ARCHIVO, 1,instr(arch.NOMBRE_ARCHIVO,'.',-1,1)-1)
+  from
+       archivos arch,
+       pgb_lst_anexos_pdf anx
+ where
+       arch.id_archivo = anx.id_archivo
+       and anx.id_Avaluo = av.id_avaluo
+       and anx.consecutivo_anexo = 1
+) as nombre1
+,
+(
+ select substr(arch.NOMBRE_ARCHIVO, 1,instr(arch.NOMBRE_ARCHIVO,'.',-1,1)-1)
+  from
+       archivos arch,
+       pgb_lst_anexos_pdf anx
+ where
+       arch.id_archivo = anx.id_archivo
+       and anx.id_Avaluo = av.id_avaluo
+       and anx.consecutivo_anexo = 2
+) as nombre2
+,
+(
+ select substr(arch.NOMBRE_ARCHIVO, 1,instr(arch.NOMBRE_ARCHIVO,'.',-1,1)-1)
+  from
+       archivos arch,
+       pgb_lst_anexos_pdf anx
+ where
+       arch.id_archivo = anx.id_archivo
+       and anx.id_Avaluo = av.id_avaluo
+       and anx.consecutivo_anexo = 3
+) as nombre3
+,
+(
+ select substr(arch.NOMBRE_ARCHIVO, 1,instr(arch.NOMBRE_ARCHIVO,'.',-1,1)-1)
+  from
+       archivos arch,
+       pgb_lst_anexos_pdf anx
+ where
+       arch.id_archivo = anx.id_archivo
+       and anx.id_Avaluo = av.id_avaluo
+       and anx.consecutivo_anexo = 4
+) as nombre4
+,
+(
+ select substr(arch.NOMBRE_ARCHIVO, 1,instr(arch.NOMBRE_ARCHIVO,'.',-1,1)-1)
+  from
+       archivos arch,
+       pgb_lst_anexos_pdf anx
+ where
+       arch.id_archivo = anx.id_archivo
+       and anx.id_Avaluo = av.id_avaluo
+       and anx.consecutivo_anexo = 5
+) as nombre5
+,
+(
+ select substr(arch.NOMBRE_ARCHIVO, 1,instr(arch.NOMBRE_ARCHIVO,'.',-1,1)-1)
+  from
+       archivos arch,
+       pgb_lst_anexos_pdf anx
+ where
+       arch.id_archivo = anx.id_archivo
+       and anx.id_Avaluo = av.id_avaluo
+       and anx.consecutivo_anexo = 6
+) as nombre6
+,
+(
+ select substr(arch.NOMBRE_ARCHIVO, 1,instr(arch.NOMBRE_ARCHIVO,'.',-1,1)-1)
+  from
+       archivos arch,
+       pgb_lst_anexos_pdf anx
+ where
+       arch.id_archivo = anx.id_archivo
+       and anx.id_Avaluo = av.id_avaluo
+       and anx.consecutivo_anexo = 7
+) as nombre7
+,
+(
+ select substr(arch.NOMBRE_ARCHIVO, 1,instr(arch.NOMBRE_ARCHIVO,'.',-1,1)-1)
+  from
+       archivos arch,
+       pgb_lst_anexos_pdf anx
+ where
+       arch.id_archivo = anx.id_archivo
+       and anx.id_Avaluo = av.id_avaluo
+       and anx.consecutivo_anexo = 8
+) as nombre8
+,
+(
+ select substr(arch.NOMBRE_ARCHIVO, 1,instr(arch.NOMBRE_ARCHIVO,'.',-1,1)-1)
+  from
+       archivos arch,
+       pgb_lst_anexos_pdf anx
+ where
+       arch.id_archivo = anx.id_archivo
+       and anx.id_Avaluo = av.id_avaluo
+       and anx.consecutivo_anexo = 9
+) as nombre9
+,
+(
+ select substr(arch.NOMBRE_ARCHIVO, 1,instr(arch.NOMBRE_ARCHIVO,'.',-1,1)-1)
+  from
+       archivos arch,
+       pgb_lst_anexos_pdf anx
+ where
+       arch.id_archivo = anx.id_archivo
+       and anx.id_Avaluo = av.id_avaluo
+       and anx.consecutivo_anexo = 10
+) as nombre10
+,
+(
+ select substr(arch.NOMBRE_ARCHIVO, 1,instr(arch.NOMBRE_ARCHIVO,'.',-1,1)-1)
+  from
+       archivos arch,
+       pgb_lst_anexos_pdf anx
+ where
+       arch.id_archivo = anx.id_archivo
+       and anx.id_Avaluo = av.id_avaluo
+       and anx.consecutivo_anexo = 11
+) as nombre11
+,
+(
+ select substr(arch.NOMBRE_ARCHIVO, 1,instr(arch.NOMBRE_ARCHIVO,'.',-1,1)-1)
+  from
+       archivos arch,
+       pgb_lst_anexos_pdf anx
+ where
+       arch.id_archivo = anx.id_archivo
+       and anx.id_Avaluo = av.id_avaluo
+       and anx.consecutivo_anexo = 12
+) as nombre12
+,
+(
+ select substr(arch.NOMBRE_ARCHIVO, 1,instr(arch.NOMBRE_ARCHIVO,'.',-1,1)-1)
+  from
+       archivos arch,
+       pgb_lst_anexos_pdf anx
+ where
+       arch.id_archivo = anx.id_archivo
+       and anx.id_Avaluo = av.id_avaluo
+       and anx.consecutivo_anexo = 13
+) as nombre13
+,
+(
+ select substr(arch.NOMBRE_ARCHIVO, 1,instr(arch.NOMBRE_ARCHIVO,'.',-1,1)-1)
+  from
+       archivos arch,
+       pgb_lst_anexos_pdf anx
+ where
+       arch.id_archivo = anx.id_archivo
+       and anx.id_Avaluo = av.id_avaluo
+       and anx.consecutivo_anexo = 14
+) as nombre14
+,
+(
+ select substr(arch.NOMBRE_ARCHIVO, 1,instr(arch.NOMBRE_ARCHIVO,'.',-1,1)-1)
+  from
+       archivos arch,
+       pgb_lst_anexos_pdf anx
+ where
+       arch.id_archivo = anx.id_archivo
+       and anx.id_Avaluo = av.id_avaluo
+       and anx.consecutivo_anexo = 15
+) as nombre15
+From pgb_avaluos av
+Where av.id_avaluo = $P{ID_AVALUO}]]>
+	</queryString>
+	<field name="CONTENIDO1" class="weblogic.jdbc.wrapper.Blob"/>
+	<field name="CONTENIDO2" class="weblogic.jdbc.wrapper.Blob"/>
+	<field name="CONTENIDO3" class="weblogic.jdbc.wrapper.Blob"/>
+	<field name="CONTENIDO4" class="weblogic.jdbc.wrapper.Blob"/>
+	<field name="CONTENIDO5" class="weblogic.jdbc.wrapper.Blob"/>
+	<field name="CONTENIDO6" class="weblogic.jdbc.wrapper.Blob"/>
+	<field name="CONTENIDO7" class="weblogic.jdbc.wrapper.Blob"/>
+	<field name="CONTENIDO8" class="weblogic.jdbc.wrapper.Blob"/>
+	<field name="CONTENIDO9" class="weblogic.jdbc.wrapper.Blob"/>
+	<field name="CONTENIDO10" class="weblogic.jdbc.wrapper.Blob"/>
+	<field name="CONTENIDO11" class="weblogic.jdbc.wrapper.Blob"/>
+	<field name="CONTENIDO12" class="weblogic.jdbc.wrapper.Blob"/>
+	<field name="CONTENIDO13" class="weblogic.jdbc.wrapper.Blob"/>
+	<field name="CONTENIDO14" class="weblogic.jdbc.wrapper.Blob"/>
+	<field name="CONTENIDO15" class="weblogic.jdbc.wrapper.Blob"/>
+	<field name="NOMBRE1" class="java.lang.String"/>
+	<field name="NOMBRE2" class="java.lang.String"/>
+	<field name="NOMBRE3" class="java.lang.String"/>
+	<field name="NOMBRE4" class="java.lang.String"/>
+	<field name="NOMBRE5" class="java.lang.String"/>
+	<field name="NOMBRE6" class="java.lang.String"/>
+	<field name="NOMBRE7" class="java.lang.String"/>
+	<field name="NOMBRE8" class="java.lang.String"/>
+	<field name="NOMBRE9" class="java.lang.String"/>
+	<field name="NOMBRE10" class="java.lang.String"/>
+	<field name="NOMBRE11" class="java.lang.String"/>
+	<field name="NOMBRE12" class="java.lang.String"/>
+	<field name="NOMBRE13" class="java.lang.String"/>
+	<field name="NOMBRE14" class="java.lang.String"/>
+	<field name="NOMBRE15" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="551" splitType="Stretch">
+			<rectangle>
+				<reportElement x="22" y="26" width="311" height="229"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="344" y="26" width="138" height="229"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="491" y="26" width="138" height="229"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="640" y="26" width="138" height="101"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="640" y="154" width="138" height="101"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="22" y="283" width="138" height="101"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="195" y="283" width="138" height="101"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="344" y="283" width="138" height="101"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="491" y="283" width="138" height="101"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="640" y="283" width="138" height="101"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="640" y="411" width="138" height="101"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="491" y="411" width="138" height="101"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="344" y="411" width="138" height="101"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="195" y="411" width="138" height="101"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="22" y="411" width="138" height="101"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="309" y="6" width="208" height="14"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[ ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="22" y="255" width="27" height="14"/>
+				<box leftPadding="3" bottomPadding="1">
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Foto 1.]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="49" y="255" width="284" height="14"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="309" y="534" width="208" height="14"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[ ]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="371" y="255" width="111" height="14"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="344" y="255" width="27" height="14"/>
+				<box leftPadding="3" bottomPadding="1">
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Foto 2.]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="518" y="255" width="111" height="14"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="491" y="255" width="27" height="14"/>
+				<box leftPadding="3" bottomPadding="1">
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Foto 3.]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="667" y="127" width="111" height="14"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="640" y="127" width="27" height="14"/>
+				<box leftPadding="3" bottomPadding="1">
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Foto 4.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="640" y="255" width="27" height="14"/>
+				<box leftPadding="3" bottomPadding="1">
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Foto 5.]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="667" y="255" width="111" height="14"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="22" y="384" width="27" height="14"/>
+				<box leftPadding="3" bottomPadding="1">
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Foto 6.]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="49" y="384" width="111" height="14"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="222" y="384" width="111" height="14"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="195" y="384" width="27" height="14"/>
+				<box leftPadding="3" bottomPadding="1">
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Foto 7.]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="371" y="384" width="111" height="14"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="344" y="384" width="27" height="14"/>
+				<box leftPadding="3" bottomPadding="1">
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Foto 8.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="491" y="384" width="27" height="14"/>
+				<box leftPadding="3" bottomPadding="1">
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Foto 9.]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="517" y="384" width="112" height="14"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="640" y="384" width="27" height="14"/>
+				<box leftPadding="3" bottomPadding="1">
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Foto 10.]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="667" y="384" width="111" height="14"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="491" y="513" width="27" height="14"/>
+				<box leftPadding="3" bottomPadding="1">
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Foto 14.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="195" y="513" width="27" height="14"/>
+				<box leftPadding="3" bottomPadding="1">
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Foto 12.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="640" y="513" width="27" height="14"/>
+				<box leftPadding="3" bottomPadding="1">
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Foto 15.]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="518" y="513" width="111" height="14"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="222" y="513" width="111" height="14"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="49" y="513" width="111" height="14"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="344" y="513" width="27" height="14"/>
+				<box leftPadding="3" bottomPadding="1">
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Foto 13.]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="667" y="513" width="111" height="14"/>
+			</rectangle>
+			<rectangle>
+				<reportElement x="371" y="513" width="111" height="14"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="22" y="513" width="27" height="14"/>
+				<box leftPadding="3" bottomPadding="1">
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Foto 11.]]></text>
+			</staticText>
+			<image scaleImage="FillFrame">
+				<reportElement x="22" y="26" width="311" height="229"/>
+				<imageExpression><![CDATA[((oracle.sql.BLOB)$F{CONTENIDO1}.getVendorObj()).getBinaryStream()]]></imageExpression>
+			</image>
+			<image scaleImage="FillFrame">
+				<reportElement x="344" y="26" width="138" height="229"/>
+				<imageExpression><![CDATA[((oracle.sql.BLOB)$F{CONTENIDO2}.getVendorObj()).getBinaryStream()]]></imageExpression>
+			</image>
+			<image scaleImage="FillFrame">
+				<reportElement x="491" y="26" width="138" height="229"/>
+				<imageExpression><![CDATA[((oracle.sql.BLOB)$F{CONTENIDO3}.getVendorObj()).getBinaryStream()]]></imageExpression>
+			</image>
+			<image scaleImage="FillFrame">
+				<reportElement x="640" y="26" width="138" height="101"/>
+				<imageExpression><![CDATA[((oracle.sql.BLOB)$F{CONTENIDO4}.getVendorObj()).getBinaryStream()]]></imageExpression>
+			</image>
+			<image scaleImage="FillFrame">
+				<reportElement x="640" y="154" width="138" height="101"/>
+				<imageExpression><![CDATA[((oracle.sql.BLOB)$F{CONTENIDO5}.getVendorObj()).getBinaryStream()]]></imageExpression>
+			</image>
+			<image scaleImage="FillFrame">
+				<reportElement x="22" y="283" width="138" height="101"/>
+				<imageExpression><![CDATA[((oracle.sql.BLOB)$F{CONTENIDO6}.getVendorObj()).getBinaryStream()]]></imageExpression>
+			</image>
+			<image scaleImage="FillFrame">
+				<reportElement x="195" y="283" width="138" height="101"/>
+				<imageExpression><![CDATA[((oracle.sql.BLOB)$F{CONTENIDO7}.getVendorObj()).getBinaryStream()]]></imageExpression>
+			</image>
+			<image scaleImage="FillFrame">
+				<reportElement x="344" y="283" width="138" height="101"/>
+				<imageExpression><![CDATA[((oracle.sql.BLOB)$F{CONTENIDO8}.getVendorObj()).getBinaryStream()]]></imageExpression>
+			</image>
+			<image scaleImage="FillFrame">
+				<reportElement x="640" y="283" width="138" height="101"/>
+				<imageExpression><![CDATA[((oracle.sql.BLOB)$F{CONTENIDO10}.getVendorObj()).getBinaryStream()]]></imageExpression>
+			</image>
+			<image scaleImage="FillFrame">
+				<reportElement x="491" y="283" width="138" height="101"/>
+				<imageExpression><![CDATA[((oracle.sql.BLOB)$F{CONTENIDO9}.getVendorObj()).getBinaryStream()]]></imageExpression>
+			</image>
+			<image scaleImage="FillFrame">
+				<reportElement x="491" y="411" width="138" height="101"/>
+				<imageExpression><![CDATA[((oracle.sql.BLOB)$F{CONTENIDO14}.getVendorObj()).getBinaryStream()]]></imageExpression>
+			</image>
+			<image scaleImage="FillFrame">
+				<reportElement x="344" y="411" width="138" height="101"/>
+				<imageExpression><![CDATA[((oracle.sql.BLOB)$F{CONTENIDO13}.getVendorObj()).getBinaryStream()]]></imageExpression>
+			</image>
+			<image scaleImage="FillFrame">
+				<reportElement x="22" y="411" width="138" height="101"/>
+				<imageExpression><![CDATA[((oracle.sql.BLOB)$F{CONTENIDO11}.getVendorObj()).getBinaryStream()]]></imageExpression>
+			</image>
+			<image scaleImage="FillFrame">
+				<reportElement x="195" y="411" width="138" height="101"/>
+				<imageExpression><![CDATA[((oracle.sql.BLOB)$F{CONTENIDO12}.getVendorObj()).getBinaryStream()]]></imageExpression>
+			</image>
+			<image scaleImage="FillFrame">
+				<reportElement x="640" y="411" width="138" height="101"/>
+				<imageExpression><![CDATA[((oracle.sql.BLOB)$F{CONTENIDO15}.getVendorObj()).getBinaryStream()]]></imageExpression>
+			</image>
+			<textField isBlankWhenNull="true">
+				<reportElement x="49" y="255" width="284" height="14"/>
+				<box bottomPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+					<paragraph leftIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE1}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="371" y="255" width="111" height="14"/>
+				<box bottomPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+					<paragraph leftIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE2}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="518" y="255" width="111" height="14"/>
+				<box bottomPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+					<paragraph leftIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE3}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="667" y="127" width="111" height="14"/>
+				<box bottomPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+					<paragraph leftIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE4}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="667" y="255" width="111" height="14"/>
+				<box bottomPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+					<paragraph leftIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE5}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="49" y="384" width="111" height="14"/>
+				<box bottomPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+					<paragraph leftIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE6}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="222" y="384" width="111" height="14"/>
+				<box bottomPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+					<paragraph leftIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE7}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="371" y="384" width="111" height="14"/>
+				<box bottomPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+					<paragraph leftIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE8}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="517" y="384" width="112" height="14"/>
+				<box bottomPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+					<paragraph leftIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE9}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="667" y="384" width="111" height="14"/>
+				<box bottomPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+					<paragraph leftIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE10}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="49" y="513" width="111" height="14"/>
+				<box bottomPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+					<paragraph leftIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE11}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="222" y="512" width="111" height="14"/>
+				<box bottomPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+					<paragraph leftIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE12}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="371" y="513" width="111" height="14"/>
+				<box bottomPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+					<paragraph leftIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE13}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="518" y="513" width="111" height="14"/>
+				<box bottomPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+					<paragraph leftIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE14}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="667" y="513" width="111" height="14"/>
+				<box bottomPadding="2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+					<paragraph leftIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NOMBRE15}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

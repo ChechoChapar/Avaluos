@@ -1,0 +1,469 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--- 
+Pantalla para visualizar y consultar los resultados de un cargue masivo de Avaluos
+con el maestro en la parte superior de los archivos cargados y el 
+detalle en la parte inferior del resultado y errores por cada linea
+@implements modulos.IModule
+/*@see spark.components Module*/
+-->
+<mx:Module xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		   xmlns:s="library://ns.adobe.com/flex/spark" 
+		   layout="absolute"
+		   xmlns:mx="library://ns.adobe.com/flex/mx" height="332" xmlns:services="services.*" xmlns:valueObjects="valueObjects.*"  width="516"
+		   implements="modulos.IModule"  creationComplete="module_creationCompleteHandler(event)" initialize="module1_initializeHandler(event)">
+	<fx:Script>
+		<![CDATA[
+			import com.segurosbolivar.avaluos.componentes.WndBuscarPerito;
+			
+			import mx.collections.ArrayCollection;
+			import mx.containers.TitleWindow;
+			import mx.controls.Alert;
+			import mx.controls.DateField;
+			import mx.events.FlexEvent;
+			import mx.events.ListEvent;
+			import mx.formatters.DateFormatter;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.ResultEvent;
+			
+			import permisos.Permiso;
+			
+			import spark.events.IndexChangeEvent;
+			import spark.events.TextOperationEvent;
+			
+			import valueObjects.EmpresasAvaluos;
+			import valueObjects.PgbCargueTmp;
+			import valueObjects.Usuario;
+			import valueObjects.VResumenCargue;
+			
+			
+			/**
+			 * Inicializa el módulo AVA3:DiligenciamientoDeAvaluos, obtiene el usuario de la aplicación padre
+			 * y con base en el perfil de este definie si los componentes de la forma estaran activados o no.
+			 * */
+			protected function module1_initializeHandler(event:FlexEvent):void
+			{
+				myUsuario = parentApplication.getUsuarioActual();
+				if((myUsuario.codigoPerfil == "PGBADMINIST01")) {
+					isEnabled = new Boolean(true);
+				}
+				else
+				{
+					isEnabled = new Boolean(false);
+				}
+				/*
+				if(myUsuario.codigoPerfil != "PGBPERITO01") {
+				//isEnabled = new Boolean(false);
+				isEnabled = new Boolean(true);
+				}
+				else 
+				{
+				//isEnabled = new Boolean(true);
+				isEnabled = new Boolean(false);
+				}*/
+				if((myUsuario.codigoPerfil == "PGBPERITO01") || (myUsuario.codigoPerfil == "PGBADMINIST01")) {
+					//isValidAprobador = new Boolean(true);
+				}
+				else 
+				{
+					//isValidAprobador = new Boolean(false);
+				}
+			}
+			
+			public function setTexto(t:String):void
+			{
+			}
+			
+			public function setPermisos(listaPermisos:Permiso):void
+			{
+				myListaPermisos = listaPermisos;
+			}
+			
+			public function getPermisos():Permiso
+			{
+				return myListaPermisos;
+			}
+			
+			
+			/**
+			 * Ejecuta la prevalidación del avaluo en modo de edición.
+			 * */
+			public function ejecutar():void
+			{
+				
+			}
+			
+			/**
+			 * Permite crear un nuevo avaluo, en este paso crea únicamente la información básica.
+			 * */
+			public function adicionar():void
+			{
+				
+			}
+			
+			private var empAvaluo:EmpresasAvaluos = new EmpresasAvaluos();
+			
+			/**
+			 * Limpia todos los controles del formulario
+			 * */
+			private function limpiarControles():void
+			{
+				txtIdentificacionPerito.text="";
+				txtValor.text="";
+				txtValor.enabled=false;
+				txtIdentificacionPerito.text="";
+				txtNombrePerito.text = "";
+				txtFechaDesde.text="";
+				txtFechaHasta.text="";
+				cbxDepartamentoFiltro.selectedIndex=-1;
+				reportesCombo.selectedIndex=-1;
+				
+			}			
+
+			/**
+			 * Permite consultar avaluos por los siguientes criterios de búsqueda: Tipo de identificación, número de identificación,
+			 * Departamento, ciudad, dirección, Matricula inmobiliaria, estado, fecha, Nombre del Txt, número de línea,
+			 * identificación del perito. 
+			 * */
+			public function consultar():void
+			{
+				
+			}					
+
+			/**
+			 * Genera el reporte PDF con la información del avaluo seleccionado
+			 * */
+			public function imprimir():void
+			{
+				
+			}
+			
+			/**
+			 * Permite ingresar al modo de edición del avaluo seleccionado. 
+			 * */
+			public function editar():void
+			{
+				
+			}
+			
+			public function eliminar():void	
+			{
+				
+			}			
+			
+			var restrict_:String ="^|<>&'";
+			private var isEnabled:Boolean;
+			public var mensaje:String = new String();
+			[Bindable]
+			public var myUsuario:Usuario;
+			[Bindable]
+			public var myListaPermisos:Permiso;			
+								
+			/**
+			 * Metodo para modificar los formatos de fecha y colocar los
+			 * dias de la semana y meses de el año en español
+			 * @deprecated Esta implementado dentro del datagrid
+			 **/
+			protected function dateChooser_init(dt:DateField):void { 
+				dt.dayNames=['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab']; 
+				dt.monthNames=[        'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 
+					'Julio', 'Agosto', 'Septiembre', 'Octubre', 
+					'Noviembre', 'Diciembre']; 
+				dt.firstDayOfWeek = 1; 
+				dt.formatString = "DD/MM/YYYY"; 
+			}
+			
+			/**
+			 * Muestra una ventana modal donde se puede buscar un perito, para luego
+			 * adicionarlos como criterio de búsqueda en la consulta de avaluos
+			 * */
+			private var ventanaExaminar:TitleWindow;
+			protected function btnExaminar_clickHandler(event:MouseEvent):void
+			{
+				ventanaExaminar = PopUpManager.createPopUp(this,WndBuscarPerito,true) as TitleWindow;
+				ventanaExaminar.showCloseButton = true;
+				PopUpManager.centerPopUp(ventanaExaminar);
+				ventanaExaminar['btnSeleccionarPerito'].addEventListener(MouseEvent.CLICK,handleSeleccionarButton);
+			}
+			
+			private function handleSeleccionarButton(event:MouseEvent):void {
+				if(ventanaExaminar['dtgPeritos'].selectedItem != null)
+				{
+					var empresa:EmpresasAvaluos = ventanaExaminar['dtgPeritos'].selectedItem as EmpresasAvaluos;
+					txtIdentificacionPerito.text = empresa.numeroDocumento;
+					txtNombrePerito.text = empresa.descEmpresa;
+					PopUpManager.removePopUp(ventanaExaminar);
+					//lblNombrePerito.visible = true;
+					//txtNombrePerito.visible = true
+				}
+				else 
+				{
+					Alert.show("No seleccionó un perito");
+				}
+			}
+
+			protected function txtIdentificacionPerito_changeHandler(event:TextOperationEvent):void
+			{
+				if((txtIdentificacionPerito.text == null) || (txtIdentificacionPerito.text.length < 1))
+				{
+					//lblNombrePerito.visible = false;
+					//txtNombrePerito.visible = false;
+				}
+			}
+						
+			protected function module_creationCompleteHandler(event:FlexEvent):void
+			{
+				limpiarControles();
+			}			
+			
+			protected function button2_clickHandler(event:MouseEvent):void
+			{			
+				var generar:Boolean=true;
+				var perito:String = "";
+				var departamento:String="";
+				var fechaDesde:Date=null;
+				var fechaHasta:Date=null;
+				var fechaCreacionDesde:Date=null;
+				var fechaCreacionHasta:Date=null;				
+				var reporte:String =""; 
+				var valor:String ="";						
+				var condicion:String ="";
+				
+				if(txtIdentificacionPerito != null && (txtIdentificacionPerito.text.length > 0) ? true : false ) 
+				{
+					perito=txtIdentificacionPerito.text;
+					condicion=condicion+" and a.tUsuario = "+perito+" ";
+				}
+				
+				if(txtFechaCreacionDesde != null && (txtFechaCreacionDesde.text.length > 0) ? true : false )
+					fechaCreacionDesde=txtFechaCreacionDesde.selectedDate;
+				
+				if(txtFechaCreacionHasta != null && (txtFechaCreacionHasta.text.length > 0) ? true : false )
+					fechaCreacionHasta=txtFechaCreacionHasta.selectedDate;
+				
+				if((fechaCreacionHasta==null && fechaCreacionDesde!=null) || (fechaCreacionDesde==null && fechaCreacionHasta!=null) )
+				{	
+					Alert.show("Las fechas creacion desde y hasta son requeridas");
+					generar=false;
+				}
+				else if(fechaCreacionHasta!=null && fechaCreacionDesde!=null)
+				{
+					var dateFormatter:DateFormatter= new DateFormatter();
+					dateFormatter.formatString = "YYYY-MM-DD";
+					condicion=condicion+" and a.fechaCreacion>='"+dateFormatter.format(fechaCreacionDesde)+"' and a.fechaCreacion<='"+dateFormatter.format(fechaCreacionHasta)+"' "
+				}
+				
+				if(txtFechaDesde != null && (txtFechaDesde.text.length > 0) ? true : false )
+					fechaDesde=txtFechaDesde.selectedDate;
+				
+				if(txtFechaHasta != null && (txtFechaHasta.text.length > 0) ? true : false )
+					fechaHasta=txtFechaHasta.selectedDate;
+				
+				if((fechaHasta==null && fechaDesde!=null) || (fechaDesde==null && fechaHasta!=null) )
+				{	
+					Alert.show("Las fechas desde y hasta son requeridas");
+					generar=false;
+				}
+				else if(fechaHasta!=null && fechaDesde!=null)
+				{
+					var dateFormatter:DateFormatter= new DateFormatter();
+					dateFormatter.formatString = "YYYY-MM-DD";
+					condicion=condicion+" and a.fechaAvaluo>='"+dateFormatter.format(fechaDesde)+"' and a.fechaAvaluo<='"+dateFormatter.format(fechaHasta)+"' "
+				}
+				
+				if((cbxDepartamentoFiltro != null) &&  (cbxDepartamentoFiltro.selectedIndex > -1) ? true : false)
+				{
+					departamento = cbxDepartamentoFiltro.selectedItem.idDepartamento as String;
+					condicion=condicion+" and e.sucursalDavivienda="+departamento+" "
+				}
+								
+				if(txtValor != null && (txtValor.text.length > 0) ? true : false ) 
+				{
+					valor=txtValor.text;
+					//condicion=condicion+" and t.totalAvaluo > "+valor+" ";
+				}	
+				
+				if((reportesCombo != null) &&  (reportesCombo.selectedIndex > -1) ? true : false)
+				{	
+					reporte = reportesCombo.selectedItem.data as String;
+					if(reporte=="avaluosXValorPerito" && valor=="")
+					{
+						Alert.show("El valor es requerido");
+						generar=false;
+					}
+					else if(reporte!="avaluosXValorPerito" && valor!="")
+					{	
+						valor="";
+						txtValor.text="";
+						txtValor.enabled=false;
+					}
+					else if(reporte=="avaluosXValorPerito" && valor!="")
+					{
+						condicion=condicion+" and t.totalAvaluo > "+valor+" ";
+					}	
+				}
+				if(reporte=="")
+				{	
+					Alert.show("El tipo de reporte es requerido");
+					generar=false;
+				}
+				/*if(vResumenCargue.nombreArchivo == null && vResumenCargue.numeroRefCargue == null && vResumenCargue.consecutivoBatch==null && vResumenCargue.fechaTransaccion == null)
+				{	
+					Alert.show("El nombre, numeros de referencia o fecha de cargue son requeridos para consultar.");
+				}*/
+				if(generar)
+				{	
+					var request:URLRequest = new URLRequest();
+					//request.method = "POST";
+					request.method = "GET";
+					request.url = "ReportesServlet?nomReporte="+reporte+"&condicion="+condicion+"&valor="+valor;
+					navigateToURL(request,"_blank");
+					limpiarControles();
+				}
+				
+			}
+			
+			[Bindable]
+			public var selectDepartamento:ArrayCollection = new ArrayCollection() ;
+			protected function consultaDepartamentosResult_resultHandler(event:ResultEvent):void
+			{
+				selectDepartamento = consultaDepartamentosResult.lastResult;
+				//if((informacionInmueble2 != null) && (informacionInmueble2.departamentoEscritura != null)) {
+					
+					//var indexDepartamento:int = getItemIndex(informacionInmueble2.departamentoEscritura,selectDepartamento,'codAsobancaria');
+					
+					//selectciudadescritura =  (selectDepartamento[indexDepartamento] as Departamento).ciudadesDepto;
+				//}
+			}
+			
+			/**
+			 * Permite  llenar el combo de departamentos en información básica
+			 * */
+			protected function cbxDepartamento_creationCompleteHandler(event:FlexEvent):void
+			{
+				consultaDepartamentosResult.token = departamentoService.consultaDepartamentos();	
+			}
+			
+			/**
+			 * Permite llenar el combo de ciudades del filtro de consulta con base en el departamento seleccionado [ok]
+			 * */
+			protected function cbxFiltro_changeHandler(event:IndexChangeEvent):void
+			{
+				if(cbxDepartamentoFiltro.selectedItem != null)
+				{
+					/*alvCiudadFiltro.list = cbxDepartamentoFiltro.selectedItem.ciudadesDepto;
+					cbxCiudadFiltro.invalidateDisplayList();
+					cbxCiudadFiltro.enabled = true;*/
+				}
+			}
+			
+			/**
+			 * Recupera un objeto de una lista a partir del índice 
+			 * @param target valor del indice correspondiente al objeto que se quiere recuperar. 
+			 * @param fields Lista de objetos
+			 * @param propiedad nombre de la propiedad mediante la cual se quiere consultar el objeto
+			 * */
+			public function getItemIndex(target:String, fields:ArrayCollection,propiedad:String ):int { 
+				for(var x:int=0; x<fields.length; x++) { 
+					if(fields[x][propiedad] == target) 
+					{ return x; 
+					} 
+				} 
+				return -1; 
+			}
+			
+
+			protected function reportesCombo_changeHandler(event:IndexChangeEvent):void
+			{
+				var reporte:String = reportesCombo.selectedItem.data as String;
+				if(reporte=="avaluosXValorPerito")						
+					txtValor.enabled=true;
+				else
+				{	
+					txtValor.text="";
+					txtValor.enabled=true;
+				}	
+			}
+
+		]]>
+		
+	</fx:Script>
+	
+	<!--- Servicios -->
+		
+		
+	<fx:Declarations>
+		
+		<services:DominiosAuxDao id="dominiosAuxDao" fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)" showBusyCursor="true"/>	
+		<s:CallResponder id="getValoresDominioResult78"/>		
+		<services:DepartamentoService id="departamentoService" fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)" showBusyCursor="true"/>
+		<s:CallResponder id="consultaDepartamentosResult" result="consultaDepartamentosResult_resultHandler(event)" />
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		
+		<!--- inclusion de los estilos -->		
+		
+	</fx:Declarations>
+	<fx:Style source="assets/css/AvaluosBolivar.css"/>
+	<fx:Style source="assets/css/AvaluosBolivarPanel.css"/>
+	
+	<mx:Form y="9" height="316" left="92" horizontalCenter="0" right="92">
+		<mx:VBox height="284" width="302">
+			<mx:HBox visible="{myUsuario.codigoPerfil == 'PGBADMINIST01'}">
+				<s:Label text="Identificación Perito" width="120" visible="{myUsuario.codigoPerfil == 'PGBADMINIST01'}"/>
+				<s:TextInput id="txtIdentificacionPerito" width="105" maxChars="30" visible="{myUsuario.codigoPerfil == 'PGBADMINIST01'}" change="txtIdentificacionPerito_changeHandler(event)"/>
+				<s:Button label="..." width="37" id="btnExaminar" click="btnExaminar_clickHandler(event)" visible="{myUsuario.codigoPerfil == 'PGBADMINIST01'}"/>				
+				
+			</mx:HBox>
+			<mx:HBox visible="{myUsuario.codigoPerfil == 'PGBADMINIST01'}" width="287" height="25">
+				
+				<s:Label id="lblNombrePerito" text="Nombre Perito" width="122" enabled="false" color="#B9B7B7" />
+				<s:Label id="txtNombrePerito" width="153" enabled="false" color="#B9B7B7"/>
+				
+			</mx:HBox>
+			<mx:HBox>
+				<s:Label text="Departamento" width="120"/>
+				<s:ComboBox id="cbxDepartamentoFiltro" creationComplete="cbxDepartamento_creationCompleteHandler(event)" labelField="departamento" change="cbxFiltro_changeHandler(event)" width="150" color="#000000">
+					<s:AsyncListView list="{consultaDepartamentosResult.lastResult}"/>
+				</s:ComboBox>
+			</mx:HBox>
+			<mx:HBox>
+				<s:Label text="Fecha Avalúo Desde&#xd;" width="120"/>
+				<mx:DateField id="txtFechaDesde" formatString="DD/MM/YYYY" creationComplete="dateChooser_init(txtFechaDesde)" yearNavigationEnabled="true" editable="true" width="150"/>
+			</mx:HBox>
+			<mx:HBox>
+				<s:Label text="Fecha Avalúo Hasta&#xd;" width="120"/>
+				<mx:DateField id="txtFechaHasta" formatString="DD/MM/YYYY" creationComplete="dateChooser_init(txtFechaHasta)" yearNavigationEnabled="true" editable="true" width="150"/>
+			</mx:HBox>
+			<mx:HBox>
+				<s:Label text="Fecha Cargue Desde&#xd;" width="120"/>
+				<mx:DateField id="txtFechaCreacionDesde" formatString="DD/MM/YYYY" creationComplete="dateChooser_init(txtFechaCreacionDesde)" yearNavigationEnabled="true" editable="true" width="150"/>
+			</mx:HBox>
+			<mx:HBox>
+				<s:Label text="Fecha Cargue Hasta&#xd;" width="120"/>
+				<mx:DateField id="txtFechaCreacionHasta" formatString="DD/MM/YYYY" creationComplete="dateChooser_init(txtFechaCreacionHasta)" yearNavigationEnabled="true" editable="true" width="150"/>
+			</mx:HBox>			
+			<mx:HBox>
+				<s:Label text="Reporte" width="120"/>
+				<s:ComboBox id="reportesCombo" change="reportesCombo_changeHandler(event)"> 
+					<s:ArrayList id="reportesArray">
+						<fx:Object label="Calificación Perito" data="avaluosXCalificacionPerito"/>
+						<fx:Object label="Categoría de Inmueble" data="avaluosXCategoriaInmueblePerito"/>
+						<fx:Object label="Estado Construcción" data="avaluosXEstadoConstrPerito"/>
+						<fx:Object label="Estrato" data="avaluosXEstratoPerito"/>
+						<fx:Object label="Mes" data="avaluosXMesPerito"/>
+						<fx:Object label="Objeto" data="avaluosXObjetoPerito"/>
+						<fx:Object label="Regional" data="avaluosXRegionalPerito"/>
+						<fx:Object label="Sector" data="avaluosXSectorPerito"/>
+						<fx:Object label="Valor" data="avaluosXValorPerito"/>
+					</s:ArrayList>
+				</s:ComboBox>
+			</mx:HBox>
+			<mx:HBox>
+				<s:Label text="Valor Mayor a:" width="121"/>
+				<s:TextInput id="txtValor" width="145" restrict="0-9"/>
+			</mx:HBox>
+			<mx:HBox>
+				<s:Button label="Generar Reporte" click="button2_clickHandler(event)"/>
+			</mx:HBox>
+		</mx:VBox>
+	</mx:Form>
+</mx:Module>

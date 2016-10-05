@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/avaluosJpa"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/cfgatewayadapter.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/commons-codec-1.3.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/commons-fileupload-1.2.2.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/commons-httpclient-3.0.1.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/commons-io-2.0.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/commons-logging.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/flex-messaging-common.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/flex-messaging-core.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/flex-messaging-opt.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/flex-messaging-proxy.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/flex-messaging-remoting.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/flex-rds-server.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/PlantillaSeguridadWebJAR.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/xalan.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/log4j-1.2.14.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/quartz-1.8.4.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/slf4j-api-1.6.0.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/slf4j-log4j12-1.6.0.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/com.sun.tools.xjc_2.2.0.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/com.sun.xml.bind_2.2.0.v201004141950.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/commonj.sdo_2.1.1.v200905221342.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/connector.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/eclipselink.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/eclipselink-dbwsutils.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/eclipselink-jpa-modelgen_2.1.1.v20100817-r8050.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/eclipselinkmw.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/elmwcore.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/javax.activation_1.1.0.v201005080500.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/javax.mail_1.4.0.v201005080615.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/javax.persistence_1.0.0.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/javax.persistence_2.0.1.v201006031150.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/javax.servlet_2.4.0.v200806031604.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/javax.wsdl_1.6.2.v200806030405.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/javax.xml.bind_2.2.0.v201005080402.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/javax.xml.stream_1.0.1.v201004272200.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/ojdbc14.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/package-rename.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6">
+		<attributes>
+			<attribute name="owner.project.facets" value="java"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="output" path="WebContent/WEB-INF/classes"/>
+</classpath>

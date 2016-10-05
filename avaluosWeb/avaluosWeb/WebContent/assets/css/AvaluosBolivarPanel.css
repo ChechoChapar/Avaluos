@@ -1,0 +1,59 @@
+/**
+* @file AvaluosBolivarPanel.css
+* Hoja de estilos para la interfaz de usuario Avaluos
+* en esta hoja solo se incluyen los componentes panel
+* porque son para su uso en el tema gris de la plantilla de Seguridad
+* y para el resto de componentes interiores el tema es verde
+*/
+/**
+* Namespaces Para los componentes panel
+@namespace s "library://ns.adobe.com/flex/spark";
+@namespace mx "library://ns.adobe.com/flex/mx";
+*/
+@namespace s "library://ns.adobe.com/flex/spark";
+@namespace mx "library://ns.adobe.com/flex/mx";
+/**
+* ESTILO GLOBAL 
+**/
+global
+{
+	focus-color: #FFDF3C;
+	selection-color: #006926;
+	roll-over-color: #FFDF3C;	
+}
+/**
+* Estilo nombrado Panel:
+* @style .myPanelStyle
+*/
+.myPanelStyle {
+	color: #FFFFFF;
+	/*symbol-color: #FFFFFF;*/
+}
+/**
+* Estilo para el namespace mx
+* Componentes Adobe flex paquete spark.*
+* @namespace s "library://ns.adobe.com/flex/spark";
+* @group spark
+*/
+s|Panel
+{
+chrome-color: #006926;
+symbol-color: #FFFFFF;
+/*color: #FFFFFF;*/	
+title-style-name: "myPanelStyle";
+}
+/**
+* Estilo para el namespace mx
+* Componentes Adobe flex paquete mx.*
+* @namespace mx "library://ns.adobe.com/flex/mx";
+* @group mx
+*/
+mx|Panel
+{
+	chrome-color: #006926;
+	symbol-color: #FFFFFF;
+	/*color: #FFFFFF;*/
+	title-style-name: "myPanelStyle";
+	/*headerStyleName: myHeaderStyle;*/
+	
+}

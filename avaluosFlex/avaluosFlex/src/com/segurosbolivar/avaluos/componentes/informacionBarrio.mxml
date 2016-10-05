@@ -1,0 +1,672 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:valueObjects="valueObjects.*"
+		 xmlns:comp="com.segurosbolivar.avaluos.componentes.*"
+		 xmlns:services="services.*"
+		 width="100%" height="100%">
+	<s:layout>
+		<s:VerticalLayout/>
+	</s:layout>
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.events.FlexEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			import valueObjects.Avaluo;
+			import valueObjects.CampoRequeridoDTO;
+			import valueObjects.Usuario;
+			
+			[Bindable]
+			public static var selectEstadoVias:ArrayCollection = new ArrayCollection() ;
+			
+			[Bindable]
+			public static var selectEstrato:ArrayCollection = new ArrayCollection() ;
+			
+			[Bindable]
+			public static var selectLegalidad:ArrayCollection = new ArrayCollection() ;
+			
+			[Bindable]
+			public static var selectTopografia:ArrayCollection = new ArrayCollection() ;
+			
+			[Bindable]
+			public static var selectTransporte:ArrayCollection = new ArrayCollection() ;
+			
+			protected function otrosUsosTextInput_clickHandler(event:MouseEvent):void
+			{
+				if(otrosUsosTextInput.selected ){
+					textoOtrosUsosTextInput.enabled = true;
+				}
+				else 
+				{
+					textoOtrosUsosTextInput.text = "";
+					textoOtrosUsosTextInput.enabled = false;
+				}
+			}
+			
+			/**
+			 * Valida si activar el check de predio para acueducto [ok]
+			 * */
+			protected function acueductoSectorTextInput_clickHandler(event:MouseEvent):void
+			{
+				if (chkAcueductoSector.selected) {
+					chkAcueducto.enabled = true;
+				}
+				else {
+					chkAcueducto.selected = false;
+					chkAcueducto.enabled = false;
+				}
+			}
+			
+			/**
+			 * Valida si activar el check de predio para alcantarillado [ok]
+			 * */
+			protected function alcantarilladoSectorTextInput_clickHandler(event:MouseEvent):void
+			{
+				if(chkAlcantarilladoSector.selected) {
+					chkAlcantarillado.enabled = true;
+				}
+				else {
+					chkAlcantarillado.selected = false;
+					chkAlcantarillado.enabled = false;
+				} 
+			}
+			
+			/**
+			 * Valida si activar el check de predio para electricidad [ok]
+			 * */
+			protected function electricidadSectorTextInput_clickHandler(event:MouseEvent):void
+			{
+				if(chkElectricidadSector.selected) {
+					chkElectricidad.enabled = true;
+				}
+				else {
+					chkElectricidad.selected = false;
+					chkElectricidad.enabled = false;
+				}
+			}
+			
+			/**
+			 * Valida si activar el check de predio para gas [ok]
+			 * */
+			protected function gasSectorTextInput_clickHandler(event:MouseEvent):void
+			{
+				if(chkGasSector.selected) {
+					chkGas.enabled = true;
+				}
+				else {
+					chkGas.selected = false;
+					chkGas.enabled = false;
+				}
+			}
+			
+			/**
+			 * Valida si activar el check de predio para telefono [ok]
+			 * */
+			protected function telefonoSectorTextInput_clickHandler(event:MouseEvent):void
+			{
+				if(chkTelefonoSector.selected) {
+					chkTelefono.enabled = true;
+				}
+				else {
+					chkTelefono.selected = false;
+					chkTelefono.enabled = false;
+				}
+			}
+			
+			protected function cbxEstadoVias_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectEstadoVias==null || selectEstadoVias.length<1){
+					getValoresDominioResult5.token = parentDocument.dominiosAuxDao.getValoresDominio("MBR");
+				}				
+			}
+			
+			protected function getValoresDominioResult5_resultHandler(event:ResultEvent):void
+			{
+				if(selectEstadoVias==null || selectEstadoVias.length<1)
+					selectEstadoVias = getValoresDominioResult5.lastResult;
+			}
+			
+			
+			protected function cbxEstrato_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectEstrato==null || selectEstrato.length<1)
+					getValoresDominioResult2.token = parentDocument.dominiosAuxDao.getValoresDominio("ESTRATO");
+			}
+			
+			protected function getValoresDominioResult2_resultHandler(event:ResultEvent):void
+			{
+				if(selectEstrato==null || selectEstrato.length<1){
+					selectEstrato = getValoresDominioResult2.lastResult;
+				}				
+			}
+			
+			
+			protected function cbxLegalidad_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectLegalidad==null || selectLegalidad.length<1)	
+					getValoresDominioResult3.token = parentDocument.dominiosAuxDao.getValoresDominio("LEGALBARRIO");
+				
+			}
+			
+			protected function getValoresDominioResult3_resultHandler(event:ResultEvent):void
+			{
+				if(selectLegalidad==null || selectLegalidad.length<1)	
+					selectLegalidad = getValoresDominioResult3.lastResult;
+			}
+			
+			protected function cbxTopografia_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectTopografia==null || selectTopografia.length<1)
+					getValoresDominioResult4.token = parentDocument.dominiosAuxDao.getValoresDominio("TOPOGRAFIA");
+				
+			}
+			 
+			protected function cbxTransporte_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectTransporte==null || selectTransporte.length<1)
+					getValoresDominioResult32.token = parentDocument.dominiosAuxDao.getValoresDominio("MBR");
+			}
+			
+			protected function getValoresDominioResult4_resultHandler(event:ResultEvent):void
+			{
+				if(selectTopografia==null || selectTopografia.length<1)
+					selectTopografia = getValoresDominioResult4.lastResult;
+			}
+			
+			protected function getValoresDominioResult32_resultHandler(event:ResultEvent):void
+			{
+				if(selectTransporte==null || selectTransporte.length<1)
+					selectTransporte = getValoresDominioResult32.lastResult;
+			}
+			
+			public function guardarInformacionBarrio(avaluo:Avaluo, myUsuario:Usuario):InformacionBarrio{
+				try{
+					informacionBarrioVO.avaluo = avaluo;
+					
+					if(avaluo.informacionBarrio != null && avaluo.informacionBarrio.length> 0){
+						var barrio:InformacionBarrio = avaluo.informacionBarrio.getItemAt(0) as InformacionBarrio; 
+						if(barrio != null){
+							informacionBarrioVO.idInformacionBarrio = barrio.idInformacionBarrio ; 	
+							informacionBarrioVO.fechaCreacion = barrio.fechaCreacion ; 
+							informacionBarrioVO.usuarioCreacion = barrio.usuarioCreacion ; 
+						}					
+					}
+	
+					if((cbxEstadoVias != null) && (cbxEstadoVias.selectedIndex > -1)) {
+						informacionBarrioVO.estadosViaAcceso = cbxEstadoVias.selectedItem.rvLowValue;
+					}
+					if((cbxEstrato != null) && (cbxEstrato.selectedIndex > -1)) {
+						informacionBarrioVO.estrato = cbxEstrato.selectedItem.rvLowValue;
+					}
+					if((cbxEstrato != null) && (cbxEstrato.selectedIndex > -1)) {
+						informacionBarrioVO.legalidad = cbxLegalidad.selectedItem.rvLowValue;
+					}
+					if((cbxEstrato != null) && (cbxEstrato.selectedIndex > -1)) {
+						informacionBarrioVO.topografia = cbxTopografia.selectedItem.rvLowValue;
+					}
+					if((cbxEstrato != null) && (cbxEstrato.selectedIndex > -1)) {
+						informacionBarrioVO.transporte = cbxTransporte.selectedItem.rvLowValue;
+					}
+					if(chkAcueductoSector != null){
+						informacionBarrioVO.acueductoSector = chkAcueductoSector.selected ?"1":"0";
+					}
+					if(chkAcueducto != null){
+						informacionBarrioVO.acueductoPredio = chkAcueducto.selected ?"1":"0";
+					}
+					if(chkAlcantarilladoSector != null){
+						informacionBarrioVO.alcantarilladoSector = chkAlcantarilladoSector.selected ?"1":"0";
+					}
+					if(chkAlcantarillado != null){
+						informacionBarrioVO.alcantarilladoPredio = chkAlcantarillado.selected ?"1":"0";
+					}
+					if(chkElectricidadSector != null){
+						informacionBarrioVO.electricidadSector = chkElectricidadSector.selected ?"1":"0";
+					}
+					if(chkElectricidad != null){
+						informacionBarrioVO.electricidadPredio = chkElectricidad.selected ?"1":"0";
+					}
+					if(chkGasSector != null){
+						informacionBarrioVO.gasSector = chkGasSector.selected ?"1":"0";
+					}
+					if(chkGas != null){
+						informacionBarrioVO.gasPredio = chkGas.selected ?"1":"0";
+					}
+					if(chkTelefonoSector != null){
+						informacionBarrioVO.telefonoSector = chkTelefonoSector.selected ?"1":"0";
+					}
+					if(chkTelefono != null){
+						informacionBarrioVO.telefonoPredio = chkTelefono.selected ?"1":"0";
+					}
+					if(chkIndustria != null){
+						informacionBarrioVO.industria = chkIndustria.selected ?"1":"0";
+					}
+					if(viviendaTextInput != null){
+						informacionBarrioVO.vivienda = viviendaTextInput.selected ?"1":"0";
+					}
+					if(comercioTextInput != null){
+						informacionBarrioVO.comercio = comercioTextInput.selected ?"1":"0";
+					}
+					if(otrosUsosTextInput != null){
+						informacionBarrioVO.otrosUsos = otrosUsosTextInput.selected ?"1":"0";
+					}
+					if(textoOtrosUsosTextInput != null){
+						informacionBarrioVO.textoOtrosUsos = textoOtrosUsosTextInput.text;
+					}
+					if(pavimentadaTextInput != null){
+						informacionBarrioVO.pavimentada = pavimentadaTextInput.selected ?"1":"2";
+					}
+					else {
+						informacionBarrioVO.pavimentada = "2";
+					}
+					if(sardenelesTextInput != null){
+						informacionBarrioVO.sardeneles = sardenelesTextInput.selected ?"1":"2";
+					}
+					else {
+						informacionBarrioVO.sardeneles = "2";
+					}
+					if(andenesTextInput != null){
+						informacionBarrioVO.andenes = andenesTextInput.selected ?"1":"2";
+					}
+					else {
+						informacionBarrioVO.andenes = "2";
+					}
+					if(parquesTextInput != null){
+						informacionBarrioVO.parques = parquesTextInput.selected ?"1":"0";
+					}
+					if(arborizacionTextInput != null){
+						informacionBarrioVO.arborizacion = arborizacionTextInput.selected ?"1":"0";
+					}
+					if(paraderoTextInput != null){
+						informacionBarrioVO.paradero = paraderoTextInput.selected ?"1":"0";
+					}
+					if(alamedasTextInput != null){
+						informacionBarrioVO.alamedas = alamedasTextInput.selected ?"1":"0";
+					}
+					if(alumbradoTextInput != null){
+						informacionBarrioVO.alumbrado = alumbradoTextInput.selected ?"1":"0";
+					}
+					if(zonasVerdesTextInput != null){
+						informacionBarrioVO.zonasVerdes = zonasVerdesTextInput.selected ?"1":"0";
+					}
+					if(cicloRutasTextInput != null){
+						informacionBarrioVO.cicloRutas = cicloRutasTextInput.selected ?"1":"0";
+					}
+					if(perspectivasTextInput != null){
+						informacionBarrioVO.perspectivas = perspectivasTextInput.text;
+					}
+					if(edificacionesIgualesTextInput != null){
+						informacionBarrioVO.edificacionesIguales = edificacionesIgualesTextInput.text;
+					}
+					informacionBarrioVO.usuarioTransaccion = myUsuario.codigoUsuario;
+					informacionBarrioVO.usuarioCreacion = myUsuario.codigoUsuario;
+				}catch(error:Error){
+					error.getStackTrace(); 
+					trace(error.message); 
+					parentDocument.imprimirEstadoProceso(error.message);
+				}
+				return informacionBarrioVO; 							
+			}
+			
+			public function validarCamposFormulario():Boolean{
+				return true ; 
+			}
+			
+			/**
+			 * Manejador del resultado del servicio barrio
+			 * */
+			protected function createResult2_resultHandler(event:ResultEvent):void
+			{
+				if(createResult2 != null && createResult2.lastResult != null){
+					parentDocument.imprimirEstadoProceso("Transacción exitosa. Info: Informacion Básica");
+					informacionBarrioVO = createResult2.lastResult;
+					parentDocument.nextTabAvaluo(); 
+				}
+			}
+
+			
+
+			protected function button1_clickHandler(event:MouseEvent):void
+			{
+				if(tbnAvaluosBarrio.selectedIndex<tbnAvaluosBarrio.numChildren){
+					if(tbnAvaluosBarrio.selectedIndex<tbnAvaluosBarrio.numElements){
+						tbnAvaluosBarrio.selectedIndex = tbnAvaluosBarrio.selectedIndex+1; 
+					}
+					if(tbnAvaluosBarrio.selectedIndex == (tbnAvaluosBarrio.numChildren - 1) ||
+						tbnAvaluosBarrio.selectedIndex == (tbnAvaluosBarrio.numElements - 1)){
+						bnBarrioSiguiente.visible=false; 
+						bnBarrioAnterior.visible=true; 
+					}else{
+						bnBarrioAnterior.visible=true; 
+						bnBarrioSiguiente.visible=true;						
+					}
+					administrarPanelesBarrio();
+				}
+			}
+
+
+			protected function button2_clickHandler(event:MouseEvent):void
+			{
+				if(tbnAvaluosBarrio.selectedIndex>0){
+					if(tbnAvaluosBarrio.selectedIndex>0){
+						tbnAvaluosBarrio.selectedIndex = tbnAvaluosBarrio.selectedIndex-1; 
+					}
+					if(tbnAvaluosBarrio.selectedIndex == 0 ||
+						tbnAvaluosBarrio.selectedIndex == 0){
+						bnBarrioAnterior.visible=false; 
+						bnBarrioSiguiente.visible=true;
+					}else{
+						bnBarrioAnterior.visible=true; 
+						bnBarrioSiguiente.visible=true;						
+					}
+					administrarPanelesBarrio();
+				}
+			}
+
+
+			protected function chkTelefono_focusOutHandler(event:FocusEvent):void
+			{
+				bnBarrioSiguiente.setFocus();
+			}
+
+
+			protected function edificacionesIgualesTextInput_focusOutHandler(event:FocusEvent):void
+			{
+				bnBarrioSiguiente.setFocus(); 
+			}
+
+
+			protected function sardenelesTextInput_focusOutHandler(event:FocusEvent):void
+			{
+				bnBarrioSiguiente.setFocus();
+			}
+
+
+			protected function zonasVerdesTextInput_focusOutHandler(event:FocusEvent):void
+			{				
+				bnBarrioSiguiente.setFocus();
+			}
+
+
+			protected function perspectivasTextInput_focusOutHandler(event:FocusEvent):void
+			{				
+				parentDocument.btGuardar.setFocus(); 
+			}
+			
+			private function administrarPanelesBarrio():void{
+				tbnAvaluosBarrio.validateNow();
+				switch(tbnAvaluosBarrio.selectedIndex)
+				{
+					case 0: 
+						chkAcueductoSector.setFocus();
+						break;
+					case 1: 
+						viviendaTextInput.setFocus();
+						break;						
+					case 2: 
+						if(cbxEstadoVias != null){
+							cbxEstadoVias.setFocus();
+						}else {
+							nvcViasAcceso.setFocus();
+						}
+						break;
+					case 3: 
+						parquesTextInput.setFocus();
+						break;
+					case 4: 
+						cbxEstrato.setFocus();
+						break;						
+				}	
+			}
+			
+			public function ejecutarValidacionCamposObligatorios():void{
+				Utilidad.validarCamposObligarios(Utilidad.obtenerCamposVacios(getListaCampos(0), this),this); 
+			}
+			
+			protected function getListaCampos(categoria:int):ArrayCollection
+			{
+				var arrayDto : ArrayCollection = new ArrayCollection();
+				var mapCampos:Object = new Object();
+				
+				mapCampos["edificacionesIgualesTextInput"] = "A_EDIIGUALES";
+				mapCampos["cbxEstadoVias"] = "C_ESTVIAACCESO";
+				mapCampos["cbxEstrato"] = "C_ESTRATO";
+				mapCampos["cbxLegalidad"] = "C_LEGALIDAD";
+				mapCampos["cbxTopografia"] = "C_TOPOGRAFIA";
+				mapCampos["cbxTransporte"] = "C_TRANSPORTE";
+				//OJO
+				mapCampos["perspectivasTextInput"] = "T_PERSPECTIVAS";
+				
+				for (var key:String in mapCampos) {
+					trace(" " + key + " - " +mapCampos[key]);
+					var campoDto:CampoRequeridoDTO = new CampoRequeridoDTO();
+					campoDto.nombretablaBD="PGB_INFBARRIO";
+					campoDto.nombrecampoBD=mapCampos[key];
+					campoDto.nombreComponente=key;
+					campoDto.categoriaInmueble=categoria.toString();
+					
+					arrayDto.addItem(campoDto);
+					
+				}
+
+				return arrayDto;
+			}
+
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<valueObjects:InformacionBarrio id="informacionBarrioVO"/>
+		
+		<s:CallResponder id="getValoresDominioResult2" result="getValoresDominioResult2_resultHandler(event)"/>
+		<s:CallResponder id="getValoresDominioResult3" result="getValoresDominioResult3_resultHandler(event)"/>
+		<s:CallResponder id="getValoresDominioResult4" result="getValoresDominioResult4_resultHandler(event)"/>
+		<s:CallResponder id="getValoresDominioResult5" result="getValoresDominioResult5_resultHandler(event)"/>
+		
+		<s:CallResponder id="getValoresDominioResult32" result="getValoresDominioResult32_resultHandler(event)"/>
+		
+		<s:CallResponder id="createResult2" result="createResult2_resultHandler(event)"/>
+		
+		
+	</fx:Declarations>
+	
+	
+	<mx:TabNavigator id="tbnAvaluosBarrio" dropShadowVisible="false" width="100%" height="100%" paddingLeft="10" paddingTop="10" paddingRight="10">
+		<fx:Script>
+			<![CDATA[
+				import com.segurosbolivar.avaluos.modulos.Utilidad;
+			]]>
+		</fx:Script>
+		<s:NavigatorContent label="Servicios Públicos" width="100%" height="100%" id="nvcServiciosPulicos" tabIndex="29" >
+			<s:Scroller width="100%" height="100%">
+				<s:Group  height="100%" width="100%">
+					<s:layout>
+						<s:VerticalLayout>
+							
+						</s:VerticalLayout>
+					</s:layout>
+					
+					<mx:HBox paddingLeft="10" paddingTop="10" paddingRight="10">
+						<s:Label text="" width="100"/>
+						<s:Label text="SECTOR" width="100"/>
+						<s:Label text="PREDIO" />
+					</mx:HBox>
+					<mx:HBox paddingLeft="20" paddingRight="10">
+						<s:Label text="Acueducto" width="100"/>
+						<s:CheckBox id="chkAcueductoSector" width="100" click="acueductoSectorTextInput_clickHandler(event)" selected="{Utilidad.isTrue(informacionBarrioVO.acueductoSector)}" enabled="true" tabIndex="30"/>
+						<s:CheckBox id="chkAcueducto"  enabled="false" selected="{Utilidad.isTrue(informacionBarrioVO.acueductoPredio)}" tabIndex="31"/>
+					</mx:HBox>
+					<mx:HBox paddingLeft="20" paddingRight="10">
+						<s:Label text="Alcantarillado" width="100"/>
+						<s:CheckBox id="chkAlcantarilladoSector" width="100" click="alcantarilladoSectorTextInput_clickHandler(event)" selected="{Utilidad.isTrue(informacionBarrioVO.alcantarilladoSector)}" enabled="true" tabIndex="32"/>
+						<s:CheckBox id="chkAlcantarillado"  enabled="false" selected="{Utilidad.isTrue(informacionBarrioVO.alcantarilladoPredio)}" tabIndex="33"/>
+					</mx:HBox>
+					<mx:HBox paddingLeft="20" paddingRight="10">
+						<s:Label text="Electricidad" width="100"/>
+						<s:CheckBox id="chkElectricidadSector" width="100" click="electricidadSectorTextInput_clickHandler(event)" selected="{Utilidad.isTrue(informacionBarrioVO.electricidadSector)}" enabled="true" tabIndex="34"/>
+						<s:CheckBox id="chkElectricidad"  enabled="false" selected="{Utilidad.isTrue(informacionBarrioVO.electricidadPredio)}" tabIndex="35"/>
+					</mx:HBox>
+					<mx:HBox paddingLeft="20" paddingRight="10">
+						<s:Label text="Gas" width="100"/>
+						<s:CheckBox id="chkGasSector" width="100" click="gasSectorTextInput_clickHandler(event)" selected="{Utilidad.isTrue(informacionBarrioVO.gasSector)}" enabled="true" tabIndex="36"/>
+						<s:CheckBox id="chkGas"  enabled="false" selected="{Utilidad.isTrue(informacionBarrioVO.gasPredio)}" tabIndex="37"/>
+					</mx:HBox>
+					<mx:HBox paddingLeft="20" paddingRight="10">
+						<s:Label text="Teléfono" width="100"/>
+						<s:CheckBox id="chkTelefonoSector" width="100" click="telefonoSectorTextInput_clickHandler(event)" selected="{Utilidad.isTrue(informacionBarrioVO.telefonoSector)}" tabIndex="38"/>
+						<s:CheckBox id="chkTelefono"  enabled="false" selected="{Utilidad.isTrue(informacionBarrioVO.telefonoPredio)}" tabIndex="39" focusOut="chkTelefono_focusOutHandler(event)"/>
+					</mx:HBox>
+				</s:Group>
+			</s:Scroller>
+		</s:NavigatorContent>
+		<s:NavigatorContent label="Uso Predominante" width="100%" height="100%" id="nvcUsoPredominate" tabIndex="40">
+			<s:Scroller width="100%" height="100%">
+				<s:Group  width="100%" height="100%">
+					<s:layout>
+						<s:VerticalLayout>
+							
+						</s:VerticalLayout>
+					</s:layout>
+					<mx:HBox paddingLeft="20" paddingTop="20" paddingRight="10">
+						<s:Label text="Vivienda" width="100"/>
+						<s:CheckBox id="viviendaTextInput" selected="{Utilidad.isTrue(informacionBarrioVO.vivienda)}" enabled="true" tabIndex="41"/>
+					</mx:HBox>
+					<mx:HBox paddingLeft="20" paddingRight="10">
+						<s:Label text="Industria" width="100"/>
+						<s:CheckBox id="chkIndustria" selected="{Utilidad.isTrue(informacionBarrioVO.industria)}" enabled="true" tabIndex="42"/>
+					</mx:HBox>
+					<mx:HBox paddingLeft="20" paddingRight="10">
+						<s:Label text="Comercio" width="100"/>
+						<s:CheckBox id="comercioTextInput" selected="{Utilidad.isTrue(informacionBarrioVO.comercio)}" enabled="true" tabIndex="43"/>									
+					</mx:HBox>
+					
+					<mx:HBox paddingLeft="20" paddingRight="10">
+						<s:Label text="Otros Usos" width="100"/>
+						<s:CheckBox id="otrosUsosTextInput" selected="{Utilidad.isTrue(informacionBarrioVO.otrosUsos)}" enabled="true" click="otrosUsosTextInput_clickHandler(event)" tabIndex="44"/>									
+					</mx:HBox>
+					<mx:HBox paddingLeft="20" paddingRight="10">
+						<s:Label text="¿Cuales?" width="100"/>
+						<s:TextInput id="textoOtrosUsosTextInput" text="{informacionBarrioVO.textoOtrosUsos}" width="265" restrict="{Utilidad.restrict_}" maxChars="30" enabled="false" tabIndex="45"/>
+					</mx:HBox>
+					<mx:HBox paddingLeft="20" paddingRight="10">
+						<s:Label text="Edificaciones Similares" width="100"/>
+						<s:TextInput id="edificacionesIgualesTextInput" text="{informacionBarrioVO.edificacionesIguales}" width="30" restrict ="0-9" maxChars="4" tabIndex="46" focusOut="edificacionesIgualesTextInput_focusOutHandler(event)"/>
+					</mx:HBox>
+				</s:Group>
+			</s:Scroller>
+		</s:NavigatorContent>
+		<s:NavigatorContent label="Vías de Acceso" width="100%" height="100%" id="nvcViasAcceso" tabIndex="47">
+			<s:Scroller width="100%" height="100%">
+				<s:Group  width="100%" height="100%">
+					<s:layout>
+						<s:VerticalLayout>
+							
+						</s:VerticalLayout>
+					</s:layout>
+					
+					<mx:HBox paddingLeft="20" paddingTop="20" paddingRight="10">
+						<s:Label text="Estado" width="100"/>
+						<s:ComboBox id="cbxEstadoVias" dataProvider="{selectEstadoVias}" selectedIndex="{Utilidad.getItemIndex(informacionBarrioVO.estadosViaAcceso,selectEstadoVias,'rvLowValue')}"  creationComplete="cbxEstadoVias_creationCompleteHandler(event)" labelField="rvMeaning" enabled="true" tabIndex="48"/>
+					</mx:HBox>
+					<mx:HBox paddingLeft="20" paddingRight="10">
+						<s:Label text="Pavimentada" width="100"/>
+						<s:CheckBox id="pavimentadaTextInput" selected="{Utilidad.isTrue(informacionBarrioVO.pavimentada)}" enabled="true" tabIndex="49"/>
+					</mx:HBox>
+					<mx:HBox paddingLeft="20" paddingRight="10">
+						<s:Label text="Andenes" width="100"/>
+						<s:CheckBox id="andenesTextInput" selected="{Utilidad.isTrue(informacionBarrioVO.andenes)}" enabled="true" tabIndex="50"/>
+					</mx:HBox>
+					<mx:HBox paddingLeft="20" paddingRight="10">
+						<s:Label text="Sardineles" width="100"/>
+						<s:CheckBox id="sardenelesTextInput" selected="{Utilidad.isTrue(informacionBarrioVO.sardeneles)}" tabIndex="50" focusOut="sardenelesTextInput_focusOutHandler(event)"/>
+					</mx:HBox>
+				</s:Group>
+			</s:Scroller>
+		</s:NavigatorContent>
+		<s:NavigatorContent label="Amoblamiento Urbano" width="100%" height="100%" id="nvcAmoblamientoUrbano"  tabIndex="52">
+			<s:Scroller width="100%" height="100%">
+				<s:Group  width="100%" height="100%">
+					<s:layout>
+						<s:VerticalLayout>
+							
+						</s:VerticalLayout>
+					</s:layout>
+					
+					<mx:HBox paddingLeft="20" paddingTop="20" paddingRight="10">
+						<s:Label text="Parques" width="100"/>
+						<s:CheckBox id="parquesTextInput" selected="{Utilidad.isTrue(informacionBarrioVO.parques)}" enabled="true" tabIndex="53"/>
+						<s:Label text="Arborización" width="100"/>
+						<s:CheckBox id="arborizacionTextInput" selected="{Utilidad.isTrue(informacionBarrioVO.arborizacion)}" enabled="true" tabIndex="54"/>
+					</mx:HBox>
+					<mx:HBox paddingLeft="20" paddingRight="10">
+						<s:Label text="Paradero" width="100"/>
+						<s:CheckBox id="paraderoTextInput" selected="{Utilidad.isTrue(informacionBarrioVO.paradero)}" enabled="true" tabIndex="55"/>
+						<s:Label text="Alamedas" width="100"/>
+						<s:CheckBox id="alamedasTextInput" selected="{Utilidad.isTrue(informacionBarrioVO.alamedas)}" enabled="true" tabIndex="56"/>
+					</mx:HBox>
+					<mx:HBox paddingLeft="20" paddingRight="10">
+						<s:Label text="Alumbrado" width="100" />
+						<s:CheckBox id="alumbradoTextInput" selected="{Utilidad.isTrue(informacionBarrioVO.alumbrado)}" enabled="true" tabIndex="57"/>
+						<s:Label text="Ciclo Rutas" width="100"/>
+						<s:CheckBox id="cicloRutasTextInput" selected="{Utilidad.isTrue(informacionBarrioVO.cicloRutas)}" tabIndex="58"/>
+					</mx:HBox>
+					<mx:HBox paddingLeft="20" paddingRight="10">
+						<s:Label text="Zonas Verdes" width="100"/>
+						<s:CheckBox id="zonasVerdesTextInput" selected="{Utilidad.isTrue(informacionBarrioVO.zonasVerdes)}" enabled="true" tabIndex="58" focusOut="zonasVerdesTextInput_focusOutHandler(event)"/>
+					</mx:HBox>
+				</s:Group>
+			</s:Scroller>
+		</s:NavigatorContent>
+		<s:NavigatorContent label="Información Adicional" width="100%" height="100%" id="nvcInfoAdicional"  tabIndex="60">
+			<s:Scroller width="100%" height="100%">
+				<s:Group  width="100%" height="100%">
+					<s:layout>
+						<s:VerticalLayout>
+							
+						</s:VerticalLayout>
+					</s:layout>
+					
+					<mx:HBox paddingLeft="20" paddingTop="20" width="100%" paddingRight="10">
+						<mx:VBox>
+							<s:Label text="Estrato"/>
+							<s:ComboBox id="cbxEstrato" dataProvider="{selectEstrato}" creationComplete="cbxEstrato_creationCompleteHandler(event)" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(informacionBarrioVO.estrato,selectEstrato,'rvLowValue')}"  enabled="true" tabIndex="61"/>
+						</mx:VBox>
+						<mx:VBox>
+							<s:Label text="Legalidad"/>
+							<s:ComboBox id="cbxLegalidad" dataProvider="{selectLegalidad}" creationComplete="cbxLegalidad_creationCompleteHandler(event)" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(informacionBarrioVO.legalidad,selectLegalidad,'rvLowValue')}"  enabled="true" tabIndex="62"/>
+						</mx:VBox>
+						<mx:VBox>
+							<s:Label text="Topografia"/>
+							<s:ComboBox id="cbxTopografia" dataProvider="{selectTopografia}" creationComplete="cbxTopografia_creationCompleteHandler(event)" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(informacionBarrioVO.topografia,selectTopografia,'rvLowValue')}"  enabled="true" tabIndex="63"/>
+						</mx:VBox>
+						<mx:VBox>
+							<s:Label text="Transporte"/>
+							<s:ComboBox id="cbxTransporte" dataProvider="{selectTransporte}" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(informacionBarrioVO.transporte,selectTransporte,'rvLowValue')}" creationComplete="cbxTransporte_creationCompleteHandler(event)" enabled="true" tabIndex="64"/>
+						</mx:VBox>
+					</mx:HBox>
+					<mx:HBox paddingLeft="20" width="100%"  paddingRight="10">
+						<mx:VBox>
+							<s:Label text="Perspectiva de Valorización"/>
+							<s:TextArea x="244" y="22" id="perspectivasTextInput" text="{informacionBarrioVO.perspectivas}" width="607" height="65" restrict="{Utilidad.restrict_}" maxChars="500" enabled="true" tabIndex="65" focusOut="perspectivasTextInput_focusOutHandler(event)"/>
+						</mx:VBox>							
+					</mx:HBox>
+						
+				</s:Group>
+			</s:Scroller>
+		</s:NavigatorContent>
+	</mx:TabNavigator>		
+	<mx:HRule width="100%"/>
+	<mx:HBox width="100%">
+		<mx:FormItem width="50%" horizontalAlign="left" >
+			<s:Button label="Anterior" visible="false" id="bnBarrioAnterior" click="button2_clickHandler(event)"> </s:Button>	
+		</mx:FormItem>
+		<mx:FormItem width="50%" horizontalAlign="right">
+			<s:Button label="Siguiente" id="bnBarrioSiguiente" click="button1_clickHandler(event)"> </s:Button>	
+		</mx:FormItem>
+	</mx:HBox>
+	
+		
+</s:Group>

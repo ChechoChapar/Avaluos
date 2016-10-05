@@ -1,0 +1,20 @@
+#Rutas en el servidor
+#RUTAS WEBLOGIC PRODUCCION 
+domain=/u/home/avaluos/
+log=/oracle/app/wlogic/Oracle/Middleware/user_projects/domains/wlprod/servers/Srvprod5/tmp/_WL_user/avaluosWeb/ao7135/war/log/logavaluos.log
+ruta.cargue.masivo=/oracle/app/wlogic/Oracle/Middleware/user_projects/domains/wlprod/servers/Srvprod5/tmp/_WL_user/avaluosWeb/ao7135/war
+nueva.ruta.cargue.masivo=/oracle/app/wlogic/Oracle/Middleware/user_projects/domains/wlprod/servers/Srvprod5/tmp/_WL_user/avaluosWeb/ao7135/war/cargues
+ruta.archivos.procedatos=/u/home/avaluos/procedatos/
+url.archivo=https://www.segurosbolivar.com/avaluosWeb
+url.webservice.terceros=https://www.segurosbolivar.com/ServiciosGeneralesTercerosWS/ServiciosTercerosWSPort
+url.logout=https://sbidserver.segurosbolivar.com/nidp/app/logout
+dirservidor.weblogic=10.1.1.175
+url.keystore=/oracle/app/wlogic/certificados/segbol/segbol10.jks
+datasource=jdbc/avaluosDS
+#Local 1 ,Servidor 0
+ambiente.local=0
+
+reportes=reportes
+tmp=tmp/
+procedatos=procedatos
+ziptmp=ziptmp

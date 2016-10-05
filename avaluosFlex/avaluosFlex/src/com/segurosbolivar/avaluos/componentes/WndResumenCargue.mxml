@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--- 
+Ventana para visualizar los resultados de un cargue masivo de Avaluos
+con el maestro en la parte superior de los archivos cargados y el 
+detalle en la parte inferior del resultado y errores por cada linea
+@implements modulos.IModule
+@see spark.components TitleWindow
+-->
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" height="470" xmlns:services="services.*" xmlns:valueObjects="valueObjects.*"  width="950">
+	<fx:Script>
+		<![CDATA[
+			import com.segurosbolivar.avaluos.modulos.AVA5_CarguePlanoAvaluos;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.controls.DateField;
+			import mx.events.FlexEvent;
+			import mx.events.ListEvent;
+			import mx.rpc.events.ResultEvent;
+						
+			/** 
+			 *   Consulta la lista de archivos cargados desde la pantalla de cargue
+			 * */
+			protected function dataGrid_creationCompleteHandler(event:FlexEvent):void
+			{
+				buscarResumenPlanoByConsecutivoBatchResult.token = carguePlano.buscarResumenPlanoByConsecutivoBatch(consecutivoBatch);
+			}
+			
+			[Bindable]
+			public var consecutivoBatch:String;
+			
+			/** 
+			 *  Consulta la informacion detallada de cada linea del plano segun el
+			 *  que se seleccione en la grilla superior 
+			 * */			
+			protected function dataGrid_changeHandler(event:ListEvent):void
+			{								
+				buscarLogCargueResult.token = carguePlano.buscarLogCargue(dataGrid.selectedItem.numeroRefCargue);			
+			}
+			
+			/**
+			 * Funcion para recibir el consecutivo Batch de la carga realizada
+			 * desde la pantalla de cargue
+			 * @see com.segurosbolivar.avaluos.modulos.AVA5_CarguePlanoAvaluos 
+			 **/
+			public function setConsecutivoBatch(valor:String)
+			{				
+				consecutivoBatch=valor;
+				buscarResumenPlanoByConsecutivoBatchResult.token = carguePlano.buscarResumenPlanoByConsecutivoBatch(consecutivoBatch);
+			}
+			
+			/*
+			protected function dataGrid2_creationCompleteHandler(event:FlexEvent):void
+			{
+			buscarLogCargueResult.token = carguePlano.buscarLogCargue( arg0);
+			}*/
+			
+			/**
+			 * Metodo asincrono que se dispara al recibir el log 
+			 * del cargue para una linea del plano
+			 **/
+			protected function buscarLogCargueResult_resultHandler(event:ResultEvent):void
+			{				
+				dataGrid2.dataProvider=buscarLogCargueResult.lastResult; //dataProvider="{buscarLogCargueResult.lastResult}				
+			}
+
+			/**
+			 * Metodo para modificar los formatos de fecha y colocar los
+			 * dias de la semana y meses de el año en español
+			 * @deprecated Esta implementado dentro del datagrid
+			 **/
+			protected function dateChooser_init(dt:DateField):void { 
+				dt.dayNames=['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab']; 
+				dt.monthNames=[        'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 
+					'Julio', 'Agosto', 'Septiembre', 'Octubre', 
+					'Noviembre', 'Diciembre']; 
+				dt.firstDayOfWeek = 1; 
+				dt.formatString = "DD/MM/YYYY"; 
+			}
+
+		]]>
+		
+	</fx:Script>
+	
+	<!--- Servicios -->
+	
+	
+	<fx:Declarations>
+		<s:CallResponder id="buscarResumenPlanoResult"/>
+		<services:CarguePlano id="carguePlano" fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)" showBusyCursor="true"/>
+		<s:CallResponder id="buscarLogCargueResult" result="buscarLogCargueResult_resultHandler(event)"/>
+		<!--<valueObjects:PgbCargueTmp id="pgbCargueTmp"/>-->
+		<s:CallResponder id="buscarResumenPlanoByConsecutivoBatchResult"/>
+		<!--<s:CallResponder id="buscarLogCargueResult2" result="pgbCargueTmp = buscarLogCargueResult2.lastResult[0] as PgbCargueTmp"/>-->		
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	
+	<!--- inclusion de los estilos -->	
+		
+	</fx:Declarations>
+	<fx:Style source="assets/css/AvaluosBolivar.css"/>
+	<fx:Style source="assets/css/AvaluosBolivarPanel.css"/>
+
+	<mx:DataGrid y="30" id="dataGrid" creationComplete="dataGrid_creationCompleteHandler(event)"  resizableColumns="true"  dataProvider="{buscarResumenPlanoByConsecutivoBatchResult.lastResult}" change="dataGrid_changeHandler(event)" horizontalCenter="-4" variableRowHeight="false" height="145" right="15" left="10">
+		<mx:columns>			
+			<mx:DataGridColumn headerText="# Batch" dataField="consecutivoBatch" width="60"/>
+			<mx:DataGridColumn headerText="# Ref" dataField="numeroRefCargue" width="60"/>
+			<mx:DataGridColumn headerText="Archivo" dataField="nombreArchivo" width="250" itemRenderer="mx.controls.TextArea" editable="false"/>	
+			<!--<mx:DataGridColumn id="Fecha" headerText="Fecha" dataField="fechaTransaccion" width="160" itemRenderer="mx.controls.DateField" editable="false" />-->			
+			<mx:DataGridColumn dataField="fechaTransaccion" id="Fecha" headerText="Fecha" width="160" editable="false" >											
+				<mx:itemRenderer>
+					<fx:Component>
+						<mx:DateField  
+									   dayNames="['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab']" 
+									   monthNames="['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 
+									   'Julio', 'Agosto', 'Septiembre', 'Octubre', 
+									   'Noviembre', 'Diciembre']" 
+									   firstDayOfWeek = "1" 
+									   formatString = "DD/MM/YYYY"									   									   
+									   />
+					</fx:Component>						
+				</mx:itemRenderer>				
+			</mx:DataGridColumn>			
+			<mx:DataGridColumn headerText="Tipo" dataField="tipoCargue" width="120"/>
+			<mx:DataGridColumn headerText="# Total Reg" dataField="total" width="110"/>
+			<mx:DataGridColumn headerText="# Rechazados" dataField="rechazados" width="110"/>
+			<mx:DataGridColumn headerText="# Sin Estado" dataField="sinEstado" width="110"/>
+			<mx:DataGridColumn headerText="# Aplicados" dataField="aplicados" width="110"/>
+		</mx:columns>
+	</mx:DataGrid>
+	
+	<!--<mx:DataGrid  verticalScrollPolicy="auto" wordWrap="true"  showScrollTips="true" useRollOver="true" id="dataGrid2" resizableColumns="true" dataProvider="{buscarLogCargueResult.lastResult}" left="9" right="30" horizontalCenter="-12" variableRowHeight="false" enabled="true" height="166" y="212" creationComplete="dataGrid2_creationCompleteHandler(event)">-->
+	<mx:DataGrid  verticalScrollPolicy="auto" wordWrap="true"  showScrollTips="true" useRollOver="true" id="dataGrid2" resizableColumns="true" dataProvider="{buscarLogCargueResult.lastResult}" right="16" horizontalCenter="-2" variableRowHeight="false" enabled="true" height="166" y="212" left="14">	
+		<mx:columns>
+			<mx:DataGridColumn headerText="consecutivo" dataField="consecutivoTmp" width="80" visible="false"/>
+			<mx:DataGridColumn headerText="# linea" dataField="lineaPlano" resizable="true" wordWrap="false" width="70"/>
+			<mx:DataGridColumn headerText="# Ref" dataField="numeroRefCargue" wordWrap="false" width="70" visible="false"/>
+			<mx:DataGridColumn headerText="Estado" dataField="estadoCargue" width="90"/>
+			<mx:DataGridColumn headerText="usuarioTransaccion" dataField="usuarioTransaccion" visible="false"/>
+			<mx:DataGridColumn headerText="tipo" dataField="tipoCargue" width="80" visible="false"/>
+			<mx:DataGridColumn headerText="Fecha" itemRenderer="mx.controls.DateField" dataField="fechaTransaccion" width="130" visible="false"/>
+			<mx:DataGridColumn headerText="Linea" dataField="contenidoLineaPlano" wordWrap="false" itemRenderer="mx.controls.TextArea" resizable="true" width="250" editable="false"/>
+			<mx:DataGridColumn headerText="Mensaje" dataField="mensajeError" resizable="true" wordWrap="false" itemRenderer="mx.controls.TextArea" width="300" editable="false"/>
+			<mx:DataGridColumn headerText="nombreArchivo" dataField="nombreArchivo" visible="false" itemRenderer="mx.controls.TextArea"/>			
+		</mx:columns>
+	</mx:DataGrid>
+	<s:Label x="28" y="10" text="Archivos Cargados&#xd;" fontWeight="bold"/>
+	<s:Label x="10" y="192" text="Detalle de errores en los archivos cargados" fontWeight="bold"/>
+</s:TitleWindow>

@@ -1,0 +1,1064 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Module xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		   xmlns:s="library://ns.adobe.com/flex/spark" 
+		   xmlns:mx="library://ns.adobe.com/flex/mx" 
+		   xmlns:comp="com.segurosbolivar.avaluos.componentes.*"
+		   xmlns:services="services.*"
+		   width="98%" height="98%"		  
+		   xmlns:valueObjects="valueObjects.*">
+	
+	<fx:Script>
+		<![CDATA[
+			import com.segurosbolivar.avaluos.modulos.Utilidad;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.core.UIComponent;
+			import mx.events.CalendarLayoutChangeEvent;
+			import mx.events.CloseEvent;
+			import mx.events.FlexEvent;
+			import mx.events.ValidationResultEvent;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			import mx.utils.StringUtil;
+			
+			import org.flexunit.internals.matchers.Each;
+			import org.hamcrest.core.throws;
+			
+			import spark.events.IndexChangeEvent;
+			import spark.events.TextOperationEvent;
+			
+			import valueObjects.CampoRequeridoDTO;
+			import valueObjects.Ciudad;
+			import valueObjects.Departamento;
+			import valueObjects.DominiosAux;
+			import valueObjects.LiquidacionAvaluo;
+			import valueObjects.Usuario;
+			
+			
+			// Variables globales de la clase 
+			public static var coordenadasLatitud:String="";
+			public static var coordenadasLongitud:String="";
+			public var numeroIdentificacion3:String;
+			public var consecutivOld:String;
+			private static var nombreSeccionDirecccion:String = new String();
+			
+			public var  numeroIdentificacion3changed:Boolean=false;
+			
+			
+			[Bindable]
+			public static var selectDepartamento:ArrayCollection = new ArrayCollection() ;
+			
+			[Bindable]
+			public static var selectTipoId:ArrayCollection = new ArrayCollection() ;
+			
+			[Bindable]
+			public static var selectObjeto:ArrayCollection = new ArrayCollection() ;
+			
+			[Bindable]
+			public static var selectCiudadbasico:ArrayCollection = new ArrayCollection() ;
+			
+			[Bindable]
+			public static var selectSector:ArrayCollection = new ArrayCollection() ;
+			
+			[Bindable]
+			public static var selectMetodologia:ArrayCollection = new ArrayCollection() ;
+			
+			public function ubicacionGpsTextInput_focusOutHandler(event:FocusEvent):void
+			{
+				var coordenadas:String = ubicacionGpsTextInput.text; 
+				
+				var vResult:ValidationResultEvent;
+				
+				// TODO Auto-generated method stub				
+				if(coordenadas!=null && coordenadas.length > 0 )
+				{
+					//var coordenadasArray:Array = coordenadas.split(";");
+					var coordenadasArray:Array = coordenadas.split(",");
+					//avaluo2.ubicacionGpsTextInput
+					try{
+						coordenadasLatitud =coordenadasArray[0];
+						coordenadasLongitud=coordenadasArray[1];
+						
+						if(coordenadasLongitud!="" && coordenadasLatitud!="")
+						{	
+							coordenadasLatitud  = numberFormatter.format(coordenadasLatitud) ;
+							coordenadasLongitud = numberFormatter.format(coordenadasLongitud) ;
+							avaluo2.ubicacionGps = coordenadasLatitud+","+coordenadasLongitud;
+							ubicacionGpsTextInput.text = avaluo2.ubicacionGps ;
+						}
+						
+					}catch(e:Error)
+					{
+						
+					}
+					
+					vResult = LatitudNumberValidator.validate(coordenadasLatitud);					
+					if (vResult.type==ValidationResultEvent.VALID) {
+						// Validation succeeded.
+						// valid=true;
+						coordenadasLatitudTextInput.text=coordenadasLatitud;
+					}else {
+						// Validation failed.
+						// valid=false;
+						coordenadasLatitudTextInput.text="";
+						return ; 
+					}
+					
+					vResult = LongitudNumberValidator.validate(coordenadasLongitud);					
+					if (vResult.type==ValidationResultEvent.VALID) {
+						// Validation failed.
+						// valid=false;
+						coordenadasLongitudTextInput.text=coordenadasLongitud;
+						imprimirEstadoProceso(""); 
+					}else{
+						coordenadasLongitudTextInput.text="";
+					}
+				}
+			}
+			
+			protected function getValoresDominioResult_resultHandler(event:ResultEvent):void
+			{
+				if (selectTipoId == null || selectTipoId.length < 1){ 
+					selectTipoId = getValoresDominioResult.lastResult;
+					selectTipoId.removeItemAt(0);
+				}				
+			}
+			
+			protected function numeroIdentificacionTextInput3_focusOutHandler(event:FocusEvent):void
+			{	
+				if(numeroIdentificacionTextInput3 != null && 
+					numeroIdentificacionTextInput3.text != null && 
+					StringUtil.trim(numeroIdentificacionTextInput3.text).length > 0 && 
+					fechaAvaluoDateField2 != null && 
+					fechaAvaluoDateField2.text != null && 
+					StringUtil.trim(fechaAvaluoDateField2.text).length > 0){ 
+					var fechaTmp:String = fechaAvaluoDateField2.text.replace("/","").replace("/","");
+					existeConsecutivoResult.token = parentDocument.avaluosService.existeConsecutivo(fechaTmp + numeroIdentificacionTextInput3.text);
+				}
+			}
+			
+			protected function existeConsecutivoResult_resultHandler(event:ResultEvent):void
+			{
+				var existeConsecutivo:Boolean=false;
+				existeConsecutivo=existeConsecutivoResult.lastResult;
+				var mensaje:String = "" ; 
+				if(existeConsecutivo)
+				{
+					mensaje = "Un avaluo con este nuevo consecutivo ya existe." ;
+					numeroIdentificacionTextInput3.text = "";					
+					consecutivoBancoTextInput.text = "" ;
+				}
+				else
+				{
+					var fechaTmp:String = fechaAvaluoDateField2.text.replace("/","").replace("/","");
+					consecutivoBancoTextInput.text = fechaTmp + numeroIdentificacionTextInput3.text;
+				}	
+				imprimirEstadoProceso(mensaje);
+			}
+			
+			protected function fechaAvaluoDateField2_changeHandler(event:CalendarLayoutChangeEvent):void
+			{
+				var fecha:String = fechaAvaluoDateField2.text;
+				getUvrDia(fecha);
+				consecutivoBancoTextInput.text = fechaAvaluoDateField2.text.replace("/","").replace("/","") + numeroIdentificacionTextInput3.text;
+			}
+			
+			protected function getUvrDia(arg0:String):void
+			{
+				getUvrDiaResult.token = parentDocument.liquidacionTotalService.getUvrDia(arg0);
+			}
+			
+			protected function getUvrDiaResult_resultHandler(event:ResultEvent):void
+			{
+				liquidacionAvaluoTotal.valorUvrDia = getUvrDiaResult.lastResult;
+				var uvrDiaNumer:Number = new Number(liquidacionAvaluoTotal.valorUvrDia);
+				if(liquidacionAvaluoTotal.totalAvaluo != null && (uvrDiaNumer > 0 )){
+					var totalAvaluoNumber:Number = new Number(liquidacionAvaluoTotal.totalAvaluo);
+					var uvrDiaNumber:Number = new Number(liquidacionAvaluoTotal.valorUvrDia);
+					var avaluoUvr:Number = Math.round((totalAvaluoNumber / uvrDiaNumber)*10000)/10000;
+					liquidacionAvaluoTotal.avaluoUvr = new String(avaluoUvr);
+				}
+			}
+			
+			protected function cbxObjetivo_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectObjeto==null || selectObjeto.length<1)	
+					getValoresDominioResult30.token = parentDocument.dominiosAuxDao.getValoresDominio("OBJETOAVALUO");
+				
+			}
+			
+			protected function getValoresDominioResult30_resultHandler(event:ResultEvent):void
+			{
+				if(selectObjeto == null || selectObjeto.length < 1)
+					selectObjeto = getValoresDominioResult30.lastResult;
+			}
+			
+			protected function direccionInmuebleTextInput3_focusOutHandler(event:FocusEvent):void
+			{
+				if(convierteDireccionDaneResult3.token == null){
+					nombreSeccionDirecccion = "direccionInmuebleTextInput3";
+					if(direccionInmuebleTextInput3.text != null && direccionInmuebleTextInput3.text.length > 0){
+						convierteDireccionDaneResult3.token = parentDocument.tercerosWebService.convierteDireccionDane(direccionInmuebleTextInput3.text);
+					}
+				}else{
+					convierteDireccionDaneResult3.token = null ;
+					convierteDireccionDaneResult3.lastResult = null ;					
+				}
+			}
+			
+			protected function convierteDireccionDaneResult3_resultHandler(event:ResultEvent):void
+			{
+				var mensaje:String = "" ; 
+				if(!((convierteDireccionDaneResult3.lastResult != " ") && (convierteDireccionDaneResult3.lastResult))){
+					mensaje = "Dirección no válida" ;					
+				}else{					
+					if(nombreSeccionDirecccion == "direccionAnexosTextInput"){
+						
+					}else if(nombreSeccionDirecccion == "direccionInmuebleTextInput3"){
+						avaluo2.direccionInmueble =  convierteDireccionDaneResult3.lastResult;
+					}else {
+						mensaje = "Dirección no válida" ;												
+					}
+				}
+				imprimirEstadoProceso(mensaje);
+				convierteDireccionDaneResult3.token = null ; 
+				convierteDireccionDaneResult3.lastResult = null;
+			}
+			
+			/**
+			 * Permite llenar el comobo de ciudades del bloque basico, actualiza el codigo del dpto[ok]
+			 * */
+			protected function cbxDepartamentoBasico_changeHandler(event:IndexChangeEvent):void
+			{
+				if(event == null || event.oldIndex != -1 )
+				{	
+					if(cbxDepartamentoBasico.selectedIndex == spark.components.ComboBox.CUSTOM_SELECTED_ITEM)
+					{	
+						//cbxDepartamentoBasico.selectedIndex = -1;
+						cbxDepartamentoBasico.selectedIndex = event.oldIndex;
+					}else if(cbxDepartamentoBasico.selectedItem == null){
+						selectCiudadbasico = new ArrayCollection(); 
+					}else{
+						selectCiudadbasico = new ArrayCollection();
+						selectCiudadbasico = cbxDepartamentoBasico.selectedItem.ciudadesDepto;
+						cbxCiudadBasico.invalidateDisplayList();
+						cbxCiudadBasico.selectedIndex = -1;
+						txiCodDaneDepto.text = (cbxDepartamentoBasico.selectedItem as Departamento).codDane;
+					}										
+				}
+			}
+			
+			/**
+			 * Permite  llenar el combo de departamentos en información básica
+			 * */
+			protected function cbxDepartamento_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectDepartamento==null || selectDepartamento.length<1){
+					consultaDepartamentosResult.token = parentDocument.departamentoService.consultaDepartamentos();
+				}				
+			}
+			
+			protected function consultaDepartamentosResult_resultHandler(event:ResultEvent):void
+			{
+				selectDepartamento = consultaDepartamentosResult.lastResult;				
+			}
+			
+			protected function cbxDepartamentoBasico_focusOutHandler(event:FocusEvent):void
+			{
+				// TODO Auto-generated method stub				
+				cbxDepartamentoBasico_changeHandler(null);
+				if(avaluo2.objCiudad != null){
+					cbxCiudadBasico.selectedItem = avaluo2.objCiudad ;  
+				}				 
+			}
+			
+			/**
+			 * Permite actualizar el codigo de la ciudad
+			 * */
+			protected function cbxCiudadBasico_changeHandler(event:IndexChangeEvent):void
+			{
+				if(cbxCiudadBasico.selectedIndex == spark.components.ComboBox.CUSTOM_SELECTED_ITEM)
+				{	
+					cbxCiudadBasico.selectedIndex = event.oldIndex;
+				}	
+				else{
+					txiCodDaneCiudad.text = (cbxCiudadBasico.selectedItem as Ciudad).codDane; 
+				}
+			}
+			
+			protected function cbxSector_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectSector==null || selectSector.length<1)
+					getValoresDominioResult31.token = parentDocument.dominiosAuxDao.getValoresDominio("SECTOR");				
+			}
+			
+			protected function getValoresDominioResult31_resultHandler(event:ResultEvent):void
+			{
+				if(selectSector==null || selectSector.length<1)
+					selectSector = getValoresDominioResult31.lastResult;
+			}
+			
+			protected function cbxMetodologia_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectMetodologia==null || selectMetodologia.length<1){
+					getValoresDominioResult29.token = parentDocument.dominiosAuxDao.getValoresDominio("METODOLOGIA");
+				}				
+			}
+			
+			protected function getValoresDominioResult29_resultHandler(event:ResultEvent):void
+			{
+				if(selectMetodologia==null || selectMetodologia.length<1){
+					selectMetodologia = getValoresDominioResult29.lastResult;
+				}
+			}
+			
+			public function validarCamposVacios():Boolean{
+				var vResult:ValidationResultEvent;
+				vResult = LatitudNumberValidator.validate(coordenadasLatitudTextInput.text);
+				if (vResult.type!=ValidationResultEvent.VALID) {
+					// Validation failed.
+					throw new Error("El valor de la latitud es incorrecto");
+				}
+				
+				vResult = LongitudNumberValidator.validate(coordenadasLongitudTextInput.text);
+				if (vResult.type!=ValidationResultEvent.VALID) {
+					// Validation failed.
+					throw new Error("El valor de la longitud es incorrecto");
+				}
+				
+				if(direccionInmuebleTextInput3.text.length == 0){
+					throw new Error("La dirección no puede estar vacia, diligencie una dirección.", "Validación de registros"); 
+				}else{
+					if(avaluo2.direccionInmueble == null || avaluo2.direccionInmueble.length == 0){
+						throw new Error("Un momento por favor. Se esta terminando de realizar la validación de la dirección. En un instante puede continuar ", "Validación de registros"); 
+					}else {
+						if(avaluo2.direccionInmueble != direccionInmuebleTextInput3.text){
+							throw new Error("Un momento por favor. Se esta terminando de realizar la validación de la dirección. En un instante puede continuar", "Validación de registro");
+						}
+					}					
+				}
+				
+				var camposObligatorios:ArrayCollection = Utilidad.obtenerCamposVacios(getListaCampos(0), this);
+				if(camposObligatorios != null && camposObligatorios.length > 0){
+					Utilidad.validarCamposObligarios(camposObligatorios,this); 
+					var camposMensaje:String = "" ; 
+					for each (var campos:CampoRequeridoDTO in camposObligatorios){
+						camposMensaje += campos.nombreComponente ; 
+					}
+					imprimirEstadoProceso("Recuerde diligenciar los siguientes campos: " + camposMensaje);
+				}
+				
+				return true ; 
+			}
+			
+			/**
+			 * Actualiza los datos del bloque información básica
+			 * */
+			public function guardarInformacionBasica(avaluo:Avaluo, myUsuario:Usuario):void {
+				
+				if(avaluo != null){
+					if(avaluo.informacionBarrio != null){
+						avaluo2.informacionBarrio = avaluo.informacionBarrio ;  
+					}
+					if(avaluo.informacionInmueble != null){
+						avaluo2.informacionInmueble = avaluo.informacionInmueble ;
+					}
+					if(avaluo.informacionConstruccion != null){
+						avaluo2.informacionConstruccion = avaluo.informacionConstruccion ;
+					}
+					if(avaluo.condicionSalubridad != null){
+						avaluo2.condicionSalubridad = avaluo.condicionSalubridad ;
+					}
+					if(avaluo.compOfertaDemanda!= null){
+						avaluo2.compOfertaDemanda = avaluo.compOfertaDemanda ;
+					}
+					if(avaluo.liquidacionAvaluos!= null){
+						avaluo2.liquidacionAvaluos = avaluo.liquidacionAvaluos ;
+					}
+					if(avaluo.liquidacionTotal!= null){
+						avaluo2.liquidacionTotal = avaluo.liquidacionTotal ;
+					}
+					if(avaluo.observacion!= null){
+						avaluo2.observacion = avaluo.observacion ;
+					}
+					if(avaluo.idAvaluo != null){ 
+						avaluo2.idAvaluo = avaluo.idAvaluo ; 
+						avaluo2.usuarioCreacion = avaluo.usuarioCreacion ; 
+						avaluo2.fechaCreacion = avaluo.fechaCreacion ; 
+						
+						if(avaluo.codigoDaneDepartamento != null && cbxCiudadBasico != null && cbxCiudadBasico.selectedIndex == -1) {
+							avaluo2.codigoDaneDepartamento = avaluo.codigoDaneDepartamento;
+							var indexDepartamento:int = Utilidad.getItemIndex(avaluo.codigoDaneDepartamento,selectDepartamento,'codAsobancaria');
+							selectCiudadbasico =  (selectDepartamento[indexDepartamento] as Departamento).ciudadesDepto;
+						}
+						
+						if(avaluo.objCiudad != null) {
+							avaluo2.objCiudad = avaluo.objCiudad;
+						}
+						
+						if(avaluo.codigoDaneCiudad != null) {
+							avaluo2.codigoDaneCiudad = avaluo.codigoDaneCiudad;
+						}
+						
+						if(avaluo.idCiudad != null) {
+							avaluo2.idCiudad = avaluo.idCiudad;
+						}
+						
+					}
+					if(avaluo.ubicacionGps != null){
+						avaluo2.ubicacionGps = avaluo.ubicacionGps;
+						ubicacionGpsTextInput_focusOutHandler(null); 
+					}
+					
+				} 
+				
+				avaluo2.nombreSolicitante = nombreSolicitanteTextInput2.text;
+				if((cbxIdTipoIdentificacion != null) && (cbxIdTipoIdentificacion.selectedIndex > -1)) {
+					avaluo2.tipoDocumento = cbxIdTipoIdentificacion.selectedItem.rvAbbreviation;
+				}
+				if((cbxIdTipoIdentificacion != null) && (cbxIdTipoIdentificacion.selectedIndex > -1)) {
+					avaluo2.idTipoIdentificacion = cbxIdTipoIdentificacion.selectedItem.rvLowValue;
+				}
+				
+				//cambio de cedula
+				avaluo2.consecutivoBanco=consecutivoBancoTextInput.text;
+				
+				avaluo2.numeroIdentificacion = numeroIdentificacionTextInput3.text;
+				avaluo2.fechaAvaluo = fechaAvaluoDateField2.selectedDate;
+				avaluo2.telefonoSolicitante = telefonoSolicitanteTextInput.text;
+				avaluo2.celularSolicitante = celularSolicitanteTextInput.text;
+				avaluo2.correoSolicitante = correoSolicitanteTextInput.text;
+				if((cbxSector != null) && (cbxSector.selectedIndex > -1)) {
+					avaluo2.sector = cbxSector.selectedItem.rvLowValue;
+				}
+				if((cbxCiudadBasico != null) && (cbxCiudadBasico.selectedIndex > -1)) {
+					avaluo2.objCiudad = cbxCiudadBasico.selectedItem;
+				}
+				if((cbxCiudadBasico != null) && (cbxCiudadBasico.selectedIndex > -1)) {
+					avaluo2.codigoDaneCiudad = cbxCiudadBasico.selectedItem.codDane;
+				}
+				if((cbxCiudadBasico != null) && (cbxCiudadBasico.selectedIndex > -1)) {
+					avaluo2.idCiudad = cbxCiudadBasico.selectedItem.codAsobancaria;
+				}
+				if((cbxCiudadBasico != null) && (cbxCiudadBasico.selectedIndex > -1)) {
+					avaluo2.codigoDaneDepartamento = cbxCiudadBasico.selectedItem.departamento.codDane;
+				}
+				avaluo2.nombreConjuntoEdificio = nombreConjuntoEdificioTextInput.text;
+				avaluo2.barrio = barrioTextInput2.text;
+				if((cbxMetodologia != null) && (cbxMetodologia.selectedIndex > -1)) {
+					avaluo2.idMetodologia = cbxMetodologia.selectedItem.rvLowValue;
+				}
+				if((cbxObjetivo != null) && (cbxObjetivo.selectedIndex > -1)) {
+					avaluo2.idObjetoAvaluo = cbxObjetivo.selectedItem.rvLowValue;
+				}
+				avaluo2.justificacion = justificacionTextInput.text;
+				
+				if(chkTipoInforme.selected == false )
+				{
+					avaluo2.tipoInforme = "1";
+				}
+				else if(chkTipoInforme.selected == true )
+				{
+					avaluo2.tipoInforme = "2";
+				}
+				
+				avaluo2.tipoInforme="1";
+				avaluo2.ubicacionGps = ubicacionGpsTextInput.text;
+				avaluo2.TUsuario = myUsuario.codigoUsuario;
+				avaluo2.usuarioCreacion = myUsuario.codigoUsuario;
+				avaluo2.usuarioTransaccion = myUsuario.codigoUsuario;
+				avaluo2.latitudSFBUA 			= coordenadasLatitud;
+				avaluo2.longitudSFBUA 			= coordenadasLongitud;
+				avaluo2.sistemaCoordenadasTxtBUA = sisCoordBUATxtTextInput.text;
+				
+				if(avaluo != null){
+					if(avaluo.informacionBarrio != null){
+						avaluo2.informacionBarrio.getItemAt(0).avaluo = avaluo2 ;  
+					}
+					if(avaluo.informacionInmueble != null){
+						avaluo2.informacionInmueble.getItemAt(0).avaluo = avaluo2 ;
+					}
+					if(avaluo.informacionConstruccion != null){
+						avaluo2.informacionConstruccion.getItemAt(0).avaluo = avaluo2 ;
+					}
+					if(avaluo.condicionSalubridad != null){
+						avaluo2.condicionSalubridad.getItemAt(0).avaluo = avaluo2 ;
+					}
+					if(avaluo.compOfertaDemanda!= null){
+						avaluo2.compOfertaDemanda.getItemAt(0).avaluo = avaluo2 ;
+					}
+					if(avaluo.liquidacionAvaluos!= null){
+						for each(var liquidacion:LiquidacionAvaluo in avaluo2.liquidacionAvaluos){
+							liquidacion.avaluo = avaluo2 ;	
+						}						
+					}
+					if(avaluo.liquidacionTotal!= null){
+						avaluo2.liquidacionTotal.getItemAt(0).avaluo = avaluo2 ;
+					}
+					if(avaluo.observacion!= null){
+						avaluo2.observacion.getItemAt(0).avaluo = avaluo2 ;
+					}
+				} 
+				
+				updateResult.token = parentDocument.avaluosService.update(avaluo2);				 
+				
+			}
+			
+			protected function updateResult_resultHandler(event:ResultEvent):void
+			{
+				if(updateResult != null && updateResult.lastResult != null){
+					parentDocument.parentDocument.parentDocument.avaluoVO = updateResult.lastResult;
+					avaluo2 = updateResult.lastResult;
+					parentDocument.nextTabAvaluo(); 
+				}
+			}
+			
+			protected function cbxIdTipoIdentificacion_updateCompleteHandler(event:FlexEvent):void
+			{
+				if (selectTipoId == null || selectTipoId.length < 1){
+					var dominio:DominiosAux = new DominiosAux();
+					dominio.rvDomain = "TIPOIDENTIFICACION";
+					getValoresDominioResult.token = parentDocument.dominiosAuxDao.getValoresDominioProcedatos(dominio);
+				}
+			}
+			
+			
+			protected function cbxObjetivo_updateCompleteHandler(event:FlexEvent):void
+			{
+				cbxObjetivo_creationCompleteHandler(null); 				
+			}
+			
+			
+			protected function justificacionTextInput_focusOutHandler(event:FocusEvent):void
+			{
+				sisCoordBUATxtTextInput.setFocus(); 
+			}
+			
+			
+			protected function fechaAvaluoDateField2_focusOutHandler(event:FocusEvent):void
+			{
+				if(numeroIdentificacionTextInput3 != null && 
+					numeroIdentificacionTextInput3.text != null && 
+					StringUtil.trim(numeroIdentificacionTextInput3.text).length > 0 && 
+					fechaAvaluoDateField2 != null && 
+					fechaAvaluoDateField2.text != null && 
+					StringUtil.trim(fechaAvaluoDateField2.text).length > 0){ 
+					var fechaTmp:String = fechaAvaluoDateField2.text.replace("/","").replace("/","");
+					existeConsecutivoResult.token = parentDocument.avaluosService.existeConsecutivo(fechaTmp + numeroIdentificacionTextInput3.text);
+				}
+			}
+			
+			public function ejecutarValidacionCamposObligatorios(categoria:int):ArrayCollection{
+				return Utilidad.validarCamposObligarios(Utilidad.obtenerCamposVacios(getListaCampos(categoria), this),this); 
+			}
+			
+			public function getListaCampos(categoria:int):ArrayCollection
+			{
+				var arrayDto : ArrayCollection = new ArrayCollection();
+				var mapCampos:Object = new Object();
+				
+				mapCampos["nombreSolicitanteTextInput2"] = "T_NOMBRESOLICITANTE";
+				mapCampos["cbxIdTipoIdentificacion"] = "C_IDTIPOIDENTIFICACION";
+				mapCampos["cbxObjetivo"] = "C_IDOBJETOAVALUO";
+				mapCampos["direccionInmuebleTextInput3"] = "T_DIRINMUEBLE";
+				mapCampos["barrioTextInput2"] = "T_BARRIO";
+				mapCampos["nombreConjuntoEdificioTextInput"] = "T_NOMBCONJEDIF";
+				mapCampos["cbxDepartamentoBasico"] = "A_CODDANE_DEPTO";
+				mapCampos["cbxCiudadBasico"] = "A_CODDANE_CIUDAD";
+				mapCampos["cbxSector"] = "T_SECTOR";
+				mapCampos["ubicacionGpsTextInput"] = "A_UBICGPS";
+				//correoSolicitanteTextInput
+				mapCampos["correoSolicitanteTextInput"] = "A_SOLCORREO";
+				
+				mapCampos["telefonoSolicitanteTextInput"] = "A_SOLTEL";
+				//celularSolicitanteTextInput
+				mapCampos["celularSolicitanteTextInput"] = "A_SOLCEL";
+				
+				mapCampos["justificacionTextInput"] = "T_JUSTIFICACION";
+				//cbxMetodologia
+				mapCampos["cbxMetodologia"] = "C_IDMETODOLOGIA";
+				
+				mapCampos["sisCoordBUATxtTextInput"] = "T_SISTEMA";
+				
+				
+				for (var key:String in mapCampos) {
+					trace(" " + key + " - " +mapCampos[key]);
+					var campoDto:CampoRequeridoDTO = new CampoRequeridoDTO();
+					campoDto.nombretablaBD="PGB_AVALUOS";
+					campoDto.nombrecampoBD=mapCampos[key];
+					campoDto.nombreComponente=key;
+					campoDto.categoriaInmueble=categoria.toString();
+					
+					arrayDto.addItem(campoDto);
+					
+				}
+				return arrayDto ; 
+			}
+			
+			protected function selectedConstructor():Boolean
+			{
+				if(avaluo2.tipoInforme == '2')
+				{	
+					imprimirEstadoProceso("Recuerde que debe marcar la vivienda como nueva y terminada para que sea proyecto constructor");
+					return true;
+				}				
+				return false;
+			}
+			
+			protected function validarCampos(categoria:int, todos:Boolean):void
+			{				
+				ejecutarValidacionCamposObligatorios(categoria); 
+			}
+			
+			protected function getAvaluosPorIdResult_resultHandler(event:ResultEvent):void
+			{
+				//Se instancian nuevamente todos los objetos
+				avaluo2 = new Avaluo(); 
+				avaluo2 = getAvaluosPorIdResult.lastResult as Avaluo;
+				parentDocument.parentDocument.avaluoVO = getAvaluosPorIdResult.lastResult as Avaluo; 
+				
+				
+				if(avaluo2 != null){ 
+					ubicacionGpsTextInput_focusOutHandler(null);
+					
+					if(avaluo2.codigoDaneDepartamento != null) {
+						// var indexDepartamento:int = Utilidad.getItemIndex(avaluoVO.codigoDaneDepartamento,informacionBasicaPanelVO.selectDepartamento,'codAsobancaria');
+						// informacionBasicaPanelVO.selectCiudadbasico =  (informacionBasicaPanelVO.selectDepartamento[indexDepartamento] as Departamento).ciudadesDepto;
+					}
+					
+				}
+				
+				
+				
+				
+				/**	
+				 //19 Nov 2012 Coordenadas Gps
+				 var coordenadas:String = avaluoVO.ubicacionGps;
+				 
+				 
+				 if(coordenadas!=null)
+				 {
+				 //var coordenadasArray:Array = coordenadas.split(";");
+				 var coordenadasArray:Array = coordenadas.split(",");
+				 //avaluo2.ubicacionGpsTextInput
+				 try{
+				 coordenadasLatitud =coordenadasArray[0];
+				 coordenadasLongitud=coordenadasArray[1];
+				 
+				 if(coordenadasLongitud!="" && coordenadasLatitud!="")
+				 {	
+				 coordenadasLatitud  = numberFormatter.format(coordenadasLatitud) ;
+				 coordenadasLongitud = numberFormatter.format(coordenadasLongitud) ;
+				 avaluo2.ubicacionGps = coordenadasLatitud+","+coordenadasLongitud;
+				 ubicacionGpsTextInput.text = avaluo2.ubicacionGps; 
+				 coordenadasLatitudTextInput.text = coordenadasLatitud; 
+				 coordenadasLongitudTextInput.text = coordenadasLongitud ; 
+				 }
+				 
+				 }	
+				 catch(e:Error)
+				 {
+				 trace(e);
+				 }	
+				 }
+				 if(aprobar){
+				 if((avaluo2.informacionInmueble != null) && (avaluo2.informacionInmueble.length > 0)) {
+				 categoria.rvLowValue = (avaluo2.informacionInmueble[0] as InformacionInmueble).idCategoria;
+				 }
+				 else {
+				 categoria = null;
+				 }
+				 if((categoria != null) && (categoria.rvLowValue != null)){
+				 var ava:Avaluo = new Avaluo();
+				 ava.idAvaluo = avaluo2.idAvaluo;
+				 aprobarResult.token = avaluosService.aprobar(ava);
+				 }
+				 else {
+				 Alert.show("Para aprobar el avaluo debe seleccionar una categoria del inmueble.\n\nRecuerde seleccionar la categoria y guardar la sección en información del inmueble.","INFO", null, null, null, null, Alert.OK);
+				 }
+				 aprobarResult.token = avaluosService.aprobar(avaluo2);
+				 aprobar = false;
+				 }
+				 
+				 else {
+				 //valida si el archivo ya fue enviado
+				 if(avaluo2.logsGeneraArchivo != null){
+				 if(avaluo2.logsGeneraArchivo.estado!=null)
+				 {	
+				 if((avaluo2.logsGeneraArchivo.estado.toUpperCase() == "E") || (avaluo2.logsGeneraArchivo.estado.toUpperCase() == "G"))
+				 {
+				 isEnabled = false;
+				 habilitarCamposEdicion(false); 
+				 }
+				 else if((avaluo2.logsGeneraArchivo.estado.toUpperCase() == "R") || (avaluo2.logsGeneraArchivo.estado.toUpperCase() == "V"))
+				 {
+				 isEnabled = true;
+				 habilitarCamposEdicion(true); 
+				 //Mantener Estado Actual
+				 }
+				 else
+				 {
+				 isEnabled = false;
+				 habilitarCamposEdicion(false); 
+				 }
+				 
+				 }
+				 }else{						
+				 isEnabled = true;
+				 habilitarCamposEdicion(true);
+				 }
+				 
+				 if(selectCiudadbasico != null && selectCiudadbasico.length == 0){
+				 selectCiudadbasico.addItem(avaluo2.objCiudad);
+				 if(cbxCiudadBasico != null){
+				 cbxCiudadBasico.selectedIndex = 0 ;
+				 }
+				 }
+				 
+				 
+				 
+				 if((avaluo2.informacionBarrio != null) && (avaluo2.informacionBarrio.length > 0)) {
+				 informacionBarrio = avaluo2.informacionBarrio.getItemAt(0) as InformacionBarrio;
+				 }
+				 
+				 
+				 if((avaluo2.informacionInmueble != null) && (avaluo2.informacionInmueble.length > 0)) {
+				 informacionInmueble2 = avaluo2.informacionInmueble.getItemAt(0) as InformacionInmueble;						
+				 
+				 categoria.rvLowValue = informacionInmueble2.idCategoria;
+				 isBodega = informacionInmueble2.idCategoria == '5'?true:false;
+				 isLocal = informacionInmueble2.idCategoria == '6'?true:false;
+				 
+				 if(selectciudadescritura != null && selectciudadescritura.length == 0 && informacionInmueble2.departamentoEscritura != null){
+				 var posicionDepartamento:int = getItemIndex(informacionInmueble2.departamentoEscritura,selectDepartamento,'codAsobancaria');
+				 if(posicionDepartamento >= 0){
+				 selectciudadescritura =  (selectDepartamento[posicionDepartamento] as Departamento).ciudadesDepto;
+				 }
+				 }
+				 }
+				 
+				 
+				 //ojo pruebas campos en cero 0
+				 informacionConstruccion.sala="0";
+				 informacionConstruccion.banioSocial="0";
+				 informacionConstruccion.banioPrivado="0";
+				 informacionConstruccion.banioServicio="0";
+				 informacionConstruccion.jardin="0";
+				 informacionConstruccion.comedor="0";
+				 informacionConstruccion.estarHabitacion="0";
+				 informacionConstruccion.cocina="0";
+				 informacionConstruccion.patioInterior="0";
+				 informacionConstruccion.balcon="0";
+				 informacionConstruccion.estudio="0";
+				 informacionConstruccion.numeroHabitaciones="0";
+				 informacionConstruccion.cuartoServicio="0";
+				 informacionConstruccion.terraza="0";
+				 informacionConstruccion.zonaVerdePrivada="0";
+				 informacionConstruccion.totalGarajes="0";
+				 informacionConstruccion.usoExclusivo="0";
+				 informacionConstruccion.sencillo="0";
+				 informacionConstruccion.deposito="0";
+				 informacionConstruccion.local="0";
+				 informacionConstruccion.cubierto="0";
+				 informacionConstruccion.privado="0";
+				 informacionConstruccion.doble="0";
+				 informacionConstruccion.bodega="0";
+				 informacionConstruccion.descubierto="0";
+				 informacionConstruccion.bahiaComunal="0";
+				 informacionConstruccion.servidumbre="0";
+				 informacionConstruccion.oficina="0";
+				 
+				 
+				 if((avaluo2.informacionConstruccion != null) && (avaluo2.informacionConstruccion.length > 0)) {
+				 informacionConstruccion = avaluo2.informacionConstruccion.getItemAt(0) as InformacionConstruccion;
+				 }
+				 if((avaluo2.condicionSalubridad != null) && (avaluo2.condicionSalubridad.length > 0)) {
+				 condicionesSalubridad = avaluo2.condicionSalubridad.getItemAt(0) as CondicionesSalubridad;
+				 }
+				 if((avaluo2.compOfertaDemanda != null) && (avaluo2.compOfertaDemanda.length > 0)) {
+				 comportamientoOfertaDemanda = avaluo2.compOfertaDemanda.getItemAt(0) as ComportamientoOfertaDemanda;
+				 }
+				 if((avaluo2.observacion != null) && (avaluo2.observacion.length > 0)) {
+				 observaciones = avaluo2.observacion.getItemAt(0) as Observaciones;
+				 }
+				 if((avaluo2.liquidacionTotal != null) && (avaluo2.liquidacionTotal.length > 0)) {
+				 liquidacionAvaluoTotal = avaluo2.liquidacionTotal.getItemAt(0) as LiquidacionAvaluoTotal;
+				 }
+				 if((avaluo2.liquidacionAvaluos != null) && (avaluo2.liquidacionAvaluos.length > 0)) {
+				 liquidacionAvaluo0 = avaluo2.liquidacionAvaluos.getItemAt(0) as LiquidacionAvaluo;
+				 }
+				 if((avaluo2.liquidacionAvaluos != null) && (avaluo2.liquidacionAvaluos.length > 1)) {
+				 liquidacionAvaluo1 = avaluo2.liquidacionAvaluos.getItemAt(1) as LiquidacionAvaluo;
+				 }
+				 if((avaluo2.liquidacionAvaluos != null) && (avaluo2.liquidacionAvaluos.length > 2)) {
+				 liquidacionAvaluo2 = avaluo2.liquidacionAvaluos.getItemAt(2) as LiquidacionAvaluo;
+				 }
+				 if((avaluo2.liquidacionAvaluos != null) && (avaluo2.liquidacionAvaluos.length > 3)) {
+				 liquidacionAvaluo3 = avaluo2.liquidacionAvaluos.getItemAt(3) as LiquidacionAvaluo;	
+				 }
+				 if((avaluo2.liquidacionAvaluos != null) && (avaluo2.liquidacionAvaluos.length > 4)) {
+				 liquidacionAvaluo4 = avaluo2.liquidacionAvaluos.getItemAt(4) as LiquidacionAvaluo;
+				 }
+				 if((avaluo2.liquidacionAvaluos != null) && (avaluo2.liquidacionAvaluos.length > 5)) {
+				 liquidacionAvaluo5 = avaluo2.liquidacionAvaluos.getItemAt(5) as LiquidacionAvaluo;
+				 }
+				 if((avaluo2.liquidacionAvaluos != null) && (avaluo2.liquidacionAvaluos.length > 6)) {
+				 liquidacionAvaluo6 = avaluo2.liquidacionAvaluos.getItemAt(6) as LiquidacionAvaluo;
+				 }
+				 if((avaluo2.liquidacionAvaluos != null) && (avaluo2.liquidacionAvaluos.length > 7)) {
+				 liquidacionAvaluo7 = avaluo2.liquidacionAvaluos.getItemAt(7) as LiquidacionAvaluo;
+				 }
+				 if((avaluo2.liquidacionAvaluos != null) && (avaluo2.liquidacionAvaluos.length > 8)) {
+				 liquidacionAvaluo8 = avaluo2.liquidacionAvaluos.getItemAt(8) as LiquidacionAvaluo;
+				 }
+				 if((avaluo2.liquidacionAvaluos != null) && (avaluo2.liquidacionAvaluos.length > 9)) {
+				 liquidacionAvaluo9 = avaluo2.liquidacionAvaluos.getItemAt(9) as LiquidacionAvaluo;
+				 }
+				 
+				 // Leonardo Galan 
+				 // Este cambio esta afectando el proceso
+				 //24 junio 2016 se agrega llamado para cargar coordenadas al editar
+				 // ubicacionGpsTextInput_focusOutHandler(null);
+				 //24 junio 2016 se agrega llamado para cargar coordenadas al editar
+				 
+				 vstAvaluo.selectedIndex = 2;
+				 * 
+				 }**/
+			}
+			
+			private function validarCamposFormultario():Boolean{
+				try{
+					validarCamposVacios();
+					
+					return true; 
+				}catch(e:Error){
+					imprimirEstadoProceso(e.message);
+				}	
+				return false;
+			}
+			
+			/**
+			 *  Imprime estado de las novedades durante el registro del formultario 
+			 **/			
+			public function imprimirEstadoProceso(mensaje:String):void{
+				mensajes.text = mensaje ; 
+			}
+			
+			protected function button1_clickHandler(event:MouseEvent):void{
+				if(!validarCamposFormultario()){
+					return; 
+				}
+				var mensajeTransaccion:String = "Transacción exitosa. Bloque: Información Básica"; 
+				var avaluoTmp:Avaluo = new Avaluo();
+				
+				imprimirEstadoProceso(mensajeTransaccion);
+				
+				guardarInformacionBasica(avaluo2, parentApplication.myUsuario);
+				
+				if(avaluo2.usuarioCreacion == null)
+					auditoriaAvaluo.usuarioCreacion.text = parentApplication.myUsuario.cedulaEmpleado ; 
+				else 
+					auditoriaAvaluo.usuarioCreacion.text = avaluo2.usuarioCreacion ;
+				
+				if(avaluo2.fechaCreacion != null)
+					auditoriaAvaluo.fechaCreacion.selectedDate = avaluo2.fechaCreacion ; 
+				else 
+					auditoriaAvaluo.fechaCreacion.selectedDate = new Date() ;
+				
+				auditoriaAvaluo.usuarioTransaccion.text = parentApplication.myUsuario.cedulaEmpleado ; 
+				auditoriaAvaluo.fechaTransaccion.selectedDate = new Date() ;
+				
+			}
+			
+			protected function button2_clickHandler(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+			}
+			
+			
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		
+		<valueObjects:Avaluo id="avaluo2" />
+		<valueObjects:LiquidacionAvaluoTotal id="liquidacionAvaluoTotal"/>
+		
+		<mx:NumberFormatter id="numberFormatter" 
+							decimalSeparatorFrom="."
+							decimalSeparatorTo="."
+							precision="7" 
+							rounding="none"
+							useThousandsSeparator="true" 
+							useNegativeSign="true"/>
+		
+		<mx:NumberValidator id="LongitudNumberValidator" property="text"
+							source="{coordenadasLongitudTextInput}"					
+							minValue="-82.500000" maxValue="-66.00000" domain="real"		
+							invalid="imprimirEstadoProceso('El valor de las coordenadas de longitud no es válido debe estar entre -82.500000 y -66.00000. Recuerde que el orden debe ser latitud,longitud y el separador debe ser coma')"
+							triggerEvent=""
+							/>
+		
+		<mx:NumberValidator id="LatitudNumberValidator" property="text" 
+							source="{coordenadasLatitudTextInput}"
+							minValue="-4.400000" maxValue="13.500000" domain="real"
+							invalid="imprimirEstadoProceso('El valor de las coordenadas de latitud no es valido debe estar entre -4.400000 y 13.500000. Recuerde que el orden debe ser latitud,longitud y el separador debe ser coma')"
+							triggerEvent=""
+							/>
+		
+		
+		<s:CallResponder id="getValoresDominioResult" result="getValoresDominioResult_resultHandler(event)"/>
+		<s:CallResponder id="existeConsecutivoResult" result="existeConsecutivoResult_resultHandler(event)"/>
+		<s:CallResponder id="getUvrDiaResult" result="getUvrDiaResult_resultHandler(event)"/>
+		<s:CallResponder id="getValoresDominioResult30" result="getValoresDominioResult30_resultHandler(event)"/>
+		<s:CallResponder id="convierteDireccionDaneResult3" result="convierteDireccionDaneResult3_resultHandler(event)"/>
+		<s:CallResponder id="consultaDepartamentosResult" result="consultaDepartamentosResult_resultHandler(event)" />
+		<s:CallResponder id="getValoresDominioResult31" result="getValoresDominioResult31_resultHandler(event)"/>
+		<s:CallResponder id="getValoresDominioResult29" result="getValoresDominioResult29_resultHandler(event)"/>
+		<s:CallResponder id="updateResult" result="updateResult_resultHandler(event)"/>
+		<s:CallResponder id="getAvaluosPorIdResult" result="getAvaluosPorIdResult_resultHandler(event)"/>
+		
+		
+		
+	</fx:Declarations>
+	
+	<s:Group>
+		<s:layout>
+			<s:VerticalLayout/>
+		</s:layout>
+		
+		<!-- ########################################### INFO BASICA ###########################################-->
+		
+		<mx:VBox width="100%" height="100%"> 
+			<mx:HBox width="100%">
+				<mx:VBox>
+					<s:Label text="Nombre Solicitante"/>
+					<s:TextInput id="nombreSolicitanteTextInput2" text="{avaluo2.nombreSolicitante}" width="231" restrict="{Utilidad.restrict_}" maxChars="60" enabled="true" tabIndex="1"/>
+				</mx:VBox>
+				<mx:VBox>
+					<s:Label text="ID"/>
+					<s:ComboBox id="cbxIdTipoIdentificacion" dataProvider="{selectTipoId}" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(avaluo2.dominioTipoIdentificacion.rvMeaning,selectTipoId,'rvMeaning')}" width="70" enabled="true" tabIndex="2" updateComplete="cbxIdTipoIdentificacion_updateCompleteHandler(event)"/>
+				</mx:VBox>
+				<mx:VBox>
+					<s:Label text="Número Identificación"/>									
+					<s:TextInput id="numeroIdentificacionTextInput3" text="{avaluo2.numeroIdentificacion}" width="124" restrict ="{Utilidad.onlyNumber}" maxChars="10" enabled="true" focusOut="numeroIdentificacionTextInput3_focusOutHandler(event)" tabIndex="3"/>
+				</mx:VBox>
+				<mx:VBox>
+					<s:Label text="Entidad"/>
+					<s:TextInput id="nombreBancoTextInput" text="DAVIVIENDA" enabled="true" width="86" tabIndex="4" editable="false"/>
+				</mx:VBox>
+				<mx:VBox>
+					<s:Label text="Fecha Avaluo"/>
+					<mx:DateField id="fechaAvaluoDateField2" selectedDate="{avaluo2.fechaAvaluo}" formatString="DD/MM/YYYY" creationComplete="Utilidad.dateChooser_init(fechaAvaluoDateField2)" enabled="true" yearNavigationEnabled="true"  change="fechaAvaluoDateField2_changeHandler(event)" tabIndex="5" editable="true" focusOut="fechaAvaluoDateField2_focusOutHandler(event)"/>
+				</mx:VBox>
+				<mx:VBox>
+					<s:Label text="Consecutivo Banco"/>
+					<s:TextInput id="consecutivoBancoTextInput" text="{avaluo2.consecutivoBanco}" enabled="true" width="151" tabIndex="6" editable="false"/>
+				</mx:VBox>
+			</mx:HBox>
+			<mx:HBox width="100%">
+				<mx:VBox>
+					<s:Label text="Objetivo"/>
+					<s:ComboBox id="cbxObjetivo" creationComplete="cbxObjetivo_creationCompleteHandler(event)" dataProvider="{selectObjeto}" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(avaluo2.idObjetoAvaluo,selectObjeto,'rvLowValue')}" width="135" enabled="true" tabIndex="7" updateComplete="cbxObjetivo_updateCompleteHandler(event)"/>
+				</mx:VBox>
+				<mx:VBox>
+					<s:Label text="Dirección Inmueble"/>
+					<s:TextInput id="direccionInmuebleTextInput3" text="{avaluo2.direccionInmueble}" width="337" restrict="{Utilidad.restrict_}" maxChars="100" enabled="true" tabIndex="8" focusOut="direccionInmuebleTextInput3_focusOutHandler(event)"/>
+				</mx:VBox>
+				<mx:VBox>
+					<s:Label text="Barrio"/>
+					<s:TextInput id="barrioTextInput2" text="{avaluo2.barrio}" restrict="{Utilidad.restrict_}" maxChars="30" enabled="true" tabIndex="9"/>
+				</mx:VBox>
+				<mx:VBox>
+					<s:Label text="Nombre Conjunto o Edificio"/>
+					<s:TextInput id="nombreConjuntoEdificioTextInput" text="{avaluo2.nombreConjuntoEdificio}" width="176" restrict="{Utilidad.restrict_}" maxChars="30" enabled="true" tabIndex="10"/>
+				</mx:VBox> 
+			</mx:HBox>
+			<mx:HBox width="100%">
+				<mx:VBox>
+					<s:Label text="Departamento"/>
+					<s:ComboBox id="cbxDepartamentoBasico" dataProvider="{selectDepartamento}" labelField="departamento" selectedIndex="{Utilidad.getItemIndex(avaluo2.objCiudad.departamento.codAsobancaria,selectDepartamento,'codAsobancaria')}" change="cbxDepartamentoBasico_changeHandler(event)"  updateComplete="cbxDepartamento_creationCompleteHandler(event)" width="176" enabled="true" tabIndex="11" focusOut="cbxDepartamentoBasico_focusOutHandler(event)"/>
+				</mx:VBox>
+				<mx:VBox>
+					<s:Label text="Código"/>
+					<s:TextInput id="txiCodDaneDepto" text="{avaluo2.objCiudad.departamento.codDane}" editable="false" enabled="true" width="45" tabIndex="12"/>
+				</mx:VBox>
+				<mx:VBox>
+					<s:Label text="Ciudad"/>
+					<s:ComboBox id="cbxCiudadBasico" labelField="ciudad" dataProvider="{selectCiudadbasico}" selectedIndex="{Utilidad.getItemIndex(avaluo2.objCiudad.codAsobancaria,selectCiudadbasico,'codAsobancaria')}" width="197" change="cbxCiudadBasico_changeHandler(event)" tabIndex="13"/>
+				</mx:VBox>
+				<mx:VBox>
+					<s:Label text="Código"/>
+					<s:TextInput id="txiCodDaneCiudad" text="{avaluo2.objCiudad.codDane}" editable="false" enabled="true" width="58" tabIndex="14"/>
+				</mx:VBox>
+				<mx:VBox>
+					<s:Label text="Sector"/>
+					<s:ComboBox id="cbxSector" creationComplete="cbxSector_creationCompleteHandler(event)" labelField="rvMeaning" dataProvider="{selectSector}" selectedIndex="{Utilidad.getItemIndex(avaluo2.sector,selectSector,'rvLowValue')}" width="96" enabled="true" tabIndex="14"/>
+				</mx:VBox>
+				<mx:VBox>
+					<s:Label text="Coordenadas"/>
+					<s:TextInput id="ubicacionGpsTextInput" toolTip="{Utilidad.toolTipCoordenadas}" focusOut="ubicacionGpsTextInput_focusOutHandler(event)" text="{avaluo2.ubicacionGps}" width="84" restrict="{Utilidad.decimalCharacter}" maxChars="30" tabIndex="16"/>
+				</mx:VBox>
+				<mx:VBox>
+					<s:Label text="Tel. Fijo"/>
+					<s:TextInput id="telefonoSolicitanteTextInput" text="{avaluo2.telefonoSolicitante}" width="96" restrict="{Utilidad.onlyNumber}" maxChars="10" enabled="true" tabIndex="17"/>
+				</mx:VBox>
+			</mx:HBox>
+			<mx:HBox width="100%">
+				<mx:VBox>
+					<s:Label text="Tel. Celular"/>
+					<s:TextInput id="celularSolicitanteTextInput" text="{avaluo2.celularSolicitante}" width="93" restrict="{Utilidad.onlyNumber}" maxChars="10"  enabled="true" tabIndex="18"/>
+				</mx:VBox>
+				<mx:VBox>
+					<s:Label text="E- Mail"/>
+					<s:TextInput id="correoSolicitanteTextInput" text="{avaluo2.correoSolicitante}" width="159" restrict="{Utilidad.restrict_}" maxChars="60" enabled="true" tabIndex="19"/>
+				</mx:VBox>
+				<mx:VBox>
+					<s:Label text="Metodología"/>
+					<s:ComboBox id="cbxMetodologia" dataProvider="{selectMetodologia}" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(avaluo2.idMetodologia,selectMetodologia,'rvLowValue')}" creationComplete="cbxMetodologia_creationCompleteHandler(event)" width="211" enabled="true" tabIndex="20"/>
+				</mx:VBox>
+				<mx:VBox>
+					<s:Label text="Justificación de la Metodología"/>
+					<s:TextInput id="justificacionTextInput" text="{avaluo2.justificacion}" width="313" restrict="{Utilidad.restrict_}" enabled="true" maxChars="500" tabIndex="21" focusOut="justificacionTextInput_focusOutHandler(event)"/>
+				</mx:VBox>
+			</mx:HBox>
+			<mx:HBox width="100%">
+				<mx:VBox width="96">
+					<s:Label text="Latitud" width="90"/>
+					<s:TextInput id="coordenadasLatitudTextInput" text="{coordenadasLatitud}" width="90" maxChars="12" visible="true" enabled="true" editable="false"/>
+				</mx:VBox>
+				<mx:VBox>
+					<s:Label text="Longitud" width="90"/>
+					<s:TextInput id="coordenadasLongitudTextInput" text="{coordenadasLongitud}" width="90" maxChars="12" visible="true" enabled="true" tabIndex="23" editable="false"/>
+				</mx:VBox>
+				
+				<mx:VBox height="100%">
+					<s:Label text="Otro Sist de Coord."/>
+					<s:TextInput id="sisCoordBUATxtTextInput" maxChars="20" text="{avaluo2.sistemaCoordenadasTxtBUA}" tabIndex="25"/>
+				</mx:VBox>
+				
+			</mx:HBox>
+			<mx:HBox width="100%">
+				<mx:FormItem label="Proyecto Constructor" width="384">
+					<s:CheckBox id="chkTipoInforme" label="Seleccione" selected="{selectedConstructor()}"/>
+				</mx:FormItem>
+			</mx:HBox>
+			
+		</mx:VBox>
+		<mx:VBox width="100%">
+			<comp:AuditoriaPanel id="auditoriaAvaluo"></comp:AuditoriaPanel>	
+		</mx:VBox>		
+		<s:HGroup>				 
+			<mx:Button id="btGuardar" label="Guardar"  click="button1_clickHandler(event)"/>
+			<mx:Button label="Cancelar" click="button2_clickHandler(event)"/>
+			<s:Label text="Select the tabs to change the panel." paddingLeft="10" width="100%" 
+					 id="mensajes" color="#FD0000" fontWeight="bold" textDecoration="underline" height="15" verticalAlign="middle"/>
+		</s:HGroup>
+		
+		<!-- ########################################### FIN INFO BASICA ###########################################-->
+	</s:Group>
+	
+	
+</mx:Module>

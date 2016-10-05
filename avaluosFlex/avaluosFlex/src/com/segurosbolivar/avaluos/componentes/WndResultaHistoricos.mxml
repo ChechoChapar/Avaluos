@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--- 
+Modulo que visualiza los resultados de la consulta de históricos de avalúos
+@see mx.modules.Module
+-->
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" width="800" height="500" xmlns:valueObjects="valueObjects.*" xmlns:services="services.*"
+			   >
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.core.ScrollPolicy;
+			import mx.events.FlexEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			[Bindable]
+			public var selectHistoricos:ArrayCollection;
+
+			/**
+			 * Da formato a la fecha del avalúo
+			 **/
+			protected function labelFechaAva(item:Object, column:DataGridColumn):String
+			{ if(item.fechaAvaluo != null)
+			{ return formatDate.format(item.fechaAvaluo);
+			}else 
+				return "";				
+			}
+            
+			protected function labelFechaC(item:Object, column:DataGridColumn):String
+			{ if(item.fechaCreacion != null)
+			{ return formatDateTime.format(item.fechaCreacion);
+			}else 
+				return "";				
+			}
+			
+			protected function labelFechaT(item:Object, column:DataGridColumn):String
+			{ if(item.fechaTransaccion != null)
+			  { return formatDateTime.format(item.fechaTransaccion);
+			  }else 
+			   return "";				
+			}
+			
+			/**
+			 * Da formato al estado del avalúo
+			 **/
+			protected function labelEstado(item:Object, column:DataGridColumn):String{
+				var res:String;
+				if((item.estadoAvaluo != null) && (item.estadoAvaluo == "2")){
+					res = "NUEVO";
+				}
+				else { 
+					res = "APROBADO";
+				}
+				return res;
+			}
+			
+			/**
+			 * Da formato al sector del avalúo
+			 **/
+			protected function labelSector(item:Object, column:DataGridColumn):String{
+				var res:String;
+				if((item.sector != null) && (item.sector == "1")){
+					res = "Urbano";
+				}
+				else { 
+					res = "Rural";
+				}
+				return res;
+			}
+			
+			/**
+			 * Da formato al objeto del avalúo
+			 **/
+			protected function labelObjeto(item:Object, column:DataGridColumn):String{
+				var res:String;
+				if((item.idObjetoAvaluo != null) && (item.idObjetoAvaluo == "1")){
+					res = "Originación";
+				}
+				else
+				{ if((item.idObjetoAvaluo != null) && (item.idObjetoAvaluo == "2")){ 
+					res = "Actualización";
+				  }
+				  else
+				  { if((item.idObjetoAvaluo != null) && (item.idObjetoAvaluo == "3")){ 
+						res = "Reconsideración";
+				    }
+				    else
+					{ if((item.idObjetoAvaluo != null) && (item.idObjetoAvaluo == "4")){ 
+						  res = "Corrección";
+					  }
+					  else
+					  { if((item.idObjetoAvaluo != null) && (item.idObjetoAvaluo == "5")){ 
+						res = "Remate";
+					    }
+					    else
+					    { if((item.idObjetoAvaluo != null) && (item.idObjetoAvaluo == "6")){ 
+						  res = "Dación en Pago";
+					      }
+						  else
+						  { if((item.idObjetoAvaluo != null) && (item.idObjetoAvaluo == "7")){ 
+							res = "Desafectación";
+						    }
+						    else
+						    { if((item.idObjetoAvaluo != null) && (item.idObjetoAvaluo == "8")){ 
+							  res = "Normalización";
+						      } 	
+						    }  
+						  }	
+					    }  
+					  }	
+					}   
+				  }
+				}	
+				return res;
+			}
+			
+			/**
+			 * Da formato a la metodología del avalúo
+			 **/
+			protected function labelMetodologia(item:Object, column:DataGridColumn):String{
+				var res:String;
+				if((item.idMetodologia != null) && (item.idMetodologia == "21")){
+					res = "Comparación de  Mercado";
+				}
+				else 
+				{ if((item.idMetodologia != null) && (item.idMetodologia == "22")){
+					res = "Capitalización de ingresos";
+				  } 
+				  else 
+				  { if((item.idMetodologia != null) && (item.idMetodologia == "23")){
+						res = "Método Reposición";
+					} 
+				    else 
+				    { if((item.idMetodologia != null) && (item.idMetodologia == "24")){
+					  res = "Metodo Residual";
+				      }
+					  else 
+					  { if((item.idMetodologia != null) && (item.idMetodologia == "25")){
+						res = "Comparación - Capitalización";
+					    }
+					    else 
+					    { if((item.idMetodologia != null) && (item.idMetodologia == "26")){
+						  res = "Comparación  - Reposición";
+					      }
+						  else 
+						  { if((item.idMetodologia != null) && (item.idMetodologia == "41")){
+							res = "Comparación - Residual";
+						    } 
+						    else 
+						    { if((item.idMetodologia != null) && (item.idMetodologia == "42")){
+							  res = "Capitalización - Reposición";
+						      }
+							  else 
+							  { if((item.idMetodologia != null) && (item.idMetodologia == "43")){
+								res = "Capitalización - Residual";
+							    }
+							    else 
+							    { if((item.idMetodologia != null) && (item.idMetodologia == "44")){
+								  res = "Reposición - Residual";
+							      }
+								  else 
+								  { if((item.idMetodologia != null) && (item.idMetodologia == "45")){
+									res = "Comp.-Capit-Repos";
+								    }
+								    else 
+								    { if((item.idMetodologia != null) && (item.idMetodologia == "61")){
+									  res = "Comp.-Repos.-Residual";
+								      } 
+									  else 
+									  { if((item.idMetodologia != null) && (item.idMetodologia == "62")){
+										res = "Comp.-Capit. - Residual";
+									    } 
+									    else 
+									    { if((item.idMetodologia != null) && (item.idMetodologia == "63")){
+										  res = "Comp.-Capit.-Repos.-Resid.l";
+									      } 
+									    }  
+									  }	
+								    }  
+								  }	
+							    }  
+							  }	
+						    }  
+						  }	
+					    }  
+					  }	
+				    }	  
+				  }	
+				}
+				return res;
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<valueObjects:HistoricoAuxDao id="historicoAux"/>
+		<services:HistoricoAvaluos id="historicoAvaluos" fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)" showBusyCursor="true"/>
+		<mx:DateFormatter id="formatDate" formatString="DD-MMM-YYYY"/>
+		<mx:DateFormatter id="formatDateTime" formatString="DD-MMM-YYYY HH:NN:SS" />
+	</fx:Declarations>
+	<fx:Style source="assets/css/AvaluosBolivar.css"/>
+	<fx:Style source="assets/css/AvaluosBolivarPanel.css"/>
+	<mx:DataGrid width="100%" height="100%" id="dataGrid" dataProvider="{selectHistoricos}" x="0" y="48" horizontalScrollPolicy="{ScrollPolicy.ON}">
+		<mx:columns>
+			<mx:DataGridColumn headerText="Consecutivo" dataField="consecutivoBanco" resizable="true" width="100"/>
+			<mx:DataGridColumn headerText="Tipo Doc." dataField="tipoDocumento" resizable="true"  width="50"/>
+			<mx:DataGridColumn headerText="Num. Identificacion" dataField="numeroIdentificacion" resizable="true"  width="60"/>
+			<mx:DataGridColumn headerText="Solicitante" dataField="nombreSolicitante" resizable="true"  width="240"/>
+			<mx:DataGridColumn headerText="Teléfono" dataField="telefonoSolicitante" resizable="true"  width="80"/>
+			<mx:DataGridColumn headerText="Celular" dataField="celularSolicitante" resizable="true"  width="80"/>
+			<mx:DataGridColumn headerText="Correo" dataField="correoSolicitante" resizable="true"  width="300"/>
+			<mx:DataGridColumn headerText="Fecha Avaluo" dataField="fechaAvaluo" resizable="true"  width="80" labelFunction="labelFechaAva"/>
+			<mx:DataGridColumn headerText="Estado" dataField="estadoAvaluo" labelFunction="labelEstado" resizable="true"  width="50"/>
+			<mx:DataGridColumn headerText="Depto" dataField="objCiudad.departamento.departamento" resizable="true"  width="80"/>
+			<mx:DataGridColumn headerText="Ciudad" dataField="objCiudad.ciudad" resizable="true"  width="80"/>
+			<mx:DataGridColumn headerText="Sector" dataField="sector" labelFunction="labelSector" resizable="true"  width="80"/>
+			<mx:DataGridColumn headerText="Dir. Inmueble" dataField="direccionInmueble" resizable="true"  width="80"/>
+			<mx:DataGridColumn headerText="Barrio" dataField="barrio" resizable="true"  width="80"/>
+			<mx:DataGridColumn headerText="Ubicacion Gps" dataField="ubicacionGps" resizable="true"  width="80"/>
+			<mx:DataGridColumn headerText="Conjunto/Edificio" dataField="nombreConjuntoEdificio" resizable="true"  width="80"/>
+			<mx:DataGridColumn dataField="matriculaInmobiliaria" headerText="Matrícula Inm." resizable="true"  width="80"/>
+			<mx:DataGridColumn headerText="Justificacion" dataField="justificacion" resizable="true"  width="80"/>
+			<mx:DataGridColumn headerText="Objeto" dataField="idObjetoAvaluo" labelFunction="labelObjeto" resizable="true"  width="80"/>
+			<mx:DataGridColumn headerText="Metodologia" dataField="idMetodologia" labelFunction="labelMetodologia" resizable="true"  width="80"/>
+			<mx:DataGridColumn headerText="Aprueba" dataField="usuario" resizable="true"  width="80"/>
+			<mx:DataGridColumn headerText="Fecha Creacion" dataField="fechaCreacion" resizable="true"  width="80" labelFunction="labelFechaC"/>
+			<mx:DataGridColumn headerText="Usuario Transaccion" dataField="usuarioTransaccion" resizable="true"  width="80"/>
+			<mx:DataGridColumn headerText="Fecha Transaccion" dataField="fechaTransaccion" resizable="true"  width="80" labelFunction="labelFechaT"/>
+		</mx:columns>
+	</mx:DataGrid>
+	<s:Label x="314" y="28" text="Resultados Consulta Históricos" fontWeight="bold"/>
+</s:TitleWindow>

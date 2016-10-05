@@ -1,0 +1,597 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:valueObjects="valueObjects.*"
+		 xmlns:comp="com.segurosbolivar.avaluos.componentes.*"
+		 width="100%" height="100%" updateComplete="group1_updateCompleteHandler(event)" initialize="group1_initializeHandler(event)">
+	<s:layout>
+		<s:VerticalLayout/>
+	</s:layout>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.segurosbolivar.avaluos.modulos.Utilidad;
+			
+			import mx.collections.ArrayCollection;
+			import mx.events.FlexEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			import spark.events.IndexChangeEvent;
+			
+			import valueObjects.Avaluo;
+			import valueObjects.CampoRequeridoDTO;
+			import valueObjects.Departamento;
+			import valueObjects.Dominios;
+			import valueObjects.Usuario;
+			
+			[Bindable]
+			public static var selecttipovivienda:ArrayCollection = new ArrayCollection();
+			
+			[Bindable]
+			public static var selectubicacion2:ArrayCollection = new ArrayCollection();
+			
+			[Bindable]
+			public static var selectubicacion3:ArrayCollection = new ArrayCollection();
+			
+			[Bindable]
+			public static var selectusoinmueble:ArrayCollection = new ArrayCollection();
+			
+			[Bindable]
+			public static var selectclaseinmueble:ArrayCollection = new ArrayCollection();
+			
+			[Bindable]
+			public static var selectcategoria:ArrayCollection = new ArrayCollection();
+			
+			[Bindable]
+			public static var selectafirmarusoactual:ArrayCollection = new ArrayCollection();
+			
+			[Bindable]
+			public static var selectDepartamentoEscritura:ArrayCollection = new ArrayCollection() ;
+			
+			[Bindable]
+			public var selectciudadescritura:ArrayCollection = new ArrayCollection();
+			
+			private var categoria:Dominios = new Dominios();
+			 
+			
+			protected function cbxTipoVivienda_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selecttipovivienda==null || selecttipovivienda.length<1)
+					getValoresDominioResult6.token = parentDocument.dominiosAuxDao.getValoresDominio("TIPOVIVIENDA");
+				
+			}
+			
+			protected function getValoresDominioResult6_resultHandler(event:ResultEvent):void
+			{
+				if(selecttipovivienda==null || selecttipovivienda.length<1)
+					selecttipovivienda = getValoresDominioResult6.lastResult;
+			}
+			
+			protected function cbxUbicacion2_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectubicacion2==null || selectubicacion2.length<1)
+					getValoresDominioResult10.token = parentDocument.dominiosAuxDao.getValoresDominio("UBICACION2");
+			
+			}
+			
+			protected function getValoresDominioResult10_resultHandler(event:ResultEvent):void
+			{
+				if(selectubicacion2==null || selectubicacion2.length<1)
+					selectubicacion2 = getValoresDominioResult10.lastResult;
+			}
+			
+			protected function cbxUbicacion3_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectubicacion3==null || selectubicacion3.length<1)
+					getValoresDominioResult11.token = parentDocument.dominiosAuxDao.getValoresDominio("UBICACION3");				
+			}
+			
+			protected function getValoresDominioResult11_resultHandler(event:ResultEvent):void
+			{
+				if(selectubicacion3==null || selectubicacion3.length<1)
+					selectubicacion3 = getValoresDominioResult11.lastResult;
+			}
+			
+			protected function cbxUso_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectusoinmueble==null || selectusoinmueble.length<1)
+					getValoresDominioResult7.token = parentDocument.dominiosAuxDao.getValoresDominio("USOINMUEBLE");
+			}
+			
+			protected function getValoresDominioResult7_resultHandler(event:ResultEvent):void
+			{
+				if(selectusoinmueble==null || selectusoinmueble.length<1)
+					selectusoinmueble = getValoresDominioResult7.lastResult;
+			}
+			
+			protected function cbxUso_changeHandler(event:IndexChangeEvent):void
+			{
+				if(cbxUso.selectedItem != null ){
+					if ((cbxUso.selectedItem as Dominios).rvLowValue == '6'){
+						otroUsoInmuebleTextInput.enabled = true;
+					}
+					else {
+						otroUsoInmuebleTextInput.text = "";
+						otroUsoInmuebleTextInput.enabled = false;
+					}
+				}
+				
+			}
+			
+			protected function cbxClase_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectclaseinmueble==null || selectclaseinmueble.length<1)
+					getValoresDominioResult8.token = parentDocument.dominiosAuxDao.getValoresDominio("CLASEINMUEBLE");
+			}
+			
+			protected function getValoresDominioResult8_resultHandler(event:ResultEvent):void
+			{
+				if(selectclaseinmueble==null || selectclaseinmueble.length<1)
+					selectclaseinmueble = getValoresDominioResult8.lastResult; 
+			}
+			
+			protected function cbxClase_changeHandler(event:IndexChangeEvent):void
+			{
+				if(cbxClase.selectedItem != null ){
+					if ((cbxClase.selectedItem as Dominios).rvLowValue == '8'){
+						otroClaseTextInput.enabled = true;
+					}
+					else {
+						otroClaseTextInput.text = "";
+						otroClaseTextInput.enabled = false;
+					}
+				}
+				
+			}
+			
+			protected function cbxCategoria_creationCompleteHandler(event:FlexEvent):void
+			{			
+				if(selectcategoria==null || selectcategoria.length<1)
+					getValoresDominioResult9.token = parentDocument.dominiosAuxDao.getValoresDominio("CATEGORIA");			
+			}
+			
+			protected function getValoresDominioResult9_resultHandler(event:ResultEvent):void
+			{
+				if(selectcategoria==null || selectcategoria.length<1)
+					selectcategoria = getValoresDominioResult9.lastResult;
+			}
+			
+			protected function cbxCategoria_changeHandler(event:IndexChangeEvent):void
+			{
+				if(cbxCategoria.selectedIndex > -1){
+					var rvLowvalue:String = (cbxCategoria.selectedItem as Dominios).rvLowValue;
+					categoria.rvLowValue = rvLowvalue;
+					//Valida si es bodega o local
+					if(rvLowvalue == '5'){
+						parentDocument.isBodega = true;
+						parentDocument.isLocal = false;
+					}
+					else if (rvLowvalue == '6'){
+						parentDocument.isLocal = true;
+						parentDocument.isBodega = false;
+					}
+					else
+					{
+						parentDocument.isBodega = false;
+						parentDocument.isLocal = false;
+						
+						// if(cbxAltura != null){
+							// cbxAltura.selectedIndex = -1;
+						// }
+						// if(cbxPisosBodega!= null){
+							// cbxPisosBodega.selectedIndex = -1;
+						// }
+						if(cbxUbiaccionLocal != null){
+							cbxUbiaccionLocal.selectedIndex -1;
+						}
+					}
+				}
+				else 
+				{
+					parentDocument.isBodega = false;
+					parentDocument.isLocal = false;
+				}
+				
+				/*if(cbxAltura != null){
+					cbxAltura.selectedIndex = -1;
+					txtAltura.setVisible(isBodega);
+					cbxAltura.setVisible(isBodega);
+				}
+				if(cbxPisosBodega!= null){
+					cbxPisosBodega.selectedIndex = -1;
+					txtPisosBodega.setVisible(isBodega);
+					cbxPisosBodega.setVisible(isBodega);
+				}**/
+				if(cbxUbiaccionLocal != null){
+					cbxUbiaccionLocal.selectedIndex = -1;
+					cbxUbiaccionLocal.setVisible(parentDocument.isLocal);
+					txtUbicacionLocal.setVisible(parentDocument.isLocal);
+				}
+			}
+			
+			protected function cbxConstUsoActual_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectafirmarusoactual==null || selectafirmarusoactual.length<1)
+					selectafirmarusoactual = parentDocument.selectafirmacion ;
+			}
+			
+
+			protected function group1_updateCompleteHandler(event:FlexEvent):void
+			{
+				
+			}
+			
+			
+			protected function cbxDepartamentoEscritura_changeHandler(event:IndexChangeEvent):void
+			{
+				if(cbxDepartamentoEscritura.selectedItem == null){
+					selectciudadescritura = new ArrayCollection();					
+				}else{
+					selectciudadescritura = new ArrayCollection();
+					selectciudadescritura = cbxDepartamentoEscritura.selectedItem.ciudadesDepto;
+					cbxCiudadEscritura.invalidateDisplayList();
+					cbxCiudadEscritura.selectedIndex = -1;
+				}
+			}
+			
+			protected function cbxDepartamentoEscritura_focusOutHandler(event:FocusEvent):void
+			{
+				cbxDepartamentoEscritura_changeHandler(null);
+				if(informacionInmuebleVO.ciudadEscritura != null){
+					selectciudadescritura = cbxDepartamentoEscritura.selectedItem.ciudadesDepto;
+					var posicionCiudad:int = Utilidad.getItemIndex(informacionInmuebleVO.ciudadEscritura,selectciudadescritura,'codAsobancaria');
+					if(posicionCiudad >= 0)
+						cbxCiudadEscritura.selectedIndex = posicionCiudad ;  
+				} 				 
+			}
+			
+			protected function cbxCiudadEscritura_changeHandler(event:IndexChangeEvent):void
+			{
+				if(cbxCiudadEscritura.selectedIndex == spark.components.ComboBox.CUSTOM_SELECTED_ITEM)
+				{	
+					cbxCiudadEscritura.selectedIndex = event.oldIndex;
+				}
+			}
+			
+			protected function fechaEscrituraDateField_focusInHandler(event:FocusEvent):void
+			{
+				fechaEscrituraDateField.setFocus();  
+			}
+			
+			/**
+			 * Crea o Actualiza la informacuón del inmueble.
+			 * */
+			public function guardarInmueble(avaluo:Avaluo, myUsuario:Usuario):InformacionInmueble{
+				try{
+					informacionInmuebleVO.avaluo = avaluo;	
+					
+					if(avaluo.informacionInmueble != null && avaluo.informacionInmueble.length >0){
+						var inmueble:InformacionInmueble = avaluo.informacionInmueble.getItemAt(0) as InformacionInmueble; 
+						if(inmueble != null){
+							informacionInmuebleVO.idInfinmueble = inmueble.idInfinmueble ; 
+							informacionInmuebleVO.fechaCreacion = inmueble.fechaCreacion ; 
+							informacionInmuebleVO.usuarioCreacion = inmueble.usuarioCreacion ; 
+						}
+					}
+					
+					if(cbxTipoVivienda.selectedIndex > -1) {
+						informacionInmuebleVO.tipoVivienda = cbxTipoVivienda.selectedItem.rvLowValue;
+					}
+					if(cbxCategoria.selectedIndex > -1) {
+						informacionInmuebleVO.idCategoria = cbxCategoria.selectedItem.rvLowValue;
+					}
+					if(cbxUbicacion2.selectedIndex > -1) {
+						informacionInmuebleVO.ubicacion2 = cbxUbicacion2.selectedItem.rvLowValue;
+					}
+					if(cbxUso.selectedIndex > -1) {
+						informacionInmuebleVO.usoInmueble = cbxUso.selectedItem.rvLowValue;
+					}
+					
+					/*12052016 error*/
+					
+					if(cbxClase.selectedIndex > -1) {
+						informacionInmuebleVO.claseInmueble = cbxClase.selectedItem.rvLowValue;
+					}
+					/*12052016 error*/
+					
+					if(cbxConstUsoActual.selectedIndex > -1) {
+						informacionInmuebleVO.ediContUso = cbxConstUsoActual.selectedItem.rvLowValue;
+					}
+					if(cbxDepartamentoEscritura.selectedIndex > -1) {
+						informacionInmuebleVO.departamentoEscritura = cbxDepartamentoEscritura.selectedItem.codAsobancaria;
+					}
+					if(cbxCiudadEscritura.selectedIndex > -1) {
+						informacionInmuebleVO.ciudadEscritura = cbxCiudadEscritura.selectedItem.codAsobancaria;
+					}
+					if(cbxUbiaccionLocal.selectedIndex > -1) {
+						informacionInmuebleVO.ubicacion3 = cbxUbiaccionLocal.selectedItem.rvLowValue;
+					}
+					
+					informacionInmuebleVO.chip = chipTextInput.text;
+					informacionInmuebleVO.otroUsoInmueble = otroUsoInmuebleTextInput.text;
+					informacionInmuebleVO.otroClase = otroClaseTextInput.text;
+					informacionInmuebleVO.matriculaInmobiliariaPpal1 = matriculaInmobiliariaPpal1TextInput3.text;
+					informacionInmuebleVO.matriculaInmobiliariaPpal2 = matriculaInmobiliariaPpal2TextInput.text;
+					informacionInmuebleVO.matriculaInmobiliariaGaraje1 = matriculaInmobiliariaGaraje1TextInput.text;
+					informacionInmuebleVO.matriculaInmobiliariaGaraje2 = matriculaInmobiliariaGaraje2TextInput.text;
+					informacionInmuebleVO.matriculaInmobiliariaGaraje3 = matriculaInmobiliariaGaraje3TextInput.text;
+					informacionInmuebleVO.matriculaInmobiliariaGaraje4 = matriculaInmobiliariaGaraje4TextInput.text;
+					informacionInmuebleVO.matriculaInmobiliariaGaraje5 = matriculaInmobiliariaGaraje5TextInput.text;
+					informacionInmuebleVO.matriculaInmobiliariaDeposito1 = matriculaInmobiliariaDeposito1TextInput.text;
+					informacionInmuebleVO.matriculaInmobiliariaDeposito2 = txtMatriculaInmDeposito2.text;
+					informacionInmuebleVO.numeroEscritura = numeroEscrituraTextInput.text;
+					informacionInmuebleVO.notaria = notariaTextInput.text;
+					informacionInmuebleVO.fechaEscritura = fechaEscrituraDateField.selectedDate;
+					informacionInmuebleVO.usuarioTransaccion = myUsuario.codigoUsuario;
+					informacionInmuebleVO.catastralSF = catastralTextInput.text;
+					 
+				}catch(error:Error){
+					error.getStackTrace(); 
+					trace(error.message); 
+					parentDocument.imprimirEstadoProceso(error.message);
+				}
+				
+				return informacionInmuebleVO; 
+				
+			}
+			
+			protected function cbxDepartamentoEscritura_creationCompleteHandler(event:FlexEvent):void
+			{
+				
+			}
+
+			protected function group1_initializeHandler(event:FlexEvent):void
+			{
+				// TODO Auto-generated method stub
+			}
+			
+			public function validarCamposVacios():Boolean{
+				return true; 
+			}
+			
+			public function ejecutarValidacionCamposObligatorios(categoria:int,todos:Boolean):void{
+				Utilidad.validarCamposObligarios(Utilidad.obtenerCamposVacios(getListaCampos(categoria,todos), this),this); 
+			}
+			
+			protected function getListaCampos(categoria:int,todos:Boolean):ArrayCollection
+			{
+				var arrayDto : ArrayCollection = new ArrayCollection();
+				var mapCampos:Object = new Object();
+				
+				mapCampos["cbxTipoVivienda"] = "C_TIPOVIVIENDA";
+				mapCampos["cbxUso"] = "C_USOINMUEBLE";
+				mapCampos["cbxClase"] = "C_CLASEINMUEBLE";
+				mapCampos["cbxCategoria"] = "IDCATEGORIA";
+				mapCampos["notariaTextInput"] = "T_NOTARIA";
+				mapCampos["cbxCiudadEscritura"] = "C_CIUDADESCRITURA";
+				mapCampos["matriculaInmobiliariaPpal1TextInput3"] = "T_MINMBPPAL1";
+				mapCampos["matriculaInmobiliariaGaraje2TextInput"] = "T_MINMOBGJ2";
+				mapCampos["matriculaInmobiliariaGaraje5TextInput"] = "T_MINMOBGJ5";
+				
+				mapCampos["catastralTextInput"] = "T_CATASTRAL_SF";
+				
+				//Condicion pgbavaluos
+				//if ciudad== bogota
+				/** if(avaluoVO.ciudad!=null)
+					if((avaluoVO.ciudad.codAsobancaria as String)==("149"))
+						mapCampos["chipTextInput"] = "T_CHIP"; */ 
+				
+				if(todos==true)
+					mapCampos["chipTextInput"] = "T_CHIP";
+				
+				var rvLowvalue:String=null;
+				
+				/** pendiente por validar 
+				 * 
+				 * 
+				 * 
+				 * ***************
+				 * 
+				 * * ***************
+				 * * ***************
+				 * * ***************
+				 * * ***************
+				 * * ***************
+				 * * ***************
+				 * 
+				 * */
+				//Condicion pgbavaluos
+				/** if(categoria!=null)
+				 if(categoria!='12' && categoria!='15')
+				 //if(categoria.rvLowValue!=12 && categoria.rvLowValue!=15)
+				 if(!=null)	
+				 if(chkSinTerminarNueva.selected!=null)
+				 if(chkSinTerminarNueva.selected)
+				 //if enobra
+				 mapCampos["avanceObraTextInput"] = "T_AVANCEOBRA";
+				 */ 
+				if(todos==true)
+					mapCampos["avanceObraTextInput"] = "T_AVANCEOBRA";
+				
+				//OJO
+				mapCampos["cbxUbicacion2"] = "C_UBICACION2";
+				mapCampos["otroUsoInmuebleTextInput"] = "T_OTROUSOINM";
+				mapCampos["otroClaseTextInput"] = "T_OTROCLASE";
+				mapCampos["cbxConstUsoActual"] = "A_EDICONSTUSO";
+				mapCampos["numeroEscrituraTextInput"] = "T_NUMESCRITURA";
+				mapCampos["fechaEscrituraDateField"] = "F_FECHAESCRITURA";
+				mapCampos["matriculaInmobiliariaPpal2TextInput"] = "T_MINMBPPAL2";
+				mapCampos["matriculaInmobiliariaGaraje3TextInput"] = "T_MINMOBGJ3";
+				mapCampos["matriculaInmobiliariaDeposito1TextInput"] = "T_MINMOBDP1";
+				mapCampos["cbxUbiaccionLocal"] = "C_UBICACION3";
+				mapCampos["cbxDepartamentoEscritura"] = "C_DEPTOESCRITURA";
+				mapCampos["matriculaInmobiliariaGaraje1TextInput"] = "T_MINMOBGJ1";
+				mapCampos["matriculaInmobiliariaGaraje4TextInput"] = "T_MINMOBGJ4";
+				mapCampos["txtMatriculaInmDeposito2"] = "T_MINMOBDP2";
+				
+				for (var key:String in mapCampos) {
+					trace(" " + key + " - " +mapCampos[key]);
+					var campoDto:CampoRequeridoDTO = new CampoRequeridoDTO();
+					campoDto.nombretablaBD="PGB_INFINMUEBLE";
+					campoDto.nombrecampoBD=mapCampos[key];
+					campoDto.nombreComponente=key;
+					campoDto.categoriaInmueble=categoria.toString();
+					
+					arrayDto.addItem(campoDto);
+					
+				}
+				
+				
+				return arrayDto;
+			}
+
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<valueObjects:InformacionInmueble id="informacionInmuebleVO"/>
+		
+		<s:CallResponder id="getValoresDominioResult6" result="getValoresDominioResult6_resultHandler(event)"/>
+		<s:CallResponder id="getValoresDominioResult7" result="getValoresDominioResult7_resultHandler(event)"/>
+		<s:CallResponder id="getValoresDominioResult8" result="getValoresDominioResult8_resultHandler(event)"/>
+		<s:CallResponder id="getValoresDominioResult9" result="getValoresDominioResult9_resultHandler(event)"/>
+		<s:CallResponder id="getValoresDominioResult10" result="getValoresDominioResult10_resultHandler(event)"/>
+		<s:CallResponder id="getValoresDominioResult11" result="getValoresDominioResult11_resultHandler(event)"/>
+		
+	</fx:Declarations>
+	
+		<s:Group width="100%">
+			<s:layout>
+				<s:HorizontalLayout /> 
+			</s:layout>
+			
+			<s:Label width="120" text="Tipo Vivienda" />
+			<s:ComboBox width="120" id="cbxTipoVivienda" dataProvider="{selecttipovivienda}" updateComplete="cbxTipoVivienda_creationCompleteHandler(event)" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(informacionInmuebleVO.tipoVivienda,selecttipovivienda,'rvLowValue')}" enabled="true" tabIndex="69" />				
+			
+			<s:Label width="120" text="Uso" />
+			<s:ComboBox width="120" id="cbxUso" dataProvider="{selectusoinmueble}" updateComplete="cbxUso_creationCompleteHandler(event)" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(informacionInmuebleVO.usoInmueble,selectusoinmueble,'rvLowValue')}" enabled="true" change="cbxUso_changeHandler(event)" tabIndex="70"/>	
+			
+			<s:Label width="120" text="Otro Uso" />
+			<s:TextInput width="120" id="otroUsoInmuebleTextInput" text="{informacionInmuebleVO.otroUsoInmueble}" maxChars="30" restrict="{Utilidad.restrict_}" enabled="false" tabIndex="74"/>	
+			
+			
+		</s:Group>
+	
+	
+		<s:Group width="100%">
+			<s:layout>
+				<s:HorizontalLayout /> 
+			</s:layout>
+									
+			<s:Label width="120" text="Clase"/>
+			<s:ComboBox width="120" id="cbxClase" dataProvider="{selectclaseinmueble}" updateComplete="cbxClase_creationCompleteHandler(event)" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(informacionInmuebleVO.claseInmueble,selectclaseinmueble,'rvLowValue')}" enabled="true" change="cbxClase_changeHandler(event)" tabIndex="71"/>
+						
+			<s:Label width="120" text="Otro Clase"/>
+			<s:TextInput width="120" id="otroClaseTextInput" text="{informacionInmuebleVO.otroClase}" maxChars="30" restrict="{Utilidad.restrict_}" enabled="false" tabIndex="75"/>	
+				
+			<s:Label width="120" text="Categoria" />
+			<s:ComboBox width="120" id="cbxCategoria" dataProvider="{selectcategoria}" updateComplete="cbxCategoria_creationCompleteHandler(event)" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(informacionInmuebleVO.idCategoria,selectcategoria,'rvLowValue')}" enabled="true" change="cbxCategoria_changeHandler(event)" tabIndex="72"/>
+		</s:Group>
+	
+		<s:Group width="100%">
+			<s:layout>
+				<s:HorizontalLayout /> 
+			</s:layout>
+			
+			<s:Label width="120" text="Ubicación" />
+			<s:ComboBox width="120" id="cbxUbicacion2" dataProvider="{selectubicacion2}" updateComplete="cbxUbicacion2_creationCompleteHandler(event)" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(informacionInmuebleVO.ubicacion2,selectubicacion2,'rvLowValue')}" enabled="true" tabIndex="73" />
+			
+			<s:Label width="120" text="Construido Para el Uso Actual"/>
+			<s:ComboBox width="120" id="cbxConstUsoActual" dataProvider="{selectafirmarusoactual}" updateComplete="cbxConstUsoActual_creationCompleteHandler(event)" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(informacionInmuebleVO.ediContUso,selectafirmarusoactual,'rvLowValue')}" enabled="true" tabIndex="76"/>
+			
+			<s:Label width="120" id="txtUbicacionLocal" text="Ubicacion Local" visible="{parentDocument.isLocal}"  />
+			<s:ComboBox width="120" id="cbxUbiaccionLocal" dataProvider="{selectubicacion3}" updateComplete="cbxUbicacion3_creationCompleteHandler(event)" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(informacionInmuebleVO.ubicacion3,selectubicacion3,'rvLowValue')}" enabled="true" visible="{parentDocument.isLocal}" tabIndex="77" />
+		</s:Group>
+		
+		<mx:HRule width="100%"> </mx:HRule>
+		
+		<s:Group width="100%">
+			<s:layout>
+				<s:HorizontalLayout /> 
+			</s:layout>
+			
+			<s:Label width="120"  text="Notaria"/>
+			<s:TextInput width="120" id="notariaTextInput" text="{informacionInmuebleVO.notaria}" maxChars="5" restrict="{Utilidad.restrict_}" enabled="true" tabIndex="78"/>
+							
+			<s:Label width="120" text="Número Escritura"/>
+			<s:TextInput width="120" id="numeroEscrituraTextInput" text="{informacionInmuebleVO.numeroEscritura}" restrict="{Utilidad.restrict_}" maxChars="5" enabled="true" tabIndex="79"/>
+						
+		</s:Group>
+	
+		<s:Group width="100%">
+			<s:layout>
+				<s:HorizontalLayout /> 
+			</s:layout>
+			
+			<s:Label width="120" text="Departamento Escritura" />
+			<s:ComboBox width="120" id="cbxDepartamentoEscritura" dataProvider="{parentDocument.selectDepartamento}" labelField="departamento" selectedIndex="{Utilidad.getItemIndex(informacionInmuebleVO.departamentoEscritura,parentDocument.selectDepartamento,'codAsobancaria')}" updateComplete="cbxDepartamentoEscritura_creationCompleteHandler(event)" change="cbxDepartamentoEscritura_changeHandler(event)" enabled="true" tabIndex="79" focusOut="cbxDepartamentoEscritura_focusOutHandler(event)"/>
+			
+			<s:Label width="120" text="Ciudad Escritura" />
+			<s:ComboBox width="120" id="cbxCiudadEscritura" labelField="ciudad" dataProvider="{selectciudadescritura}" selectedIndex="{Utilidad.getItemIndex(informacionInmuebleVO.ciudadEscritura,selectciudadescritura,'codAsobancaria')}"  enabled="true" tabIndex="80" change="cbxCiudadEscritura_changeHandler(event)"/>
+			
+		</s:Group>
+	
+		<s:Group width="100%">
+			<s:layout>
+				<s:HorizontalLayout /> 
+			</s:layout>
+			<s:Label width="120" text="Fecha Escritura"/>
+			
+			<mx:DateField width="120" id="fechaEscrituraDateField" selectedDate="{informacionInmuebleVO.fechaEscritura}" formatString="DD/MM/YYYY" updateComplete="Utilidad.dateChooser_init(fechaEscrituraDateField)" enabled="true" yearNavigationEnabled="true" tabIndex="80" focusIn="fechaEscrituraDateField_focusInHandler(event)"/>
+			
+			<s:Label width="120" text="Matrícula Inmobiliaria Ppal1"/>
+			<s:TextInput width="120" id="matriculaInmobiliariaPpal1TextInput3" text="{informacionInmuebleVO.matriculaInmobiliariaPpal1}" maxChars="20" restrict="0-9,a-z,A-Z" enabled="true" tabIndex="81"/>
+			
+			<s:Label width="120" text="Matrícula Inmobiliaria Ppal2"/>
+			<s:TextInput width="120" id="matriculaInmobiliariaPpal2TextInput" text="{informacionInmuebleVO.matriculaInmobiliariaPpal2}" maxChars="20" restrict="0-9,a-z,A-Z" enabled="true" tabIndex="82"/>
+			
+		</s:Group>
+		<s:Group width="100%">
+			<s:layout>
+				<s:HorizontalLayout /> 
+			</s:layout>
+			<s:Label width="120" text="Matrícula Inmobiliaria Garaje 1"/>
+			<s:TextInput width="120" id="matriculaInmobiliariaGaraje1TextInput" text="{informacionInmuebleVO.matriculaInmobiliariaGaraje1}" maxChars="20" restrict="0-9,a-z,A-Z" enabled="true" tabIndex="83"/>
+			
+			<s:Label width="120" text="Matrícula Inmobiliaria Garaje 2"/>
+			<s:TextInput width="120" id="matriculaInmobiliariaGaraje2TextInput" text="{informacionInmuebleVO.matriculaInmobiliariaGaraje2}" maxChars="20" restrict="0-9,a-z,A-Z" enabled="true" tabIndex="84"/>
+			
+			<s:Label width="120" text="Matrícula Inmobiliaria Garaje 3"/>
+			<s:TextInput width="120" id="matriculaInmobiliariaGaraje3TextInput" text="{informacionInmuebleVO.matriculaInmobiliariaGaraje3}" maxChars="20" restrict="0-9,a-z,A-Z" enabled="true" tabIndex="85"/>
+			
+		</s:Group>		
+		<s:Group width="100%">
+			<s:layout>
+				<s:HorizontalLayout /> 
+			</s:layout>
+			
+			<s:Label width="120" text="Matrícula Inmobiliaria Garaje 4"/>
+			<s:TextInput width="120" id="matriculaInmobiliariaGaraje4TextInput" text="{informacionInmuebleVO.matriculaInmobiliariaGaraje4}" maxChars="20" restrict="0-9,a-z,A-Z" enabled="true" tabIndex="86"/>
+			
+			<s:Label width="120" text="Matrícula Inmobiliaria Garaje 5"/>
+			<s:TextInput width="120" id="matriculaInmobiliariaGaraje5TextInput" text="{informacionInmuebleVO.matriculaInmobiliariaGaraje5}" maxChars="20" restrict="0-9,a-z,A-Z" enabled="true" tabIndex="87"/>
+			
+			<s:Label width="120" text="Matrícula Inmobiliaria Deposito 1"/>
+			<s:TextInput width="120" id="matriculaInmobiliariaDeposito1TextInput" text="{informacionInmuebleVO.matriculaInmobiliariaDeposito1}" maxChars="20" restrict="0-9,a-z,A-Z" enabled="true" tabIndex="88"/>
+							
+		</s:Group>
+		<s:Group width="100%">
+			<s:layout>
+				<s:HorizontalLayout /> 
+			</s:layout>
+			
+			<s:Label width="120" text="Matrícula Inmobiliaria Deposito 2"/>
+			<s:TextInput width="120" id="txtMatriculaInmDeposito2" text="{informacionInmuebleVO.matriculaInmobiliariaDeposito2}" maxChars="20" restrict="0-9,a-z,A-Z" enabled="true" tabIndex="89"/>
+			
+			<s:Label width="120" text="Chip"/>
+			<s:TextInput width="120" id="chipTextInput" text="{informacionInmuebleVO.chip}" maxChars="20" restrict="{Utilidad.restrict_}" enabled="true" tabIndex="90"/>
+							
+			<s:Label width="120" text="Número Catastral"/>
+			<s:TextInput width="120" id="catastralTextInput" text="{informacionInmuebleVO.catastralSF}" maxChars="20" tabIndex="100"/>
+			
+		</s:Group>
+		
+	
+</s:Group>

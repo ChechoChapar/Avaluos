@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--- 
+Modulo para la parametrización de Dominios
+@implements modulos.IModule
+@see mx.modules.Module
+-->
+<mx:Module xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		   xmlns:s="library://ns.adobe.com/flex/spark" 
+		   xmlns:mx="library://ns.adobe.com/flex/mx" layout="absolute" width="400" height="300" xmlns:services="services.*"
+		   xmlns:componentes="com.segurosbolivar.avaluos.componentes.*"
+		   implements="modulos.IModule"
+           initialize="module1_initializeHandler(event)"
+		   >
+	<fx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			import mx.events.FlexEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			import permisos.Permiso;
+			
+			import valueObjects.Dominios;
+			import valueObjects.Usuario;
+			
+			[Bindable]
+			public var myUsuario:Usuario;
+			
+			[Bindable]
+			public var mensaje:String = new String();
+			
+			[Bindable]
+			var myListaPermisos:Permiso;
+			
+			[Bindable]
+			var dominio:String = null;
+			
+			/**
+			 * Obtiene los nombres de los dominios
+			 **/ 
+			protected function dropDownList_creationCompleteHandler(event:FlexEvent):void
+			{
+				getNombresDominiosResult.token = dominiosService.getNombresDominios();
+			}
+			
+			public function setTexto(t:String):void
+			{
+			}
+			
+			public function setPermisos(listaPermisos:Permiso):void
+			{
+				myListaPermisos = listaPermisos;
+			}	
+			
+			public function getPermisos():Permiso
+			{
+				return myListaPermisos;
+			}
+			
+			public function ejecutar():void
+			{    
+			}
+			
+			/**
+			 * Adiciona nuevos dominios y valores de dominio
+			 **/ 
+			public function adicionar():void
+			{ var d:Dominios = new Dominios(); 
+			  d.rvDomain = '';
+			  d.rvLowValue = '';
+			  d.rvMeaning = '';
+			  d.rvCreateBy = myUsuario.codigoUsuario;
+			  dataGrid.dataProvider.addItem(d); 
+			  dataGrid.verticalScrollPosition = dataGrid.dataProvider.length -1;	
+			} 
+			
+			/**
+			 * Consulta los valores de un dominio específico
+			 **/
+			public function consultar():void
+			{ buscarDominioResult.token = dominiosService.buscarDominio(dominio); 
+			}
+			
+			public function imprimir():void
+			{
+			}
+			
+			/**
+			 * Actualiza un valor de dominio
+			 **/
+			public function editar():void
+			{ dominiosService.actualizaVlrDominio(dataGrid.selectedItem as Dominios);
+			  getMensajeTransaccionResult.token = dominiosService.getMensajeTransaccion();	
+			}
+			
+			/**
+			 * Elimina un dominio y restringe la eliminación del dominio de Categoría
+			 **/
+			public function eliminar():void
+			{ if(dataGrid.selectedItem.rvDomain != 'CATEGORIA')
+				{	dominiosService.borraVlrDominio(dataGrid.selectedItem.idCgRefCodes);
+			        getMensajeTransaccionResult.token = dominiosService.getMensajeTransaccion();
+				}
+				else
+				{ Alert.show('El dominio CATEGORIA no se puede eliminar!!');
+				}	
+					
+			}
+	
+			/**
+			 * Obtiene el usuario de la transacción
+			 **/
+			protected function module1_initializeHandler(event:FlexEvent):void
+			{ myUsuario = parentApplication.getUsuarioActual();
+			}
+			
+			/**
+			 * Confirma el cambio de un dominio
+			 **/
+			protected function button1_clickHandler(event:MouseEvent):void
+			{ dominiosService.commit();
+			  getNombresDominiosResult.token = dominiosService.getNombresDominios();
+			  Alert.show('Proceso realizado satisfactoriamente');	
+			}
+
+			/**
+			 * Obtiene los objetos de Dominio
+			 **/
+			protected function getDominios():void
+			{
+				getDominiosResult.token = dominiosService.getDominios();
+			}
+
+			protected function dataGrid_creationCompleteHandler(event:FlexEvent):void
+			{
+				getDominiosResult2.token = dominiosService.getDominios();
+			}
+			
+
+			protected function getDominiosResult2_resultHandler(event:ResultEvent):void
+			{ arrDominios = getDominiosResult2.lastResult;
+			}
+
+			protected function buscarDominioResult_resultHandler(event:ResultEvent):void
+			{ arrDominios = buscarDominioResult.lastResult as ArrayCollection; 
+			}
+
+
+			/**
+			 * Puebla el arraylist de los dominios
+			 **/
+			protected function getNombresDominiosResult_resultHandler(event:ResultEvent):void
+			{ arrNombresDominios = getNombresDominiosResult.lastResult;
+			  arrNombresDominios.addItemAt(new String('[Todos]'),0);		
+			}
+
+ 
+			/**
+			 * Cancela los cambios a realizar
+			 **/
+			protected function button2_clickHandler(event:MouseEvent):void
+			{  dominiosService.getDataManager(dominiosService.DATA_MANAGER_DOMINIOS).revertChanges(); 
+			   arrDominios = getDominiosResult2.lastResult;
+			}
+
+			/**
+			 * Retorna el resultado de la transacción
+			 **/
+			protected function getMensajeTransaccionResult_resultHandler(event:ResultEvent):void
+			{mensaje = getMensajeTransaccionResult.lastResult as String;
+				if(mensaje!=null)
+				{
+					Alert.show(mensaje);
+				}
+			}
+
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<s:CallResponder id="getNombresDominiosResult" result="getNombresDominiosResult_resultHandler(event)"/>
+		<s:CallResponder id="insertaVlrDominioResult"/>
+		<s:CallResponder id="getDominiosResult"/>
+		<services:DominiosService id="dominiosService" fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)" showBusyCursor="true"/>
+		<s:CallResponder id="getDominiosResult2" result="getDominiosResult2_resultHandler(event)"/>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<s:ArrayCollection id="arrDominios"/>
+		<s:ArrayCollection id="arrNombresDominios"/>
+		<s:CallResponder id="buscarDominioResult" result="buscarDominioResult_resultHandler(event)"/>
+		<s:CallResponder id="getMensajeTransaccionResult" result="getMensajeTransaccionResult_resultHandler(event)"/>
+	</fx:Declarations>
+	
+	<fx:Style source="assets/css/AvaluosBolivar.css"/>
+	<fx:Style source="assets/css/AvaluosBolivarPanel.css"/>
+
+	<s:VGroup x="2" y="3" width="100%" height="20%">
+		<s:Label text="Seleccione el Dominio"/>
+		<s:ComboBox id="dropDownList" creationComplete="dropDownList_creationCompleteHandler(event)" selectedItem="@{dominio}" requireSelection="false">
+			<s:AsyncListView list="{arrNombresDominios}"/>
+		</s:ComboBox>
+	</s:VGroup>
+	<s:VGroup x="1" y="65" width="100%" height="80%">
+		<mx:DataGrid id="dataGrid" width="100%" creationComplete="dataGrid_creationCompleteHandler(event)" dataProvider="{arrDominios}" editable="true" height="80%">
+			<mx:columns>
+				<mx:DataGridColumn headerText="Dominio" dataField="rvDomain"/>
+				<mx:DataGridColumn headerText="Código" dataField="rvLowValue"/>
+				<mx:DataGridColumn headerText="Código Alt." dataField="rvHighValue"/>
+				<mx:DataGridColumn headerText="Descripción" dataField="rvMeaning"/>
+				<mx:DataGridColumn headerText="Usuario Creación" dataField="rvCreateBy"/>
+			</mx:columns>
+		</mx:DataGrid>
+		<s:HGroup width="100%" height="20%" verticalAlign="middle" textAlign="center">
+			<s:Button label="Ingresar Dominio" click="button1_clickHandler(event)"/>
+			<s:Button label="Cancelar Cambios" click="button2_clickHandler(event)"/>
+		</s:HGroup>
+	</s:VGroup>
+</mx:Module>

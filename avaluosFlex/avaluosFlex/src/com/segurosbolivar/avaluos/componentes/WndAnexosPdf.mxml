@@ -1,0 +1,710 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:upload="*"
+			   xmlns:uploads="com.segurosbolivar.componentes.*"
+			   xmlns:mx="library://ns.adobe.com/flex/mx" width="698" height="498" xmlns:services="services.*"
+			   preinitialize="titlewindow1_preinitializeHandler(event)"
+			   creationComplete="titlewindow1_creationCompleteHandler(event)"
+			   
+			   close="titlewindow1_closeHandler(event)"
+			   
+>
+	<fx:Script>
+		<![CDATA[
+			import com.segurosbolivar.avaluos.componentes.FileIOAnexosPdf;
+			
+			import mx.controls.Alert;
+			import mx.core.FlexGlobals;
+			import mx.events.CloseEvent;
+			import mx.events.FlexEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			public var idAvaluo:String;
+			public var codigoUsuario:String;
+			
+			private var cargues:Boolean=false;
+			public  var cargados:Boolean=false;
+			private var borrados:Boolean=false;
+				
+			public var fileUp1:FileUploadAnexosPdf = new FileUploadAnexosPdf();
+			public var fileUp2:FileUploadAnexosPdf = new FileUploadAnexosPdf();
+			public var fileUp3:FileUploadAnexosPdf = new FileUploadAnexosPdf();
+			public var fileUp4:FileUploadAnexosPdf = new FileUploadAnexosPdf();
+			public var fileUp5:FileUploadAnexosPdf = new FileUploadAnexosPdf();
+			public var fileUp6:FileUploadAnexosPdf = new FileUploadAnexosPdf();
+			public var fileUp7:FileUploadAnexosPdf = new FileUploadAnexosPdf();
+			public var fileUp8:FileUploadAnexosPdf = new FileUploadAnexosPdf();
+			public var fileUp9:FileUploadAnexosPdf = new FileUploadAnexosPdf();
+			public var fileUp10:FileUploadAnexosPdf = new FileUploadAnexosPdf();
+			public var fileUp11:FileUploadAnexosPdf = new FileUploadAnexosPdf();
+			public var fileUp12:FileUploadAnexosPdf = new FileUploadAnexosPdf();
+			public var fileUp13:FileUploadAnexosPdf = new FileUploadAnexosPdf();
+			public var fileUp14:FileUploadAnexosPdf = new FileUploadAnexosPdf();
+			public var fileUp15:FileUploadAnexosPdf = new FileUploadAnexosPdf();
+			
+			public function init():void
+			{
+
+			}	
+			
+
+			protected function button1_clickHandler(event:MouseEvent):void
+			{
+				
+				cargues=false;
+				
+				cargados=true;
+				
+				fileUp1.startUpload();
+				fileUp2.startUpload();
+				fileUp3.startUpload();
+				fileUp4.startUpload();
+				fileUp5.startUpload();
+				fileUp6.startUpload();
+				fileUp7.startUpload();
+				fileUp8.startUpload();
+				fileUp9.startUpload();				
+				fileUp10.startUpload();
+				fileUp11.startUpload();
+				fileUp12.startUpload();
+				fileUp13.startUpload();
+				fileUp14.startUpload();
+				fileUp15.startUpload();
+				
+			}
+
+
+			protected function buttonAnx_clickHandler(event:MouseEvent):void
+			{
+				if(!cargues)
+				{	
+					cargados=false;
+					borrados=false;
+					generarAnexoResult.token = listaAnexosPdfService.generarAnexo(idAvaluo, codigoUsuario);
+				}
+				else
+				{
+					Alert.show("Primero haga clic en cargar imágenes antes de generar el pdf");
+				}	
+				
+			}
+
+
+			protected function listaAnexosPdfService_resultHandler(event:ResultEvent):void
+			{
+				/*var mensaje:String;
+				mensaje = generarAnexoResult.lastResult as String;
+				
+				if(mensaje)*/
+			}
+
+
+			protected function generarAnexoResult_resultHandler(event:ResultEvent):void
+			{
+				var mensaje:String;
+				mensaje = generarAnexoResult.lastResult as String;
+				
+				if(mensaje != null)
+				{
+					Alert.show("Fallo el Proceso: "+mensaje);
+				}
+				else
+				{
+					Alert.show("El anexo fotográfico ha sido generado exitosamente. ");
+					
+					//existsAnexo = true;
+					//parentApplication.existsAnexo=true;
+					parentDocument.existsAnexo=true;
+					
+				}	
+				
+			}
+
+
+			protected function titlewindow1_preinitializeHandler(event:FlexEvent):void
+			{
+				//Security.loadPolicyFile(FlexGlobals.topLevelApplication.parameters.urlArchivo+"/crossdomain.xml"); 
+				Security.loadPolicyFile(FlexGlobals.topLevelApplication.parameters.urlArchivo+"/crossdomain.xml");
+			}
+			
+			var rq1:URLRequest; 
+			var rq2:URLRequest; 
+			var rq3:URLRequest; 
+			var rq4:URLRequest; 
+			var rq5:URLRequest; 
+			var rq6:URLRequest; 
+			var rq7:URLRequest; 
+			var rq8:URLRequest; 
+			var rq9:URLRequest; 
+			var rq10:URLRequest;
+			var rq11:URLRequest;
+			var rq12:URLRequest;
+			var rq13:URLRequest;
+			var rq14:URLRequest;
+			var rq15:URLRequest;
+
+			
+ 
+			protected function titlewindow1_creationCompleteHandler(event:FlexEvent):void
+			{
+				// TODO Auto-generated method stub
+				
+				rq1= new URLRequest("/avaluosWeb/UploadAnexosPdfServlet?operacion=borrar&idAvaluo="+idAvaluo+"&consecutivo=1");
+				rq2= new URLRequest("/avaluosWeb/UploadAnexosPdfServlet?operacion=borrar&idAvaluo="+idAvaluo+"&consecutivo=2");			
+				rq3= new URLRequest("/avaluosWeb/UploadAnexosPdfServlet?operacion=borrar&idAvaluo="+idAvaluo+"&consecutivo=3");
+				rq4= new URLRequest("/avaluosWeb/UploadAnexosPdfServlet?operacion=borrar&idAvaluo="+idAvaluo+"&consecutivo=4");
+				rq5= new URLRequest("/avaluosWeb/UploadAnexosPdfServlet?operacion=borrar&idAvaluo="+idAvaluo+"&consecutivo=5");			
+				rq6= new URLRequest("/avaluosWeb/UploadAnexosPdfServlet?operacion=borrar&idAvaluo="+idAvaluo+"&consecutivo=6");
+				rq7= new URLRequest("/avaluosWeb/UploadAnexosPdfServlet?operacion=borrar&idAvaluo="+idAvaluo+"&consecutivo=7");			
+				rq8= new URLRequest("/avaluosWeb/UploadAnexosPdfServlet?operacion=borrar&idAvaluo="+idAvaluo+"&consecutivo=8");
+				rq9= new URLRequest("/avaluosWeb/UploadAnexosPdfServlet?operacion=borrar&idAvaluo="+idAvaluo+"&consecutivo=9");
+				rq10 = new URLRequest("/avaluosWeb/UploadAnexosPdfServlet?operacion=borrar&idAvaluo="+idAvaluo+"&consecutivo=10");
+				rq11 = new URLRequest("/avaluosWeb/UploadAnexosPdfServlet?operacion=borrar&idAvaluo="+idAvaluo+"&consecutivo=11");
+				rq12 = new URLRequest("/avaluosWeb/UploadAnexosPdfServlet?operacion=borrar&idAvaluo="+idAvaluo+"&consecutivo=12");			
+				rq13 = new URLRequest("/avaluosWeb/UploadAnexosPdfServlet?operacion=borrar&idAvaluo="+idAvaluo+"&consecutivo=13");
+				rq14 = new URLRequest("/avaluosWeb/UploadAnexosPdfServlet?operacion=borrar&idAvaluo="+idAvaluo+"&consecutivo=14");
+				rq15 = new URLRequest("/avaluosWeb/UploadAnexosPdfServlet?operacion=borrar&idAvaluo="+idAvaluo+"&consecutivo=15");
+				
+				fileUp1.codigoUsuario=codigoUsuario;
+				fileUp2.codigoUsuario=codigoUsuario;
+				fileUp3.codigoUsuario=codigoUsuario;
+				fileUp4.codigoUsuario=codigoUsuario;
+				fileUp5.codigoUsuario=codigoUsuario;
+				fileUp6.codigoUsuario=codigoUsuario;
+				fileUp7.codigoUsuario=codigoUsuario;
+				fileUp8.codigoUsuario=codigoUsuario;
+				fileUp9.codigoUsuario=codigoUsuario;
+				fileUp10.codigoUsuario=codigoUsuario;
+				fileUp11.codigoUsuario=codigoUsuario;
+				fileUp12.codigoUsuario=codigoUsuario;
+				fileUp13.codigoUsuario=codigoUsuario;
+				fileUp14.codigoUsuario=codigoUsuario;
+				fileUp15.codigoUsuario=codigoUsuario;
+				
+				
+				consultaNomImagenResult2.token = listaAnexosPdfService.consultaNomImagen(idAvaluo,"2");
+				consultaNomImagenResult3.token = listaAnexosPdfService.consultaNomImagen(idAvaluo,"3");
+				consultaNomImagenResult4.token = listaAnexosPdfService.consultaNomImagen(idAvaluo,"4");
+				consultaNomImagenResult5.token = listaAnexosPdfService.consultaNomImagen(idAvaluo,"5");
+				consultaNomImagenResult6.token = listaAnexosPdfService.consultaNomImagen(idAvaluo,"6");
+				consultaNomImagenResult7.token = listaAnexosPdfService.consultaNomImagen(idAvaluo,"7");
+				consultaNomImagenResult8.token = listaAnexosPdfService.consultaNomImagen(idAvaluo,"8");
+				consultaNomImagenResult9.token = listaAnexosPdfService.consultaNomImagen(idAvaluo,"9");
+				consultaNomImagenResult10.token = listaAnexosPdfService.consultaNomImagen(idAvaluo,"10");
+				consultaNomImagenResult11.token = listaAnexosPdfService.consultaNomImagen(idAvaluo,"11");
+				consultaNomImagenResult12.token = listaAnexosPdfService.consultaNomImagen(idAvaluo,"12");
+				consultaNomImagenResult13.token = listaAnexosPdfService.consultaNomImagen(idAvaluo,"13");
+				consultaNomImagenResult14.token = listaAnexosPdfService.consultaNomImagen(idAvaluo,"14");
+				consultaNomImagenResult15.token = listaAnexosPdfService.consultaNomImagen(idAvaluo,"15");
+				
+			}
+
+			
+			/*protected function cancelUp0_clickHandler(event:MouseEvent):void
+			{
+				borraImagenResult.token = listaAnexosPdfService.borraImagen(arg0, arg1);
+			}*/
+			
+
+			protected function borraImagenResult_resultHandler(event:ResultEvent):void
+			{
+				// TODO Auto-generated method stub
+				var mensaje:String;
+				mensaje = borraImagenResult.lastResult as String;
+				
+				if(mensaje != null)
+				{
+					Alert.show("Fallo el Proceso: "+mensaje);
+				}
+				else
+				{
+					Alert.show("La imagen ha sido borrada. Por favor genere nuevamente el anexo para borrarla del pdf ");
+				}				
+			}
+
+
+			protected function consultaNomImagenResult2_resultHandler(event:ResultEvent):void
+			{
+				// TODO Auto-generated method stub
+			  if(consultaNomImagenResult2.lastResult!=null)
+				lb2.text = lb2.text+" "+consultaNomImagenResult2.lastResult; 
+			}
+
+			protected function consultaNomImagenResult3_resultHandler(event:ResultEvent):void
+			{
+				// TODO Auto-generated method stub
+				if(consultaNomImagenResult3.lastResult!=null)				
+				lb3.text = lb3.text+" "+consultaNomImagenResult3.lastResult; 
+			}
+			
+			protected function consultaNomImagenResult4_resultHandler(event:ResultEvent):void
+			{
+				// TODO Auto-generated method stub
+				if(consultaNomImagenResult4.lastResult!=null)
+				lb4.text = lb4.text+" "+consultaNomImagenResult4.lastResult; 
+			}
+			
+			protected function consultaNomImagenResult5_resultHandler(event:ResultEvent):void
+			{
+				// TODO Auto-generated method stub
+				if(consultaNomImagenResult5.lastResult!=null)
+				lb5.text = lb5.text+" "+consultaNomImagenResult5.lastResult; 
+			}
+			
+			protected function consultaNomImagenResult6_resultHandler(event:ResultEvent):void
+			{
+				// TODO Auto-generated method stub
+				if(consultaNomImagenResult6.lastResult!=null)
+				lb6.text = lb6.text+" "+consultaNomImagenResult6.lastResult; 
+			}
+			
+			protected function consultaNomImagenResult7_resultHandler(event:ResultEvent):void
+			{
+				// TODO Auto-generated method stub
+				if(consultaNomImagenResult7.lastResult!=null)
+				lb7.text = lb7.text+" "+consultaNomImagenResult7.lastResult; 
+			}
+			
+			protected function consultaNomImagenResult8_resultHandler(event:ResultEvent):void
+			{
+				// TODO Auto-generated method stub
+				if(consultaNomImagenResult8.lastResult!=null)
+				lb8.text = lb8.text+" "+consultaNomImagenResult8.lastResult; 
+			}
+			
+			protected function consultaNomImagenResult9_resultHandler(event:ResultEvent):void
+			{
+				// TODO Auto-generated method stub
+				if(consultaNomImagenResult9.lastResult!=null)
+				lb9.text = lb9.text+" "+consultaNomImagenResult9.lastResult; 
+			}
+			
+			protected function consultaNomImagenResult10_resultHandler(event:ResultEvent):void
+			{
+				// TODO Auto-generated method stub
+				if(consultaNomImagenResult10.lastResult!=null)
+				lb10.text = lb10.text+" "+consultaNomImagenResult10.lastResult; 
+			}
+			
+			protected function consultaNomImagenResult11_resultHandler(event:ResultEvent):void
+			{
+				// TODO Auto-generated method stub
+				if(consultaNomImagenResult11.lastResult!=null)
+				lb11.text = lb11.text+" "+consultaNomImagenResult11.lastResult; 
+			}
+			
+			protected function consultaNomImagenResult12_resultHandler(event:ResultEvent):void
+			{
+				// TODO Auto-generated method stub
+				if(consultaNomImagenResult12.lastResult!=null)
+				lb12.text = lb12.text+" "+consultaNomImagenResult12.lastResult; 
+			}
+			
+			protected function consultaNomImagenResult13_resultHandler(event:ResultEvent):void
+			{
+				// TODO Auto-generated method stub
+				if(consultaNomImagenResult13.lastResult!=null)
+				lb13.text = lb13.text+" "+consultaNomImagenResult13.lastResult; 
+			}
+			
+			protected function consultaNomImagenResult14_resultHandler(event:ResultEvent):void
+			{
+				// TODO Auto-generated method stub
+				if(consultaNomImagenResult14.lastResult!=null)
+				lb14.text = lb14.text+" "+consultaNomImagenResult14.lastResult; 
+			}
+			
+			protected function consultaNomImagenResult15_resultHandler(event:ResultEvent):void
+			{
+				// TODO Auto-generated method stub
+				if(consultaNomImagenResult15.lastResult!=null)
+				lb15.text = lb15.text+" "+consultaNomImagenResult15.lastResult; 
+			}
+			
+
+			protected function titlewindow1_closeHandler(event:CloseEvent):void
+			{
+				
+				if(cargues)
+				{
+					event.stopImmediatePropagation();
+					Alert.show("Recuerde que cargó imágenes en el formulario, por favor haga clic en cargar y luego en generar anexo para generar el pdf");
+					cargues=false;
+				}
+				if(cargados)
+				{
+					event.stopImmediatePropagation();
+					Alert.show("Después de cargar las imágenes no olvide hacer clic en generar anexo para generar el pdf");
+					cargados=false;
+				}
+				if(borrados)
+				{
+					event.stopImmediatePropagation();
+					Alert.show("Recuerde después de borrar imágenes, hacer clic en generar anexo para generar el pdf");
+					borrados=false;
+				}
+				
+				//trace("Close");
+
+			}
+			/*
+			Alert.show("Open new tab to search in Google Maps?",
+				"No places found", Alert.YES | Alert.NO, this, alertListener, null, Alert.NO);
+			
+			function alertListener(eventObj:CloseEvent):void {
+				
+				if (eventObj.detail==Alert.YES) {
+					Alert.show("You clicked yes"); 
+				}
+			}*/
+			
+
+		]]>
+	</fx:Script>	
+	<fx:Declarations>
+		<s:CallResponder id="generarAnexoResult" result="generarAnexoResult_resultHandler(event)"/>
+		<services:ListaAnexosPdfService id="listaAnexosPdfService" result="listaAnexosPdfService_resultHandler(event)"  fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)" showBusyCursor="true"/>
+		<s:CallResponder id="borraImagenResult" result="borraImagenResult_resultHandler(event)"/>
+		<s:CallResponder id="consultaNomImagenResult2" result="consultaNomImagenResult2_resultHandler(event)"/>
+		<s:CallResponder id="consultaNomImagenResult3" result="consultaNomImagenResult3_resultHandler(event)"/>
+		<s:CallResponder id="consultaNomImagenResult4" result="consultaNomImagenResult4_resultHandler(event)"/>
+		<s:CallResponder id="consultaNomImagenResult5" result="consultaNomImagenResult5_resultHandler(event)"/>
+		<s:CallResponder id="consultaNomImagenResult6" result="consultaNomImagenResult6_resultHandler(event)"/>
+		<s:CallResponder id="consultaNomImagenResult7" result="consultaNomImagenResult7_resultHandler(event)"/>
+		<s:CallResponder id="consultaNomImagenResult8" result="consultaNomImagenResult8_resultHandler(event)"/>
+		<s:CallResponder id="consultaNomImagenResult9" result="consultaNomImagenResult9_resultHandler(event)"/>
+		<s:CallResponder id="consultaNomImagenResult10" result="consultaNomImagenResult10_resultHandler(event)"/>
+		<s:CallResponder id="consultaNomImagenResult11" result="consultaNomImagenResult11_resultHandler(event)"/>
+		<s:CallResponder id="consultaNomImagenResult12" result="consultaNomImagenResult12_resultHandler(event)"/>
+		<s:CallResponder id="consultaNomImagenResult13" result="consultaNomImagenResult13_resultHandler(event)"/>
+		<s:CallResponder id="consultaNomImagenResult14" result="consultaNomImagenResult14_resultHandler(event)"/>
+		<s:CallResponder id="consultaNomImagenResult15" result="consultaNomImagenResult15_resultHandler(event)"/>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Style source="assets/css/AvaluosBolivar.css"/>
+	<fx:Style source="assets/css/AvaluosBolivarPanel.css"/>
+	
+	<!--<upload:FileIOAnexosPdf
+		cargando="{up1.estado='cargando'}"
+		error="{up1.estado='error'};if(ventanaOpen==false)notificar();"
+		completo="{up1.estado='completo'};notificar();"
+		
+		cancelado="{up1.estado=null}"
+		id="up1" x="0" y="10" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+	</upload:FileIOAnexosPdf>-->
+	
+	<!--<upload:FileUploadAnexosPdf id="fileUp1" creationComplete="fileUp1.init(uploadPrgs1, cancelUp1);" />-->
+	<!--<mx:HBox width="319"  height="23" x="46" y="11">
+		<mx:Label  text="Imagen 1">			
+		</mx:Label>
+		<mx:ProgressBar id="uploadPrgs1" label="" mode="manual"  height="21"/>
+		<mx:Button id="startUpload" click="init();fileUp1.startUploadImgs();"
+				   skin="@Embed(source='assets/icons/adjuntar.gif')"
+				   toolTip="Cargar..."				   
+				   />
+		<mx:Button id="cancelUp1" click="fileUp1.cancelUpload()" enabled="false" 
+				   skin="@Embed(source='assets/icons/cancelar.gif')"
+				   toolTip="Cancelar"				   
+				   width="20" height="20"/>
+	</mx:HBox>-->
+	<!--<uploads:FileUploadAnexosPdf id="fileUp1" creationComplete="fileUp1.init(uploadPrgs1, cancelUp1);" />-->
+	<!--<mx:HBox width="437"  height="44" x="46" y="11" creationComplete="fileUp1.init(uploadPrgs1, cancelUp1,this)">						
+		<mx:Label  text="Imagen 1 ">									
+		</mx:Label>											
+		<mx:ProgressBar id="uploadPrgs1" label="" mode="manual"  height="21"/>			
+		<mx:Button id="startUp1" click="init();fileUp1.startUploadImgs(idAvaluo,'1');"			
+				   skin="@Embed(source='assets/icons/adjuntar.gif')"				
+				   toolTip="Cargar..."				   			
+				   />										
+		<mx:Button id="cancelUp1" click="fileUp1.cancelUpload()" enabled="false" 			
+				   skin="@Embed(source='assets/icons/cancelar.gif')"				
+				   toolTip="Cancelar"				   				
+				   width="20" height="20"/>							
+		<mx:Button id="cancelUp0" click="borraImagenResult.token=listaAnexosPdfService.borraImagen(idAvaluo,'1');/*;navigateToURL(rq1,'_blank'); cancelUp0_clickHandler(event)*/" enabled="true" 			
+				   skin="@Embed(source='assets/icons/eliminar.gif')"				
+				   toolTip="Borrar"				   				
+				   width="20" height="20"/>
+	</mx:HBox>-->												
+	
+	<!--<uploads:FileUploadAnexosPdf id="fileUp2" creationComplete="fileUp2.init(uploadPrgs2, cancelUp2);" />-->
+<mx:Canvas width="696" height="400">
+	<mx:HBox width="542"  height="46" x="46" y="58" creationComplete="fileUp2.init(uploadPrgs2, cancelUp2,this)">						
+		<mx:Label id="lb2"  text="Imagen 2 "  height="36" width="246">									
+		</mx:Label>											
+		<mx:ProgressBar id="uploadPrgs2" label="" mode="manual"  height="21"/>			
+		<mx:Button id="startUp2" click="init();fileUp2.startUploadImgs(idAvaluo,'2');cargues=true;"			
+				   skin="@Embed(source='assets/icons/adjuntar.gif')"				
+				   toolTip="Cargar..."				   			
+				   />										
+		<mx:Button id="cancelUp2" click="fileUp2.cancelUpload()" enabled="false" 			
+				   skin="@Embed(source='assets/icons/cancelar.gif')"				
+				   toolTip="Cancelar"				   				
+				   width="20" height="20"/>							
+		<mx:Button id="cancelUp15" click="borraImagenResult.token=listaAnexosPdfService.borraImagen(idAvaluo,'2');/*navigateToURL(rq2,'_blank')*/borrados=true;" enabled="true" 			
+				   skin="@Embed(source='assets/icons/eliminar.gif')"				
+				   toolTip="Borrar"				   				
+				   width="20" height="20"/>
+	</mx:HBox>												
+	
+	<!--<uploads:FileUploadAnexosPdf id="fileUp3" creationComplete="fileUp3.init(uploadPrgs3, cancelUp3);" />-->
+	<mx:HBox width="542"  height="46" x="46" y="107" creationComplete="fileUp3.init(uploadPrgs3, cancelUp3,this)">						
+		<mx:Label id="lb3" text="Imagen 3 " height="38" width="247">									
+		</mx:Label>											
+		<mx:ProgressBar id="uploadPrgs3" label="" mode="manual"  height="21"/>			
+		<mx:Button id="startUp3" click="init();fileUp3.startUploadImgs(idAvaluo,'3');cargues=true;"			
+				   skin="@Embed(source='assets/icons/adjuntar.gif')"				
+				   toolTip="Cargar..."				   			
+				   />										
+		<mx:Button id="cancelUp3" click="fileUp3.cancelUpload()" enabled="false" 			
+				   skin="@Embed(source='assets/icons/cancelar.gif')"				
+				   toolTip="Cancelar"				   				
+				   width="20" height="20"/>							
+		<mx:Button id="cancelUp16" click="borraImagenResult.token=listaAnexosPdfService.borraImagen(idAvaluo,'3');/*navigateToURL(rq3,'_blank')*/borrados=true;" enabled="true" 			
+				   skin="@Embed(source='assets/icons/eliminar.gif')"				
+				   toolTip="Borrar"				   				
+				   width="20" height="20"/>
+	</mx:HBox>												
+	
+	<!--<uploads:FileUploadAnexosPdf id="fileUp4" creationComplete="fileUp4.init(uploadPrgs4, cancelUp4);" />-->
+	<mx:HBox width="542"  height="46" x="46" y="156" creationComplete="fileUp4.init(uploadPrgs4, cancelUp4,this)">						
+		<mx:Label id="lb4" text="Imagen 4 " height="36" width="249">									
+		</mx:Label>											
+		<mx:ProgressBar id="uploadPrgs4" label="" mode="manual"  height="21"/>			
+		<mx:Button id="startUp4" click="init();fileUp4.startUploadImgs(idAvaluo,'4');cargues=true;"			
+				   skin="@Embed(source='assets/icons/adjuntar.gif')"				
+				   toolTip="Cargar..."				   			
+				   />										
+		<mx:Button id="cancelUp4" click="fileUp4.cancelUpload()" enabled="false" 			
+				   skin="@Embed(source='assets/icons/cancelar.gif')"				
+				   toolTip="Cancelar"				   				
+				   width="20" height="20"/>							
+		<mx:Button id="cancelUp17" click="borraImagenResult.token=listaAnexosPdfService.borraImagen(idAvaluo,'4');/*navigateToURL(rq4,'_blank')*/borrados=true;" enabled="true" 			
+				   skin="@Embed(source='assets/icons/eliminar.gif')"				
+				   toolTip="Borrar"				   				
+				   width="20" height="20"/>
+	</mx:HBox>												
+	
+	<!--<uploads:FileUploadAnexosPdf id="fileUp5" creationComplete="fileUp5.init(uploadPrgs5, cancelUp5);" />-->
+	<mx:HBox width="542"  height="46" x="46" y="205" creationComplete="fileUp5.init(uploadPrgs5, cancelUp5,this)">						
+		<mx:Label id="lb5" text="Imagen 5 " height="40" width="248">									
+		</mx:Label>											
+		<mx:ProgressBar id="uploadPrgs5" label="" mode="manual"  height="21"/>			
+		<mx:Button id="startUp5" click="init();fileUp5.startUploadImgs(idAvaluo,'5');cargues=true;"			
+				   skin="@Embed(source='assets/icons/adjuntar.gif')"				
+				   toolTip="Cargar..."				   			
+				   />										
+		<mx:Button id="cancelUp5" click="fileUp5.cancelUpload()" enabled="false" 			
+				   skin="@Embed(source='assets/icons/cancelar.gif')"				
+				   toolTip="Cancelar"				   				
+				   width="20" height="20"/>							
+		<mx:Button id="cancelUp18" click="borraImagenResult.token=listaAnexosPdfService.borraImagen(idAvaluo,'5');/*navigateToURL(rq5,'_blank')*/borrados=true;" enabled="true" 			
+				   skin="@Embed(source='assets/icons/eliminar.gif')"				
+				   toolTip="Borrar"				   				
+				   width="20" height="20"/>
+	</mx:HBox>												
+	
+	<!--<uploads:FileUploadAnexosPdf id="fileUp6" creationComplete="fileUp6.init(uploadPrgs6, cancelUp6);" />-->
+	<mx:HBox width="542"  height="46" x="46" y="254" creationComplete="fileUp6.init(uploadPrgs6, cancelUp6,this)">						
+		<mx:Label id="lb6" text="Imagen 6 " height="39" width="252">									
+		</mx:Label>											
+		<mx:ProgressBar id="uploadPrgs6" label="" mode="manual"  height="21"/>			
+		<mx:Button id="startUp6" click="init();fileUp6.startUploadImgs(idAvaluo,'6');cargues=true;"			
+				   skin="@Embed(source='assets/icons/adjuntar.gif')"				
+				   toolTip="Cargar..."				   			
+				   />										
+		<mx:Button id="cancelUp6" click="fileUp6.cancelUpload()" enabled="false" 			
+				   skin="@Embed(source='assets/icons/cancelar.gif')"				
+				   toolTip="Cancelar"				   				
+				   width="20" height="20"/>							
+		<mx:Button id="cancelUp19" click="borraImagenResult.token=listaAnexosPdfService.borraImagen(idAvaluo,'6');/*fileUp1.cancelUpload()*/borrados=true;" enabled="false" 			
+				   skin="@Embed(source='assets/icons/eliminar.gif')"				
+				   toolTip="Borrar"				   				
+				   width="20" height="20"/>
+	</mx:HBox>												
+	
+	<!--<uploads:FileUploadAnexosPdf id="fileUp7" creationComplete="fileUp7.init(uploadPrgs7, cancelUp7);" />-->
+	<mx:HBox width="542"  height="46" x="46" y="301" creationComplete="fileUp7.init(uploadPrgs7, cancelUp7,this)">						
+		<mx:Label id="lb7"  text="Imagen 7 " height="41" width="250">									
+		</mx:Label>											
+		<mx:ProgressBar id="uploadPrgs7" label="" mode="manual"  height="21"/>			
+		<mx:Button id="startUp7" click="init();fileUp7.startUploadImgs(idAvaluo,'7');cargues=true;"			
+				   skin="@Embed(source='assets/icons/adjuntar.gif')"				
+				   toolTip="Cargar..."				   			
+				   />										
+		<mx:Button id="cancelUp7" click="fileUp7.cancelUpload()" enabled="false" 			
+				   skin="@Embed(source='assets/icons/cancelar.gif')"				
+				   toolTip="Cancelar"				   				
+				   width="20" height="20"/>							
+		<mx:Button id="cancelUp20" click="borraImagenResult.token=listaAnexosPdfService.borraImagen(idAvaluo,'7');/*navigateToURL(rq7,'_blank')*/borrados=true;" enabled="true" 			
+				   skin="@Embed(source='assets/icons/eliminar.gif')"				
+				   toolTip="Borrar"				   				
+				   width="20" height="20"/>
+	</mx:HBox>												
+	
+	<!--<uploads:FileUploadAnexosPdf id="fileUp8" creationComplete="fileUp8.init(uploadPrgs8, cancelUp8);" />-->
+	<mx:HBox width="542"  height="46" x="46" y="349" creationComplete="fileUp8.init(uploadPrgs8, cancelUp8,this)">						
+		<mx:Label id="lb8"  text="Imagen 8 " height="38" width="250">									
+		</mx:Label>											
+		<mx:ProgressBar id="uploadPrgs8" label="" mode="manual"  height="21"/>			
+		<mx:Button id="startUp8" click="init();fileUp8.startUploadImgs(idAvaluo,'8');cargues=true;"			
+				   skin="@Embed(source='assets/icons/adjuntar.gif')"				
+				   toolTip="Cargar..."				   			
+				   />										
+		<mx:Button id="cancelUp8" click="fileUp8.cancelUpload()" enabled="false" 			
+				   skin="@Embed(source='assets/icons/cancelar.gif')"				
+				   toolTip="Cancelar"				   				
+				   width="20" height="20"/>							
+		<mx:Button id="cancelUp21" click="borraImagenResult.token=listaAnexosPdfService.borraImagen(idAvaluo,'8');/*navigateToURL(rq8,'_blank')*/borrados=true;" enabled="true" 			
+				   skin="@Embed(source='assets/icons/eliminar.gif')"				
+				   toolTip="Borrar"				   				
+				   width="20" height="20"/>
+	</mx:HBox>												
+	
+	<!--<uploads:FileUploadAnexosPdf id="fileUp9" creationComplete="fileUp9.init(uploadPrgs9, cancelUp9);" />-->
+	<mx:HBox width="542"  height="46" x="46" y="401" creationComplete="fileUp9.init(uploadPrgs9, cancelUp9,this)">						
+		<mx:Label id="lb9" text="Imagen 9 " height="38" width="251">									
+		</mx:Label>											
+		<mx:ProgressBar id="uploadPrgs9" label="" mode="manual"  height="21"/>			
+		<mx:Button id="startUp9" click="init();fileUp9.startUploadImgs(idAvaluo,'9');cargues=true;"			
+				   skin="@Embed(source='assets/icons/adjuntar.gif')"				
+				   toolTip="Cargar..."				   			
+				   />										
+		<mx:Button id="cancelUp9" click="fileUp9.cancelUpload()" enabled="false" 			
+				   skin="@Embed(source='assets/icons/cancelar.gif')"				
+				   toolTip="Cancelar"				   				
+				   width="20" height="20"/>							
+		<mx:Button id="cancelUp22" click="borraImagenResult.token=listaAnexosPdfService.borraImagen(idAvaluo,'9');/*navigateToURL(rq9,'_blank')*/borrados=true;" enabled="true" 			
+				   skin="@Embed(source='assets/icons/eliminar.gif')"				
+				   toolTip="Borrar"				   				
+				   width="20" height="20"/>
+	</mx:HBox>												
+	
+	<!--<uploads:FileUploadAnexosPdf id="fileUp10" creationComplete="fileUp10.init(uploadPrgs10, cancelUp10);" />-->
+	<mx:HBox width="542"  height="46" x="46" y="451" creationComplete="fileUp10.init(uploadPrgs10, cancelUp10,this)">						
+		<mx:Label id="lb10" text="Imagen 10" height="37" width="254">									
+		</mx:Label>											
+		<mx:ProgressBar id="uploadPrgs10" label="" mode="manual"  height="21"/>			
+		<mx:Button id="startUp10" click="init();fileUp10.startUploadImgs(idAvaluo,'10');cargues=true;"			
+				   skin="@Embed(source='assets/icons/adjuntar.gif')"				
+				   toolTip="Cargar..."				   			
+				   />										
+		<mx:Button id="cancelUp10" click="fileUp10.cancelUpload()" enabled="false" 			
+				   skin="@Embed(source='assets/icons/cancelar.gif')"				
+				   toolTip="Cancelar"				   				
+				   width="20" height="20"/>							
+		<mx:Button id="cancelUp23" click="borraImagenResult.token=listaAnexosPdfService.borraImagen(idAvaluo,'10');/*navigateToURL(rq10,'_blank')*/borrados=true;" enabled="true" 			
+				   skin="@Embed(source='assets/icons/eliminar.gif')"				
+				   toolTip="Borrar"				   				
+				   width="20" height="20"/>
+	</mx:HBox>												
+	
+	<!--<uploads:FileUploadAnexosPdf id="fileUp11" creationComplete="fileUp11.init(uploadPrgs11, cancelUp11);" />-->
+	<mx:HBox width="542"  height="46" x="46" y="500" creationComplete="fileUp11.init(uploadPrgs11, cancelUp11,this)">						
+		<mx:Label id="lb11" text="Imagen 11" height="40" width="254">									
+		</mx:Label>											
+		<mx:ProgressBar id="uploadPrgs11" label="" mode="manual"  height="21"/>			
+		<mx:Button id="startUp11" click="init();fileUp11.startUploadImgs(idAvaluo,'11');cargues=true;"			
+				   skin="@Embed(source='assets/icons/adjuntar.gif')"				
+				   toolTip="Cargar..."				   			
+				   />										
+		<mx:Button id="cancelUp11" click="fileUp11.cancelUpload()" enabled="false" 			
+				   skin="@Embed(source='assets/icons/cancelar.gif')"				
+				   toolTip="Cancelar"				   				
+				   width="20" height="20"/>							
+		<mx:Button id="cancelUp24" click="borraImagenResult.token=listaAnexosPdfService.borraImagen(idAvaluo,'11');/*navigateToURL(rq11,'_blank')*/borrados=true;" enabled="true" 			
+				   skin="@Embed(source='assets/icons/eliminar.gif')"				
+				   toolTip="Borrar"				   				
+				   width="20" height="20"/>
+	</mx:HBox>												
+	
+	<!--<uploads:FileUploadAnexosPdf id="fileUp12" creationComplete="fileUp12.init(uploadPrgs12, cancelUp12);" />-->
+	<mx:HBox width="542"  height="46" x="46" y="548" creationComplete="fileUp12.init(uploadPrgs12, cancelUp12,this)">						
+		<mx:Label id="lb12" text="Imagen 12" height="40" width="254">									
+		</mx:Label>											
+		<mx:ProgressBar id="uploadPrgs12" label="" mode="manual"  height="21"/>			
+		<mx:Button id="startUp12" click="init();fileUp12.startUploadImgs(idAvaluo,'12');cargues=true;"			
+				   skin="@Embed(source='assets/icons/adjuntar.gif')"				
+				   toolTip="Cargar..."				   			
+				   />										
+		<mx:Button id="cancelUp12" click="fileUp12.cancelUpload()" enabled="false" 			
+				   skin="@Embed(source='assets/icons/cancelar.gif')"				
+				   toolTip="Cancelar"				   				
+				   width="20" height="20"/>							
+		<mx:Button id="cancelUp25" click="borraImagenResult.token=listaAnexosPdfService.borraImagen(idAvaluo,'12');/*navigateToURL(rq12,'_blank')*/borrados=true;" enabled="true" 			
+				   skin="@Embed(source='assets/icons/eliminar.gif')"				
+				   toolTip="Borrar"				   				
+				   width="20" height="20"/>
+	</mx:HBox>												
+	
+	<!--<uploads:FileUploadAnexosPdf id="fileUp13" creationComplete="fileUp13.init(uploadPrgs13, cancelUp13);" />-->
+	<mx:HBox width="543"  height="46" x="46" y="596" creationComplete="fileUp13.init(uploadPrgs13, cancelUp13,this)">						
+		<mx:Label id="lb13" text="Imagen 13" height="39" width="251">									
+		</mx:Label>											
+		<mx:ProgressBar id="uploadPrgs13" label="" mode="manual"  height="21"/>			
+		<mx:Button id="startUp13" click="init();fileUp13.startUploadImgs(idAvaluo,'13');cargues=true;"			
+				   skin="@Embed(source='assets/icons/adjuntar.gif')"				
+				   toolTip="Cargar..."				   			
+				   />										
+		<mx:Button id="cancelUp13" click="fileUp13.cancelUpload()" enabled="false" 			
+				   skin="@Embed(source='assets/icons/cancelar.gif')"				
+				   toolTip="Cancelar"				   				
+				   width="20" height="20"/>							
+		<mx:Button id="cancelUp26" click="borraImagenResult.token=listaAnexosPdfService.borraImagen(idAvaluo,'13');/*navigateToURL(rq13,'_blank')*/borrados=true;" enabled="true" 			
+				   skin="@Embed(source='assets/icons/eliminar.gif')"				
+				   toolTip="Borrar"				   				
+				   width="20" height="20"/>
+	</mx:HBox>												
+	
+	<!--<uploads:FileUploadAnexosPdf id="fileUp14" creationComplete="fileUp14.init(uploadPrgs14, cancelUp14);" />-->
+	<mx:HBox width="543"  height="46" x="46" y="644" creationComplete="fileUp14.init(uploadPrgs14, cancelUp14,this)">						
+		<mx:Label id="lb14" text="Imagen 14" height="40" width="252">									
+		</mx:Label>											
+		<mx:ProgressBar id="uploadPrgs14" label="" mode="manual"  height="21"/>			
+		<mx:Button id="startUp14" click="init();fileUp14.startUploadImgs(idAvaluo,'14');cargues=true;"			
+				   skin="@Embed(source='assets/icons/adjuntar.gif')"				
+				   toolTip="Cargar..."				   			
+				   />										
+		<mx:Button id="cancelUp14" click="fileUp14.cancelUpload()" enabled="false" 			
+				   skin="@Embed(source='assets/icons/cancelar.gif')"				
+				   toolTip="Cancelar"				   				
+				   width="20" height="20"/>							
+		<mx:Button id="cancelUp27" click="borraImagenResult.token=listaAnexosPdfService.borraImagen(idAvaluo,'14');/*navigateToURL(rq14,'_blank')*/borrados=true;" enabled="true" 			
+				   skin="@Embed(source='assets/icons/eliminar.gif')"				
+				   toolTip="Borrar"				   				
+				   width="20" height="20"/>
+	</mx:HBox>												
+
+	<!--<uploads:FileUploadAnexosPdf id="fileUp15" creationComplete="fileUp15.init(uploadPrgs15, cancelUp15);" />-->
+	<mx:HBox width="543"  height="46" x="46" y="698" creationComplete="fileUp15.init(uploadPrgs15, cancelUp151,this)">						
+		<mx:Label id="lb15" text="Imagen 15" height="38" width="253">									
+		</mx:Label>											
+		<mx:ProgressBar id="uploadPrgs15" label="" mode="manual"  height="21"/>			
+		<mx:Button id="startUp15" click="init();fileUp15.startUploadImgs(idAvaluo,'15');cargues=true;"			
+				   skin="@Embed(source='assets/icons/adjuntar.gif')"				
+				   toolTip="Cargar..."				   			
+				   />										
+		<mx:Button id="cancelUp151" click="fileUp15.cancelUpload()" enabled="false" 			
+				   skin="@Embed(source='assets/icons/cancelar.gif')"				
+				   toolTip="Cancelar"				   				
+				   width="20" height="20"/>							
+		<mx:Button id="cancelUp271" click="borraImagenResult.token=listaAnexosPdfService.borraImagen(idAvaluo,'15');/*navigateToURL(rq14,'_blank')*/borrados=true;" enabled="true" 			
+				   skin="@Embed(source='assets/icons/eliminar.gif')"				
+				   toolTip="Borrar"				   				
+				   width="20" height="20"/>
+	</mx:HBox>	
+	<s:Label text="Cargue de imágenes individuales anexo:" fontWeight="bold" width="244" x="226" y="17"/>
+
+	
+<fx:Script>
+	<![CDATA[
+		//fileUp1.addEventListener(FlexEvent.CREATION_COMPLETE,fileUp1.init(uploadPrgs1, cancelUp1));
+	]]>
+</fx:Script>
+
+
+</mx:Canvas>	
+	<s:Button x="56" y="416" label="Cargar Imagenes" click="button1_clickHandler(event)"/>
+	<s:Button x="175" y="416" label="Generar Anexo Fotografico" click="buttonAnx_clickHandler(event)" id="buttonAnx"/>
+	
+</s:TitleWindow>

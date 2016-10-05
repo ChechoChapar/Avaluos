@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		   xmlns:s="library://ns.adobe.com/flex/spark" 
+		   xmlns:mx="library://ns.adobe.com/flex/mx"
+		   width="942" height="298" xmlns:valueObjects="valueObjects.*" xmlns:services="services.*" xmlns:a="com.segurosbolivar.avaluos.*"
+		   initialize="titlewindow1_initializeHandler(event)"
+		    creationComplete="titlewindow1_creationCompleteHandler(event)">
+	<fx:Script>
+		<![CDATA[
+			import valueObjects.HistoricoLogsGeneraArch;
+			import mx.controls.Alert;
+			import mx.events.FlexEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.ResultEvent;
+			
+			import valueObjects.LogsGeneraArchivo;
+			//import valueObjects.HistoricoLogsGeneraArch;
+			
+			[Bindable]
+			var historico:HistoricoLogsGeneraArch;
+			
+			public function setConsecutivoBatch(valor:String)
+			{				
+				/*consecutivoBatch=valor;
+				buscarResumenPlanoByConsecutivoBatchResult.token = carguePlano.buscarResumenPlanoByConsecutivoBatch(consecutivoBatch);*/
+			}
+			public function setHistoricoLogsGeneraArch(valor:HistoricoLogsGeneraArch)
+			{				
+				/*consecutivoBatch=valor;
+				buscarResumenPlanoByConsecutivoBatchResult.token = carguePlano.buscarResumenPlanoByConsecutivoBatch(consecutivoBatch);*/
+				historico=valor;
+			}
+
+			protected function titlewindow1_creationCompleteHandler(event:FlexEvent):void
+			{
+				var logGeneraTmp:LogsGeneraArchivo = new LogsGeneraArchivo();
+				logGeneraTmp.estado = "R";
+				findLogsGeneraArchivoResult.token = logsArchivoService.findLogsGeneraArchivo(logGeneraTmp);
+			}
+
+			protected function findLogsGeneraArchivoResult_resultHandler(event:ResultEvent):void
+			{
+				if(findLogsGeneraArchivoResult.lastResult.length > 0) {
+					/*btnReversar.enabled = true;
+					btnCambiarEstado.enabled = true;*/
+				}
+				else {
+					/*btnReversar.enabled = false;
+					btnCambiarEstado.enabled = false;*/
+					Alert.show("Sin resultados, intente otros criterios de búsqueda","INFO");
+				}
+				dtgLogsArchivo.invalidateDisplayList();
+				
+			}
+
+			/**
+			 * Llama al servicio de consulta de logsGeneraArchivo, para poblar
+			 * la grilla desde su creación
+			 **/ 
+			protected function dtgLogsArchivo_creationCompleteHandler(event:FlexEvent):void
+			{
+				//findLogsGeneraArchivoResult.token = logsArchivoService.findLogsGeneraArchivo(logsGeneraArchivo);
+				findHistoricoLogsGeneraArchivoResult.token = logsArchivoService.findHistoricoLogsGeneraArchivo(historico);
+			}
+			
+			protected function labelFechaInicio(item:Object, column:DataGridColumn):String{
+				if(item.fechaInicioCreacion != null){					
+					return formatDateTime.format(item.fechaInicioCreacion);
+				}
+				else { 
+					return "";
+				}
+			}
+			
+			protected function labelFechaFin(item:Object, column:DataGridColumn):String{
+				if(item.fechaFinCreacion != null){
+					return formatDateTime.format(item.fechaFinCreacion);
+				}
+				else { 
+					return "";
+				}
+			}
+			
+			protected function labelFechaModif(item:Object, column:DataGridColumn):String{
+				if(item .fechaTransaccion != null){
+					return formatDateTime.format(item.fechaTransaccion);
+				}
+				else { 
+					return "";
+				}
+			}
+
+			protected function labelFechaHasta(item:Object, column:DataGridColumn):String{
+				if(item.fechaHasta != null){
+					//return formatDateTime.format(item.fechaHasta);
+					var df:DateFormatter =new DateFormatter();					
+					df.formatString="DD/MM/YYYY";					
+					return df.format(item.fechaHasta);
+				}
+				else { 
+					return "";
+				}
+			}
+			
+			public function linkbutton2_clickHandler(event:MouseEvent):void
+			{
+				logsGeneraArchivo = dtgLogsArchivo.selectedItem as LogsGeneraArchivo;
+				
+				var ventanaErr:WndErrValidacionAvaluo = new WndErrValidacionAvaluo();
+				ventanaErr.setTextoErrValidacionAvaluo(logsGeneraArchivo.descripcionError);
+				
+				ventanaErr.showCloseButton = true;
+				PopUpManager.addPopUp(ventanaErr,this,true);
+				PopUpManager.centerPopUp(ventanaErr); 
+				
+			}
+			/*public function linkbutton1_clickHandler(event:MouseEvent):void
+			{
+				logsGeneraArchivo = dtgLogsArchivo.selectedItem as LogsGeneraArchivo;
+				var fileDownload:FileDownload = new FileDownload();
+				fileDownload.init(null,null);
+				fileDownload.startProcedatosDownload(logsGeneraArchivo.linkDescarga.concat(logsGeneraArchivo.nombreArchivo));	
+			}*/
+			
+			
+
+			protected function titlewindow1_initializeHandler(event:FlexEvent):void
+			{
+				// TODO Auto-generated method stub
+			}
+
+			import valueObjects.DominiosAux;
+			
+			/**
+			 * Actualiza el combobox cbxEstadoLog con la lista de valores del dominio ESTADOARCHIVO
+			 * */
+			protected function cbxEstadoLog_creationCompleteHandler(event:FlexEvent):void
+			{
+				var dominio:DominiosAux = new DominiosAux();
+				dominio.rvDomain = "ESTADOARCHIVO";
+				getValoresDominioProcedatosResult.token = dominiosAuxDao.getValoresDominioProcedatos(dominio);
+			}
+			
+		]]>
+	</fx:Script>			
+	<fx:Declarations>
+		<mx:DateFormatter id="formatDateTime" formatString="DD/MM/YYYY JJ:NN:SS" />
+		<fx:Component id="inlineEditor">
+			<mx:ComboBox selectedIndex="0">
+				<mx:dataProvider>
+					<fx:String>G</fx:String>
+					<fx:String>R</fx:String>
+					<fx:String>E</fx:String>
+					<fx:String>V</fx:String>
+				</mx:dataProvider>
+			</mx:ComboBox>
+		</fx:Component>
+		
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<s:CallResponder id="findLogsGeneraArchivoResult" result="findLogsGeneraArchivoResult_resultHandler(event)"/>
+		<services:LogsArchivoService id="logsArchivoService" fault="Alert.show('Existen errores, por favor inténtelo de nuevo','Error')" showBusyCursor="true"/>
+		<valueObjects:LogsGeneraArchivo id="logsGeneraArchivo"/>
+		<s:CallResponder id="findHistoricoLogsGeneraArchivoResult"/>
+		<s:CallResponder id="getValoresDominioProcedatosResult"/>
+		<services:DominiosAuxDao id="dominiosAuxDao" fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)" showBusyCursor="true"/>		
+	</fx:Declarations>
+	
+	
+	<!--<mx:Form x="10" y="23" label="Consultar Logs Archivos Generados">
+		<mx:FormItem label="Estado">
+			<s:ComboBox id="cbxEstadoLog" creationComplete="cbxEstadoLog_creationCompleteHandler(event)" labelField="rvMeaning" selectedItem="{getValoresDominioProcedatosResult.lastResult[3]}">
+				<s:AsyncListView list="{getValoresDominioProcedatosResult.lastResult}" />
+			</s:ComboBox>
+		</mx:FormItem>
+	</mx:Form>-->
+	
+	
+	<mx:DataGrid allowMultipleSelection="true" width="921" height="186" id="dtgLogsArchivo" creationComplete="dtgLogsArchivo_creationCompleteHandler(event)" dataProvider="{findHistoricoLogsGeneraArchivoResult.lastResult}" editable="true" x="8" y="62">
+		<mx:columns>
+			<mx:DataGridColumn dataField="idLogArchivos" headerText="Id" resizable="false" sortable="true" width="45" textAlign="center" editable="false"/>
+			<mx:DataGridColumn headerText="Nombre Archivo" dataField="nombreArchivo" resizable="false" sortable="true" editable="false" textAlign="center" width="200"/>
+			<mx:DataGridColumn headerText="Fecha Hasta" labelFunction="labelFechaHasta" dataField="fechaHasta" itemEditor="mx.controls.DateField" editorDataField="selectedDate" width="85"/>
+			<mx:DataGridColumn headerText="Estado" dataField="estado" editorDataField="selectedItem" itemEditor="{inlineEditor}" textAlign="center" editable="false" resizable="false" width="90"/>
+			<mx:DataGridColumn dataField="fechaInicioCreacion" headerText="Inicio Generac." labelFunction="labelFechaInicio" editable="false" resizable="true" sortable="true" width="90"/>
+			<mx:DataGridColumn dataField="fechaFinCreacion" headerText="Fin Generac." labelFunction="labelFechaFin" 
+							   editable="false" resizable="true" sortable="true" width="80"/>
+			<mx:DataGridColumn headerText="Usr. Modifica." dataField="usuarioTransaccion" width="80"/>
+			<mx:DataGridColumn headerText="Fecha. Modif." dataField="fechaTransaccion" 
+							   labelFunction="labelFechaModif" 
+							   editable="false" width="80"/>
+			<!--<mx:DataGridColumn headerText="Log/Error" dataField="codigoError" editable="false" textAlign="center" sortable="false" resizable="true" width="70">
+				<mx:itemRenderer>
+					<fx:Component>
+						<mx:LinkButton label="Ver" click="outerDocument.linkbutton2_clickHandler(event)" />
+					</fx:Component>						
+				</mx:itemRenderer>
+			</mx:DataGridColumn>-->
+			<!--<mx:DataGridColumn textAlign="center" resizable="false" sortable="false" dataField="linkDescarga" headerText="Descarga" editable="false" width="80">
+				<mx:itemRenderer>
+					<fx:Component>
+						<mx:LinkButton label="Descargar" click="outerDocument.linkbutton1_clickHandler(event)" />
+					</fx:Component>			
+				</mx:itemRenderer>
+			</mx:DataGridColumn>-->
+			<mx:DataGridColumn dataField="usuarioCreacion" headerText="Usr. Crea." width="80"/>
+		</mx:columns>
+	</mx:DataGrid>
+	<s:Label text="Estados Archivo procedatos" fontWeight="bold" x="10" y="15"/>
+</s:TitleWindow>

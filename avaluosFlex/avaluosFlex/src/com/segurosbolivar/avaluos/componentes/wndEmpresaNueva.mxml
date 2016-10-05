@@ -1,0 +1,443 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--- 
+Modulo para la creación de empresas nuevas
+@see mx.modules.Module
+-->
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" width="406" height="590" xmlns:services="services.*" xmlns:valueObjects="valueObjects.*"
+			   initialize="titlewindow1_initializeHandler(event)"
+			   xmlns:upload="com.segurosbolivar.componentes.upload.*"
+			   xmlns:example="com.segurosbolivar.avaluos.modulos.*"
+			   close="titlewindow1_closeHandler(event)" enabled="true">
+	
+	<fx:Metadata>
+		[Event (name = "refrescarDatos")]
+	</fx:Metadata>
+	
+	
+	<s:layout>
+		<s:VerticalLayout/>
+	</s:layout>
+	<fx:Script>
+		<![CDATA[
+			import com.segurosbolivar.avaluos.modulos.FileDownload;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.events.CloseEvent;
+			import mx.events.FlexEvent;
+			import mx.events.ValidationResultEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.ResultEvent;
+			import mx.utils.Base64Decoder;
+			
+			import valueObjects.Archivo;
+			import valueObjects.Departamento;
+			import valueObjects.Usuario;
+			
+			private var base64Dec:Base64Decoder;
+
+			[Bindable]
+			public var contenidoLogo:ByteArray;
+			
+			[Bindable]
+			public var contenidoFirma:ByteArray;
+			
+			[Bindable]
+			public var myUsuario:Usuario;
+			
+			[Bindable]
+			public var mensaje:String = new String();
+			
+			[Bindable]
+			public var selectSucursal:ArrayCollection = new ArrayCollection();
+			
+			[Bindable]
+			public var idLogo:String = new String(); 
+			
+			[Bindable]
+			public var logo:String = new String(); 
+
+			[Bindable]
+			public var idFirma:String = new String(); 
+			
+			[Bindable]
+			public var firma:String = new String(); 			
+			
+			[Bindable]
+			public var selecTipDoc:ArrayCollection = new ArrayCollection([
+				{label:"CEDULA DE CIUDADANIA", data:"CC"}, 
+				{label:"CARNET DIPLOMATICO", data:"CD"}, 
+				{label:"CEDULA EXTRANJERIA", data:"CE"},
+				{label:"CODIGO FISCAL", data:"CF"},
+				{label:"CODIGO REASEGURADORA", data:"CR"},
+				{label:"NIT CONVENCIONAL", data:"NC"},
+				{label:"NIT EXTRANJERIA", data:"CE"},
+				{label:"NIT DE MENOR", data:"NM"},
+				{label:"NIT PERSONA NATURAL", data:"NN"},
+				{label:"N.I.T.", data:"NT"},
+				{label:"PASAPORTE", data:"PP"},
+				{label:"REGISTRO CIVIL", data:"RC"},
+				{label:"RUT PERSONA EXTRANJERA", data:"RE"},
+				{label:"TARJETA DE IDENTIDAD", data:"TI"},
+				{label:"TARJETA PROFESIONAL APLICA SOLO PARA DOCUMENTOS ADICIONALES", data:"TP"},
+			]);
+			
+
+			/**
+			 * Función que permite repoblar un combo con el valor previamente almacenado
+			 **/
+			public function getItemIndex(target:String, fields:ArrayCollection,propiedad:String ):int { 
+				for(var x:int=0; x<fields.length; x++) { 
+					if(fields[x][propiedad] == target) 
+					{ return x; 
+					} 
+				} 
+				return -1; 
+			} 
+			
+			/**
+			 * Almacena o actualiza una empresa
+			 **/
+			protected function button_clickHandler(event:MouseEvent):void
+			{									
+				var fechaActual:Date = new Date();
+				
+				empresasAvaluos.idEmpresaAvaluo;
+				empresasAvaluos.tipoDocumento = ddlTipdoc.selectedItem.data;
+				empresasAvaluos.numeroDocumento = numeroDocumentoTextInput.text;
+				empresasAvaluos.descEmpresa = descEmpresaTextInput.text;
+				empresasAvaluos.estado = estadoTextInput.text;
+				
+				var logo:Archivo = new Archivo();
+				logo.nombreArchivo = nombreLogo.text;
+				if(frLogo != null)
+				{	
+				  logo.tamanioArchivo = frLogo.size as String;
+				  logo.contenidoArchivo = frLogo.data;
+				}
+				else
+				{  logo.contenidoArchivo = contenidoLogo;	
+				}
+				logo.usuarioCreacion = myUsuario.codigoUsuario;
+				logo.fechaCreacion = fechaActual;
+				logo.usuarioTransaccion = myUsuario.codigoUsuario;
+				logo.fechaTransaccion = fechaActual;
+
+				var firma:Archivo = new Archivo();
+				firma.nombreArchivo = nombreFirma.text;
+				if(frFirma != null)
+				{
+				firma.tamanioArchivo = frFirma.size as String;
+				firma.contenidoArchivo = frFirma.data;
+				}
+				else
+				{ firma.contenidoArchivo = contenidoFirma;	
+				}
+				firma.usuarioCreacion = myUsuario.codigoUsuario;
+				firma.fechaCreacion = fechaActual;
+				firma.usuarioTransaccion = myUsuario.codigoUsuario;
+				firma.fechaTransaccion = fechaActual;
+
+				empresasAvaluos.registroSic = registroSicTextInput.text;
+				empresasAvaluos.registroPrivado = registroPrivadoTextInput.text;
+				empresasAvaluos.cargaArchivoPlano = cargaArchivoPlanoTextInput.text;
+				empresasAvaluos.sucursalDavivienda = (Departamento)(ddlSucursal.selectedItem).idDepartamento;
+				empresasAvaluos.usuarioCreacion = myUsuario.codigoUsuario;
+				empresasAvaluos.fechaCreacion = fechaActual;
+				empresasAvaluos.usuarioTransaccion = myUsuario.codigoUsuario;
+				empresasAvaluos.fechaTransaccion = fechaActual;
+				guardaEmpresaResult2.token = empresasAvaluosService.guardaEmpresa(empresasAvaluos,logo,firma);
+				getMensajeTransaccionResult.token = empresasAvaluosService.getMensajeTransaccion();
+				dispatchEvent(new Event("refrescarDatos"));
+				PopUpManager.removePopUp(this);
+			}
+			
+			/**
+			 * Obtiene el usuario que realiza la transacción y consulta los departamentos
+			 **/
+			protected function titlewindow1_initializeHandler(event:FlexEvent):void
+			{ myUsuario = parentApplication.getUsuarioActual();
+			  consultaDepartamentosResult.token = departamentoService.consultaDepartamentos();
+			}
+
+			import flash.net.FileReference;
+			[Bindable]
+			public var frLogo:FileReference;
+			public var frFirma:FileReference;
+			
+			/**
+			 * Permite la carga de un archivo del logo 
+			 **/
+			protected function button1_clickHandler(event:MouseEvent):void
+			{	frLogo = new FileReference();
+				frLogo.addEventListener(Event.SELECT,cargar);			
+				frLogo.addEventListener(Event.OPEN, openHandler);
+				frLogo.addEventListener(ProgressEvent.PROGRESS, progressHandler);
+				frLogo.addEventListener(Event.COMPLETE, completeHandler);
+				frLogo.browse();
+				img.data = null;
+			}
+
+			public function cargar(event:Event):void {
+				nombreLogo.text=frLogo.name;
+				setTimeout( function():void{frLogo.load();}, 1);
+			}
+
+			/**
+			 * When the OPEN event has dispatched, change the progress bar's label 
+			 * and enable the "Cancel" button, which allows the user to abort the 
+			 * upload operation.
+			 */
+			private function openHandler(event:Event):void {
+				logoProgress.label = "CARGANDO";
+			}
+			
+			/**
+			 * While the file is uploading, update the progress bar's status and label.
+			 */
+			private function progressHandler(event:ProgressEvent):void {
+				logoProgress.label = "CARGANDO %3%%";
+				try{
+					logoProgress.setProgress(event.bytesLoaded, event.bytesTotal);
+				}
+				catch (err:Error){
+					err.getStackTrace();
+				}	
+			}
+			
+			/**
+			 * Once the upload has completed, change the progress bar's label and 
+			 * disable the "Cancel" button since the upload is already completed.
+			 */
+			private function completeHandler(event:Event):void {
+				logoProgress.label = "CARGA COMPLETA";
+				logoProgress.setProgress(0, 100);
+			}
+			
+			/**
+			 * Permite la carga de un archivo de firma 
+			 **/
+			protected function button2_clickHandler(event:MouseEvent):void
+			{
+				frFirma = new FileReference();
+				frFirma.addEventListener(Event.SELECT,cargarFirma);			
+				frFirma.addEventListener(Event.OPEN, openHandlerFirma);
+				frFirma.addEventListener(ProgressEvent.PROGRESS, progressHandlerFirma);
+				frFirma.addEventListener(Event.COMPLETE, completeHandlerFirma);
+				frFirma.browse();	
+				imgFirma.data = null;
+			}
+			
+			public function cargarFirma(event:Event):void {
+				nombreFirma.text=frFirma.name;
+				setTimeout( function():void{frFirma.load();}, 1);
+			}
+			/**
+			 * When the OPEN event has dispatched, change the progress bar's label 
+			 * and enable the "Cancel" button, which allows the user to abort the 
+			 * upload operation.
+			 */
+			private function openHandlerFirma(event:Event):void {
+				firmaProgress.label = "CARGANDO";
+			}
+			
+			/**
+			 * While the file is uploading, update the progress bar's status and label.
+			 */
+			private function progressHandlerFirma(event:ProgressEvent):void {
+				firmaProgress.label = "CARGANDO %3%%";
+				try{
+					firmaProgress.setProgress(event.bytesLoaded, event.bytesTotal);
+				}
+				catch (err:Error){
+					err.getStackTrace();
+				}	
+			}
+			
+			/**
+			 * Once the upload has completed, change the progress bar's label and 
+			 * disable the "Cancel" button since the upload is already completed.
+			 */
+			private function completeHandlerFirma(event:Event):void {
+				firmaProgress.label = "CARGA COMPLETA";
+				firmaProgress.setProgress(0, 100);
+			}
+			
+			/**
+			 * Retorna el resultado de la transacción 
+			 **/
+			protected function getMensajeTransaccionResult_resultHandler(event:ResultEvent):void
+			{
+				mensaje = getMensajeTransaccionResult.lastResult as String;
+				if(mensaje!=null)
+				{
+					Alert.show(mensaje);
+				}
+			}
+
+			protected function stringvalidator1_invalidHandler(event:ValidationResultEvent):void
+			{Alert.show("El estado debe ser A o I");
+			}
+
+			protected function titlewindow1_closeHandler(event:CloseEvent):void
+			{ PopUpManager.removePopUp(this);
+			}
+
+			protected function consultaDepartamentosResult_resultHandler(event:ResultEvent):void
+			{  selectSucursal = consultaDepartamentosResult.lastResult;
+			   ddlSucursal.selectedIndex=getItemIndex(empresasAvaluos.sucursalDavivienda,selectSucursal,"idDepartamento");	
+			}
+
+			/**
+			 * Permite la visualización de un archivo del logo 
+			 **/
+			protected function button3_clickHandler(event:MouseEvent):void
+			{ consultaLogoResult.token = empresasAvaluosService.consultaLogo(empresasAvaluos);
+			 /* fileDownload.init(logoProgress, btnDescargaLogo);
+			  fileDownload.startDownload(logo);*/	
+			}
+
+			/**
+			 * Permite la visualización de un archivo de la firma 
+			 **/
+			protected function button4_clickHandler(event:MouseEvent):void
+			{ consultaFirmaResult.token = empresasAvaluosService.consultaFirma(empresasAvaluos);
+  			  /*fileDownload.init(firmaProgress, descargarFirma);
+			  fileDownload.startDownload(firma);*/	
+			}
+
+			protected function consultaLogoResult_resultHandler(event:ResultEvent):void
+			{ idLogo = consultaLogoResult.lastResult as String;
+			  descargarArchivoIdResult2.token = archivoService.descargarArchivoId(idLogo);			  
+			}
+
+			protected function descargarArchivoIdResult2_resultHandler(event:ResultEvent):void
+			{ logo = descargarArchivoIdResult2.lastResult as String;
+			}
+
+			protected function consultaFirmaResult_resultHandler(event:ResultEvent):void
+			{ idFirma = consultaFirmaResult.lastResult as String;
+			  descargarArchivoIdResult.token = archivoService.descargarArchivoId(idFirma);
+			}
+
+			protected function descargarArchivoIdResult_resultHandler(event:ResultEvent):void
+			{ firma = descargarArchivoIdResult.lastResult as String;
+			}
+			
+			/**
+			 * Pinta el archivo de logo en pantalla 
+			 **/
+			private function dibujaLogo():void {
+				img.load(contenidoLogo);
+			}
+
+			/**
+			 * Pinta el archivo de firma en pantalla 
+			 **/
+			private function dibujaFirma():void {
+				imgFirma.load(contenidoFirma);
+			}
+			
+			[Bindable]
+			public function set empresa(empresa:EmpresasAvaluos):void{
+			
+				empresasAvaluos = empresa;
+				dibujaLogo();
+				dibujaFirma();
+			}
+			
+			/**
+			 * Valida números 
+			 **/
+
+			protected function numeroDocumentoTextInput_keyDownHandler(event:KeyboardEvent):void
+			{ numeroDocumentoTextInput.restrict ="0-9";
+			}
+
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<s:CallResponder id="guardaEmpresaResult"/>
+		<services:EmpresasAvaluosService id="empresasAvaluosService" fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)" showBusyCursor="true"/>
+		<valueObjects:EmpresasAvaluos id="empresasAvaluos"/>
+		<s:CallResponder id="guardaEmpresaResult2"/>
+		<s:CallResponder id="consultaDepartamentosResult" result="consultaDepartamentosResult_resultHandler(event)"/>
+		<services:DepartamentoService id="departamentoService" fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)" showBusyCursor="true"/>
+		<s:CallResponder id="getMensajeTransaccionResult" result="getMensajeTransaccionResult_resultHandler(event)"/>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<mx:NumberValidator source="{numeroDocumentoTextInput}" property="text" domain="int" allowNegative="false" trigger="{numeroDocumentoTextInput}" triggerEvent="keyUp" integerError="Ingrese únicamente números"/>
+		<mx:StringValidator source="{descEmpresaTextInput}" property="text" maxLength="150"/>
+		<mx:StringValidator source="{estadoTextInput}" required="true" property="text" maxLength="1" invalid="stringvalidator1_invalidHandler(event)"/>
+		<mx:StringValidator source="{cargaArchivoPlanoTextInput}" required="true" property="text" maxLength="150"/>
+		<mx:StringValidator source="{registroSicTextInput}" property="text" maxLength="30"/>
+		<mx:StringValidator source="{registroPrivadoTextInput}" property="text" maxLength="30"/>
+		<s:CallResponder id="descargarArchivoIdResult" result="descargarArchivoIdResult_resultHandler(event)"/>
+		<services:ArchivoService id="archivoService" fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)" showBusyCursor="true"/>
+		<s:CallResponder id="descargarArchivoIdResult2" result="descargarArchivoIdResult2_resultHandler(event)"/>
+		<s:CallResponder id="consultaLogoResult" result="consultaLogoResult_resultHandler(event)"/>
+		<s:CallResponder id="consultaFirmaResult" result="consultaFirmaResult_resultHandler(event)"/>
+		<example:FileDownload id="fileDownload"/>
+	</fx:Declarations>
+	<fx:Style source="assets/css/AvaluosBolivar.css"/>
+	<fx:Style source="assets/css/AvaluosBolivarPanel.css"/>
+
+	<mx:Form defaultButton="{button}" height="511" width="100%" x="0" y="0"> 
+		<mx:FormItem label="Empresas Avaluadoras" width="154" fontWeight="bold" horizontalAlign="center">
+		</mx:FormItem>
+		<mx:FormItem label="TipoDocumento">
+			<s:ComboBox id="ddlTipdoc" x="232" y="16" dataProvider="{selecTipDoc}" width="209" selectedIndex="{getItemIndex(empresasAvaluos.tipoDocumento,selecTipDoc,'data')}">				
+			</s:ComboBox>
+		</mx:FormItem>
+		<mx:FormItem label="NumeroDocumento">
+			<s:TextInput id="numeroDocumentoTextInput" text="{empresasAvaluos.numeroDocumento}" width="206" keyDown="numeroDocumentoTextInput_keyDownHandler(event)" restrict="0-9"/>
+		</mx:FormItem>
+		<mx:FormItem label="Razón Social">
+			<s:TextInput id="descEmpresaTextInput" text="{empresasAvaluos.descEmpresa}" width="206" maxChars="150"/>
+		</mx:FormItem>
+		<mx:FormItem label="Estado (A/I)">
+			<s:TextInput id="estadoTextInput" text="{empresasAvaluos.estado}" maxChars="1" restrict="A I"/>
+		</mx:FormItem>
+		<mx:FormItem label="Logo" width="340">
+			<mx:Button skin="@Embed(source='assets/icons/adjuntar.gif')" toolTip="Adjuntar archivo" click="button1_clickHandler(event)"/>
+<!--			<mx:Button skin="@Embed(source='assets/icons/descargar.gif')" toolTip="Descargar Archivo" click="button3_clickHandler(event)" id="btnDescargaLogo"/>-->
+			<mx:ProgressBar id="logoProgress" label="" mode="manual" />
+			<mx:Image id="img"/>
+			<s:Label x="138" y="45" id="nombreLogo" text="{empresasAvaluos.logo.nombreArchivo}"/>
+		</mx:FormItem>
+		<mx:FormItem label="Firma">
+			<mx:Button skin="@Embed(source='assets/icons/adjuntar.gif')" toolTip="Adjuntar archivo" click="button2_clickHandler(event)"/>
+<!--			<mx:Button skin="@Embed(source='assets/icons/descargar.gif')" toolTip="Descargar Archivo" click="button4_clickHandler(event)" id="descargarFirma"/>-->
+			<mx:ProgressBar id="firmaProgress" label="" mode="manual" />
+			<mx:Image id="imgFirma"/>			
+			<s:Label x="135" y="37" id="nombreFirma" text="{empresasAvaluos.firma.nombreArchivo}"/>
+		</mx:FormItem>
+		<mx:FormItem label="Registro Sic">
+			<s:TextInput id="registroSicTextInput" text="{empresasAvaluos.registroSic}"  maxChars="30"/>
+		</mx:FormItem>
+		<mx:FormItem label="Registro Privado">
+			<s:TextInput id="registroPrivadoTextInput" text="{empresasAvaluos.registroPrivado}" maxChars="30"/>
+		</mx:FormItem>
+		<mx:FormItem label="Carga Archivo Plano (S/N)">
+			<s:TextInput id="cargaArchivoPlanoTextInput" text="{empresasAvaluos.cargaArchivoPlano}" maxChars="1" restrict="S N"/>
+		</mx:FormItem>
+		<mx:FormItem label="Sucursal Davivienda">
+			<s:ComboBox x="144" y="12" id="ddlSucursal" dataProvider="{selectSucursal}" labelField="departamento" >
+			</s:ComboBox>
+		</mx:FormItem>
+		<mx:FormItem label="Usuario Creacion" height="24" visible="false">
+			<s:Label id="usuarioCreacionLabel" text="{empresasAvaluos.usuarioCreacion}"/>
+		</mx:FormItem>
+		<mx:FormItem label="Fecha Creacion" visible="false">
+			<s:Label id="fechaCreacionLabel" text="{empresasAvaluos.fechaCreacion}"/>
+		</mx:FormItem>
+		<mx:FormItem label="Usuario Transaccion" visible="false">
+			<s:Label id="usuarioTransaccionLabel" text="{empresasAvaluos.usuarioTransaccion}"/>
+		</mx:FormItem>
+		<mx:FormItem label="Fecha Transaccion" visible="false">
+			<s:Label id="fechaTransaccionLabel" text="{empresasAvaluos.fechaTransaccion}"/>
+		</mx:FormItem>
+	</mx:Form>
+	<s:Button label="Guarda Empresa" id="button" click="button_clickHandler(event)"/>
+</s:TitleWindow>

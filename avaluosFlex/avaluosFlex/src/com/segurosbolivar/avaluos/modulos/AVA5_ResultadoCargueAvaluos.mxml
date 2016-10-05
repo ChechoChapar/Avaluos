@@ -1,0 +1,636 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--- 
+Pantalla para visualizar y consultar los resultados de un cargue masivo de Avaluos
+con el maestro en la parte superior de los archivos cargados y el 
+detalle en la parte inferior del resultado y errores por cada linea
+@implements modulos.IModule
+/*@see spark.components Module*/
+-->
+<mx:Module xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		   xmlns:s="library://ns.adobe.com/flex/spark" 
+		   layout="absolute"
+		   xmlns:mx="library://ns.adobe.com/flex/mx" height="604" xmlns:services="services.*" xmlns:valueObjects="valueObjects.*"  width="820"
+		   implements="modulos.IModule"  creationComplete="module_creationCompleteHandler(event)" initialize="module1_initializeHandler(event)">
+	<fx:Script>
+		<![CDATA[
+			import com.segurosbolivar.avaluos.componentes.WndBuscarPerito;
+			import com.segurosbolivar.avaluos.modulos.AVA5_CarguePlanoAvaluos;
+			
+			import mx.collections.ArrayCollection;
+			import mx.containers.TitleWindow;
+			import mx.controls.Alert;
+			import mx.controls.DateField;
+			import mx.events.FlexEvent;
+			import mx.events.ListEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.ResultEvent;
+			
+			import permisos.Permiso;
+			
+			import spark.events.IndexChangeEvent;
+			import spark.events.TextOperationEvent;
+			
+			import valueObjects.EmpresasAvaluos;
+			import valueObjects.PgbCargueTmp;
+			import valueObjects.Usuario;
+			import valueObjects.VResumenCargue;
+			
+			
+			/**
+			 * Inicializa el módulo AVA3:DiligenciamientoDeAvaluos, obtiene el usuario de la aplicación padre
+			 * y con base en el perfil de este definie si los componentes de la forma estaran activados o no.
+			 * */
+			protected function module1_initializeHandler(event:FlexEvent):void
+			{
+				myUsuario = parentApplication.getUsuarioActual();
+				if((myUsuario.codigoPerfil == "PGBADMINIST01")) {
+					isEnabled = new Boolean(true);
+				}
+				else
+				{
+					isEnabled = new Boolean(false);
+				}
+				/*
+				if(myUsuario.codigoPerfil != "PGBPERITO01") {
+					//isEnabled = new Boolean(false);
+					isEnabled = new Boolean(true);
+				}
+				else 
+				{
+					//isEnabled = new Boolean(true);
+					isEnabled = new Boolean(false);
+				}*/
+				if((myUsuario.codigoPerfil == "PGBPERITO01") || (myUsuario.codigoPerfil == "PGBADMINIST01")) {
+					//isValidAprobador = new Boolean(true);
+				}
+				else 
+				{
+					//isValidAprobador = new Boolean(false);
+				}
+			}
+			
+			public function setTexto(t:String):void
+			{
+			}
+			
+			public function setPermisos(listaPermisos:Permiso):void
+			{
+				myListaPermisos = listaPermisos;
+			}
+			
+			public function getPermisos():Permiso
+			{
+				return myListaPermisos;
+			}
+			
+			
+			/**
+			 * Ejecuta la prevalidación del avaluo en modo de edición.
+			 * */
+			public function ejecutar():void
+			{
+				
+			}
+			
+			/**
+			 * Permite crear un nuevo avaluo, en este paso crea únicamente la información básica.
+			 * */
+			public function adicionar():void
+			{
+				
+			}
+						
+			private var empAvaluo:EmpresasAvaluos = new EmpresasAvaluos();
+			
+			/**
+			 * Limpia todos los controles del formulario
+			 * */
+			private function limpiarControles():void
+			{
+				txtIdentificacionPerito.text="";
+				numeroBatchCargue.text="";
+				numeroRefCargue.text="";
+				fechaAvaluoFiltro.text="";
+				txtNombreTxt.text="";
+				
+				filtrar.enabled=false;
+				registrosHijosEncontrados.text = "TOTAL: ";
+				registrosEncontrados.text = "TOTAL: ";
+				
+			}
+			
+			
+			/**
+			 * Permite consultar avaluos por los siguientes criterios de búsqueda: Tipo de identificación, número de identificación,
+			 * Departamento, ciudad, dirección, Matricula inmobiliaria, estado, fecha, Nombre del Txt, número de línea,
+			 * identificación del perito. 
+			 * */
+			public function consultar():void
+			{
+				var empresaAvaluo:EmpresasAvaluos = null;
+				if(myUsuario.codigoPerfil != "PGBADMINIST01") {
+				empresaAvaluo = new EmpresasAvaluos();
+				empresaAvaluo.numeroDocumento = myUsuario.codigoUsuario;
+				//empresaAvaluo.usuarioTransaccion = myUsuario.codigoPerfil
+				//empresaAvaluo.descEmpresa = txtNombrePerito.text;
+				}
+				else if(txtIdentificacionPerito != null && (txtIdentificacionPerito.text.length > 0) ? true : false ) 
+				{
+					//txtIdentificacionPerito.text
+					empresaAvaluo = new EmpresasAvaluos();
+					empresaAvaluo.numeroDocumento = txtIdentificacionPerito.text;
+					//empresaAvaluo.usuarioTransaccion = myUsuario.codigoPerfil
+				}
+				var vResumenCargue:VResumenCargue = new VResumenCargue();
+							
+				//vResumenCargue.aplicados
+				//vResumenCargue.fechaTransaccion
+				//vResumenCargue.rechazados
+				//vResumenCargue.sinEstado
+				//vResumenCargue.tipoCargue
+				//vResumenCargue.total
+				//vResumenCargue.usuarioTransaccion				
+				/*
+				fechaTransaccionDesde
+				fechaTransaccionHasta
+				txtIdentificacionPerito*/
+				
+				if(numeroBatchCargue != null && (numeroBatchCargue.text.length > 0) ? true : false )
+					vResumenCargue.consecutivoBatch=numeroBatchCargue.text;
+				
+				if(numeroRefCargue != null && (numeroRefCargue.text.length > 0) ? true : false )
+					vResumenCargue.numeroRefCargue=numeroRefCargue.text;
+								
+				if(fechaAvaluoFiltro != null && (fechaAvaluoFiltro.text.length > 0) ? true : false )
+					vResumenCargue.fechaTransaccion=fechaAvaluoFiltro.selectedDate;
+				
+				if(txtNombreTxt != null && (txtNombreTxt.text.length > 0) ? true : false )
+					vResumenCargue.nombreArchivo=txtNombreTxt.text;
+
+				if(vResumenCargue.nombreArchivo == null && vResumenCargue.numeroRefCargue == null && vResumenCargue.consecutivoBatch==null && vResumenCargue.fechaTransaccion == null)
+				{	
+					Alert.show("El nombre, numeros de referencia o fecha de cargue son requeridos para consultar.");
+				}
+				else
+				{	
+					buscarLogCargueResult.token = carguePlano.buscarLogCargue(null);
+					dataGrid2.dataProvider=buscarLogCargueResult.lastResult;
+					/*filtrar.enabled=false;
+					registrosHijosEncontrados.text = "TOTAL: ";
+					registrosEncontrados.text = "TOTAL: ";*/
+					limpiarControles();
+					buscarResumenPlanoPeritoByCriterioResult.token = carguePlano.buscarResumenPlanoPeritoByCriterio(vResumenCargue, empresaAvaluo);
+				}
+				/*
+				var isTipoDoc:Boolean = (cbxTipoIdentificacion != null) &&  (cbxTipoIdentificacion.selectedIndex > -1) ? true : false;
+				var isDepto:Boolean = (cbxDepartamentoFiltro != null) &&  (cbxDepartamentoFiltro.selectedIndex > -1) ? true : false;
+				var isCiudad:Boolean = (cbxCiudadFiltro != null) &&  (cbxCiudadFiltro.selectedIndex > -1) ? true : false;
+				var isNumDcto:Boolean = (numeroIdentificacionTextInput != null) &&  (numeroIdentificacionTextInput.text.length > 0) ? true : false;
+				var isDireccion:Boolean = (direccionInmuebleTextInput != null) &&  (direccionInmuebleTextInput.text.length > 0) ? true : false;
+				var isMatricula:Boolean = (txtmatriculaInmobiliariaPpal1 != null) &&  (txtmatriculaInmobiliariaPpal1.text.length > 0) ? true : false;
+				var isEstado:Boolean = (cbxEstadoAvaluo != null) &&  (cbxEstadoAvaluo.selectedIndex > -1) ? true : false;
+				var isNombreTxt:Boolean = (txtNombreTxt != null) &&  (txtNombreTxt.text.length > 0) ? true : false;
+				var isNumLinea:Boolean = (txtNumeroLinea != null) &&  (txtNombreTxt.text.length > 0) ? true : false;
+				var isNombrePeritoTxt:Boolean = (txtNombrePerito != null) &&  (txtNombrePerito.text.length > 0) ? true : false;
+				var isIdentificacionPeritoTxt:Boolean = (txtIdentificacionPerito != null) &&  (txtIdentificacionPerito.text.length > 0) ? true : false;
+				var isFechaAvaluoFiltro:Boolean = (fechaAvaluoFiltro != null) &&  (fechaAvaluoFiltro.text.length > 0) ? true : false;
+				var isFechaCreacionDesde:Boolean = (fechaCreacionDesde != null) &&  (fechaCreacionDesde.text.length > 0) ? true : false;
+				var isFechaCreacionHasta:Boolean = (fechaCreacionHasta != null) &&  (fechaCreacionHasta.text.length > 0) ? true : false;
+				
+				if ( isTipoDoc || isDepto || isCiudad || isNumDcto || isDireccion || isMatricula|| isEstado || isNombreTxt  || isNumLinea 
+					|| isNombrePeritoTxt || isFechaAvaluoFiltro || isIdentificacionPeritoTxt || isFechaCreacionDesde || isFechaCreacionHasta)
+				{
+					if (isTipoDoc && !(isDepto || isCiudad || isNumDcto || isDireccion || isMatricula || isEstado || isIdentificacionPeritoTxt
+						|| isNombreTxt || isNumLinea || isNombrePeritoTxt || isFechaAvaluoFiltro || isFechaCreacionDesde || isFechaCreacionHasta))
+					{
+						Alert.show("No esta permitido realizar consultas por Tipo de Documento Únicamente", "INFO");
+					}
+					else if(isDepto && !(isTipoDoc || isCiudad || isNumDcto || isDireccion || isMatricula || isEstado || isIdentificacionPeritoTxt
+						|| isNombreTxt || isNumLinea || isNombrePeritoTxt || isFechaAvaluoFiltro || isFechaCreacionDesde || isFechaCreacionHasta))
+					{
+						Alert.show("No esta permitido realizar consultas por Departamento Únicamente", "INFO");
+					}
+					else if(isCiudad && !(isTipoDoc || isDepto || isNumDcto || isDireccion || isMatricula || isEstado || isIdentificacionPeritoTxt
+						|| isNombreTxt || isNumLinea || isNombrePeritoTxt || isFechaAvaluoFiltro || isFechaCreacionDesde || isFechaCreacionHasta))
+					{
+						Alert.show("No esta permitido realizar consultas por Ciudad Únicamente", "INFO");
+					}
+					else
+					{
+						informacionInmueble.matriculaInmobiliariaPpal1 = txtmatriculaInmobiliariaPpal1.text.concat(txtmatriculaInmobiliariaPpal2.text);
+						if(cbxTipoIdentificacion.selectedIndex > -1) {
+							informacionInmueble.avaluo.idTipoIdentificacion = cbxTipoIdentificacion.selectedItem.rvLowValue;					
+						}
+						informacionInmueble.avaluo.numeroIdentificacion = numeroIdentificacionTextInput.text;
+						if(cbxDepartamentoFiltro.selectedIndex > -1){
+							informacionInmueble.avaluo.idDepartamento = cbxDepartamentoFiltro.selectedItem.codAsobancaria;
+						}
+						if(cbxEstadoAvaluo.selectedIndex > -1)
+						{
+							informacionInmueble.avaluo.estadoAvaluo = cbxEstadoAvaluo.selectedItem.rvLowValue;
+						}
+						var empresaAvaluo:EmpresasAvaluos = new EmpresasAvaluos();
+						empresaAvaluo.numeroDocumento = myUsuario.codigoUsuario;
+						empresaAvaluo.usuarioTransaccion = myUsuario.codigoPerfil
+						empresaAvaluo.descEmpresa = txtNombrePerito.text;
+						informacionInmueble.avaluo.objCiudad = cbxCiudadFiltro.selectedItem;
+						informacionInmueble.avaluo.direccionInmueble = direccionInmuebleTextInput.text;
+						var logsGenera:LogsGeneraArchivo = new LogsGeneraArchivo();
+						logsGenera.nombrePlano = txtNombreTxt.text;
+						informacionInmueble.avaluo.logsGeneraArchivo = logsGenera; 
+						informacionInmueble.avaluo.numLinea = txtNumeroLinea.text;
+						informacionInmueble.avaluo.fechaAvaluo = fechaAvaluoFiltro.selectedDate;
+						informacionInmueble.avaluo.TUsuario = txtIdentificacionPerito.text;
+						informacionInmueble.avaluo.fechaCreacion = fechaCreacionDesde.selectedDate;
+						
+						if(fechaCreacionHasta.selectedDate != null)
+						{
+							fechaCreacionHasta.selectedDate.setHours(23,59,59,999);
+						}
+						
+						
+						informacionInmueble.avaluo.fechaTransaccion = fechaCreacionHasta.selectedDate;
+						infoInmueble = informacionInmueble;
+						empresaAvaluo = empresaAvaluo;
+						getAvaluosPorCriterioResult.token = avaluosService.getAvaluosPorCriterio(informacionInmueble,empresaAvaluo);
+						limpiarControles();
+					}
+				}
+				else
+				{
+					Alert.show("Debe seleccionar como mínimo un criterio de búsqueda", "INFO");
+				}
+				*/
+			}
+			
+			/**
+			 * Genera el reporte PDF con la información del avaluo seleccionado
+			 * */
+			public function imprimir():void
+			{
+				
+			}
+			
+			/**
+			 * Permite ingresar al modo de edición del avaluo seleccionado. 
+			 * */
+			public function editar():void
+			{
+				
+			}
+			
+			public function eliminar():void	
+			{
+				
+			}
+			
+			/** 
+			 *   Consulta la lista de archivos cargados desde la pantalla de cargue
+			 * */
+			protected function dataGrid_creationCompleteHandler(event:FlexEvent):void
+			{
+				//buscarResumenPlanoByConsecutivoBatchResult.token = carguePlano.buscarResumenPlanoByConsecutivoBatch(consecutivoBatch);
+			}
+			
+			var restrict_:String ="^|<>&'";
+			private var isEnabled:Boolean;
+			public var mensaje:String = new String();
+			[Bindable]
+			public var myUsuario:Usuario;
+			[Bindable]
+			public var myListaPermisos:Permiso;
+			
+			
+			
+			[Bindable]
+			public var consecutivoBatch:String;
+			public var numRefCargue:String;
+			
+			/** 
+			 *  Consulta la informacion detallada de cada linea del plano segun el
+			 *  que se seleccione en la grilla superior 
+			 * */			
+			protected function dataGrid_changeHandler(event:ListEvent):void
+			{			
+				numRefCargue = dataGrid.selectedItem.numeroRefCargue;
+				buscarLogCargueResult.token = carguePlano.buscarLogCargue(dataGrid.selectedItem.numeroRefCargue);
+				filtrar.enabled=true;
+			}
+			
+			/**
+			 * Funcion para recibir el consecutivo Batch de la carga realizada
+			 * desde la pantalla de cargue
+			 * @see com.segurosbolivar.avaluos.modulos.AVA5_CarguePlanoAvaluos 
+			 **/
+			public function setConsecutivoBatch(valor:String)
+			{				
+				consecutivoBatch=valor;
+				buscarResumenPlanoByConsecutivoBatchResult.token = carguePlano.buscarResumenPlanoByConsecutivoBatch(consecutivoBatch);
+			}
+			
+			/*
+			protected function dataGrid2_creationCompleteHandler(event:FlexEvent):void
+			{
+			buscarLogCargueResult.token = carguePlano.buscarLogCargue( arg0);
+			}*/
+			
+			/**
+			 * Metodo asincrono que se dispara al recibir el log 
+			 * del cargue para una linea del plano
+			 **/
+			protected function buscarLogCargueResult_resultHandler(event:ResultEvent):void
+			{				
+				dataGrid2.dataProvider=buscarLogCargueResult.lastResult; //dataProvider="{buscarLogCargueResult.lastResult}
+				if((buscarLogCargueResult.lastResult != null)) {
+					registrosHijosEncontrados.text = "TOTAL: "+buscarLogCargueResult.lastResult.length + " Registros encontrados";
+				}
+			}
+			
+			/**
+			 * Metodo para modificar los formatos de fecha y colocar los
+			 * dias de la semana y meses de el año en español
+			 * @deprecated Esta implementado dentro del datagrid
+			 **/
+			protected function dateChooser_init(dt:DateField):void { 
+				dt.dayNames=['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab']; 
+				dt.monthNames=[        'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 
+					'Julio', 'Agosto', 'Septiembre', 'Octubre', 
+					'Noviembre', 'Diciembre']; 
+				dt.firstDayOfWeek = 1; 
+				dt.formatString = "DD/MM/YYYY"; 
+			}
+			
+			/**
+			 * Muestra una ventana modal donde se puede buscar un perito, para luego
+			 * adicionarlos como criterio de búsqueda en la consulta de avaluos
+			 * */
+			private var ventanaExaminar:TitleWindow;
+			protected function btnExaminar_clickHandler(event:MouseEvent):void
+			{
+				ventanaExaminar = PopUpManager.createPopUp(this,WndBuscarPerito,true) as TitleWindow;
+				ventanaExaminar.showCloseButton = true;
+				PopUpManager.centerPopUp(ventanaExaminar);
+				ventanaExaminar['btnSeleccionarPerito'].addEventListener(MouseEvent.CLICK,handleSeleccionarButton);
+			}
+			
+			private function handleSeleccionarButton(event:MouseEvent):void {
+				if(ventanaExaminar['dtgPeritos'].selectedItem != null)
+				{
+					var empresa:EmpresasAvaluos = ventanaExaminar['dtgPeritos'].selectedItem as EmpresasAvaluos;
+					txtIdentificacionPerito.text = empresa.numeroDocumento;
+					//txtNombrePerito.text = empresa.descEmpresa;
+					PopUpManager.removePopUp(ventanaExaminar);
+					//lblNombrePerito.visible = true;
+					//txtNombrePerito.visible = true
+				}
+				else 
+				{
+					Alert.show("No seleccionó un perito");
+				}
+			}
+			
+			protected function txtNombreTxt_changeHandler(event:TextOperationEvent):void
+			{
+				if((txtNombreTxt.text != null) && (txtNombreTxt.text.length > 0)){
+					//txtNumeroLinea.enabled = true;
+				}
+				else
+				{
+					//txtNumeroLinea.text = "";
+					//txtNumeroLinea.enabled = false;
+				}
+			}
+			
+			protected function txtIdentificacionPerito_changeHandler(event:TextOperationEvent):void
+			{
+				if((txtIdentificacionPerito.text == null) || (txtIdentificacionPerito.text.length < 1))
+				{
+					//lblNombrePerito.visible = false;
+					//txtNombrePerito.visible = false;
+				}
+			}
+			
+			protected function cbxEstadoAvaluo_creationCompleteHandler(event:FlexEvent):void
+			{
+				getValoresDominioResult78.token = dominiosAuxDao.getValoresDominio("ESTADOCARGUE");
+			}
+			
+
+			protected function module_creationCompleteHandler(event:FlexEvent):void
+			{
+				//buscarResumenPlanoPeritoByCriterioResult.token = carguePlano.buscarResumenPlanoPeritoByCriterio(/*Enter value(s) for */ arg0, arg1);
+				//buscarLogCarguePorCriterioResult.token = carguePlano.buscarLogCarguePorCriterio(/*Enter value(s) for */ arg0, arg1);
+			}
+			
+
+			protected function buscarResumenPlanoPeritoByCriterioResult_resultHandler(event:ResultEvent):void
+			{
+				// TODO Auto-generated method stub
+				//dataGrid.dataProvider=buscarResumenPlanoPeritoByCriterioResult.lastResult;
+				
+				if((buscarResumenPlanoPeritoByCriterioResult.lastResult == null) || (buscarResumenPlanoPeritoByCriterioResult.lastResult.length == 0)) {
+					/*dtgAvaluos.dataProvider.removeAll();/
+					Alert.show("La consulta no arroja resultados, intente otros criterios de búsqueda");
+					registrosEncontrados.visible = false;*/
+				}
+				else
+				{
+					registrosEncontrados.text = "TOTAL: "+buscarResumenPlanoPeritoByCriterioResult.lastResult.length + " Registros encontrados";
+					/*registrosEncontrados.visible = true;*/
+				}
+				
+			}
+
+
+			protected function button1_clickHandler(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				var cargue:PgbCargueTmp  = new PgbCargueTmp();
+				//cargue.lineaPlano
+				//cargue.estadoCargue
+					
+				if(txtLineaPlano != null && (txtLineaPlano.text.length > 0) ? true : false )
+					cargue.lineaPlano=txtLineaPlano.text;
+				
+				if((cbxEstadoRegistro != null) && (cbxEstadoRegistro.selectedIndex > -1))
+					cargue.estadoCargue=cbxEstadoRegistro.selectedItem.rvLowValue;								
+				
+				/*if(dataGrid.selectedItem.numeroRefCargue != null)
+				{
+					buscarLogCarguePorCriterioResult.token = carguePlano.buscarLogCarguePorCriterio(dataGrid.selectedItem.numeroRefCargue, cargue);				
+					//dataGrid.selectedItem.numeroRefCargue
+					dataGrid2.dataProvider=buscarLogCarguePorCriterioResult.lastResult;
+				}*/
+				buscarLogCarguePorCriterioResult.token = carguePlano.buscarLogCarguePorCriterio(numRefCargue, cargue);
+				//dataGrid2.dataProvider=buscarLogCarguePorCriterioResult.lastResult;
+				
+			}
+
+
+			protected function buscarLogCarguePorCriterioResult_resultHandler(event:ResultEvent):void
+			{
+				if((buscarLogCarguePorCriterioResult.lastResult != null) /*|| (buscarLogCarguePorCriterioResult.lastResult.length == 0)*/) {
+					//if(buscarLogCarguePorCriterioResult.lastResult != null)
+					/*if(buscarLogCarguePorCriterioResult.lastResult.length == 0)
+					{*/	
+						registrosHijosEncontrados.text = "TOTAL: "+buscarLogCarguePorCriterioResult.lastResult.length + " Registros encontrados";
+					/*}*/
+				}
+				dataGrid2.dataProvider=buscarLogCarguePorCriterioResult.lastResult;
+			}
+
+
+			import mx.core.FlexGlobals;
+			protected function button2_clickHandler(event:MouseEvent):void
+			{			
+				
+				if(dataGrid.selectedItem == null){
+					//Alert.show("Debe seleccionar un avalúo");
+					Alert.show("Debe seleccionar un registro en los archivos cargados");
+				}
+				else
+				{	
+					
+					//downloadProgress.visible=true;
+					var request:URLRequest = new URLRequest();
+					numRefCargue = dataGrid.selectedItem.numeroRefCargue;
+					//request.url = FlexGlobals.topLevelApplication.parameters.urlArchivo+"/ExcelMallaResServlet?referencia="+numRefCargue+"&tipoExcel=malla";
+					request.url = "ExcelMallaResServlet?referencia="+numRefCargue+"&tipoExcel=malla";
+					navigateToURL(request,"_blank");
+					
+					
+					/*
+					// TODO Auto-generated method stub
+					var fileDownload:FileDownload = new FileDownload();
+					
+					fileDownload.init(downloadProgress,null);				
+					
+					numRefCargue = dataGrid.selectedItem.numeroRefCargue;			
+					
+					var nombreDescarga:String = numRefCargue+"_resul_malla.xls";
+					
+					fileDownload.startMallaResDownload(numRefCargue ,nombreDescarga);
+					*/
+				}
+			}
+
+		]]>
+		
+	</fx:Script>
+	
+	<!--- Servicios -->
+	
+	
+	<fx:Declarations>
+		
+		<services:DominiosAuxDao id="dominiosAuxDao" fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)" showBusyCursor="true"/>
+		
+		<s:CallResponder id="getValoresDominioResult78"/>
+		
+		<s:CallResponder id="buscarResumenPlanoResult"/>
+		<services:CarguePlano id="carguePlano" fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)" showBusyCursor="true"/>
+		<s:CallResponder id="buscarLogCargueResult" result="buscarLogCargueResult_resultHandler(event)"/>
+		<!--<valueObjects:PgbCargueTmp id="pgbCargueTmp"/>-->
+		<s:CallResponder id="buscarResumenPlanoByConsecutivoBatchResult" fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)"/>
+		<s:CallResponder id="buscarResumenPlanoPeritoByCriterioResult" fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)" result="buscarResumenPlanoPeritoByCriterioResult_resultHandler(event)"/>
+		<s:CallResponder id="buscarLogCarguePorCriterioResult" fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)" result="buscarLogCarguePorCriterioResult_resultHandler(event)"/>
+		<!--<s:CallResponder id="buscarLogCargueResult2" result="pgbCargueTmp = buscarLogCargueResult2.lastResult[0] as PgbCargueTmp"/>-->		
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		
+		<!--- inclusion de los estilos -->	
+		
+	</fx:Declarations>
+	<fx:Style source="assets/css/AvaluosBolivar.css"/>
+	<fx:Style source="assets/css/AvaluosBolivarPanel.css"/>
+	
+	<!--mx:DataGrid y="230" id="dataGrid" creationComplete="dataGrid_creationCompleteHandler(event)"  resizableColumns="true"  dataProvider="{buscarResumenPlanoByConsecutivoBatchResult.lastResult}" change="dataGrid_changeHandler(event)" horizontalCenter="-4" variableRowHeight="false" height="145" right="16" left="9"-->
+	<mx:DataGrid y="170" id="dataGrid" creationComplete="dataGrid_creationCompleteHandler(event)"  resizableColumns="true"  dataProvider="{buscarResumenPlanoPeritoByCriterioResult.lastResult}" change="dataGrid_changeHandler(event)" horizontalCenter="0" variableRowHeight="false" height="145" right="12" left="12">		
+		<mx:columns>			
+			<mx:DataGridColumn headerText="#Batch" dataField="consecutivoBatch" width="42"/>
+			<mx:DataGridColumn headerText="#Ref" dataField="numeroRefCargue" width="42"/>
+			<mx:DataGridColumn headerText="Archivo" dataField="nombreArchivo" width="200" itemRenderer="mx.controls.TextArea" editable="false"/>	
+			<!--<mx:DataGridColumn id="Fecha" headerText="Fecha" dataField="fechaTransaccion" width="160" itemRenderer="mx.controls.DateField" editable="false" />-->			
+			<mx:DataGridColumn dataField="fechaTransaccion" id="Fecha" headerText="Fecha" width="160" editable="false" >											
+				<mx:itemRenderer>
+					<fx:Component>
+						<mx:DateField  
+							dayNames="['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab']" 
+							monthNames="['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 
+							'Julio', 'Agosto', 'Septiembre', 'Octubre', 
+							'Noviembre', 'Diciembre']" 
+							firstDayOfWeek = "1" 
+							formatString = "DD/MM/YYYY"									   									   
+							/>
+					</fx:Component>						
+				</mx:itemRenderer>				
+			</mx:DataGridColumn>			
+			<mx:DataGridColumn headerText="Tipo" dataField="tipoCargue" width="120"/>
+			<mx:DataGridColumn headerText="#Total Reg" dataField="total" width="60"/>
+			<mx:DataGridColumn headerText="#Rechazados" dataField="rechazados" width="60"/>
+			<mx:DataGridColumn headerText="#Sin Estado" dataField="sinEstado" width="60"/>
+			<mx:DataGridColumn headerText="#Aplicados" dataField="aplicados" width="60"/>
+			<mx:DataGridColumn dataField="usuarioTransaccion" headerText="Usuario" width="81"/>
+			<mx:DataGridColumn dataField="empresaAvaluos" headerText="Empresa" width="81"/>
+		</mx:columns>
+	</mx:DataGrid>
+	
+	<!--<mx:DataGrid  verticalScrollPolicy="auto" wordWrap="true"  showScrollTips="true" useRollOver="true" id="dataGrid2" resizableColumns="true" dataProvider="{buscarLogCargueResult.lastResult}" left="9" right="30" horizontalCenter="-12" variableRowHeight="false" enabled="true" height="166" y="212" creationComplete="dataGrid2_creationCompleteHandler(event)">-->
+	<mx:DataGrid  verticalScrollPolicy="auto" wordWrap="true"  showScrollTips="true" useRollOver="true" id="dataGrid2" resizableColumns="true" dataProvider="{buscarLogCargueResult.lastResult}" right="15" horizontalCenter="0" variableRowHeight="false" enabled="true" height="166" y="407" left="15">	
+		<mx:columns>
+			<mx:DataGridColumn headerText="consecutivo" dataField="consecutivoTmp" width="80" visible="false"/>
+			<mx:DataGridColumn headerText="# linea" dataField="lineaPlano" resizable="true" wordWrap="false" width="70"/>
+			<mx:DataGridColumn headerText="# Ref" dataField="numeroRefCargue" wordWrap="false" width="70" visible="false"/>
+			<mx:DataGridColumn headerText="Estado" dataField="estadoCargue" width="90"/>
+			<mx:DataGridColumn headerText="usuarioTransaccion" dataField="usuarioTransaccion" visible="false"/>
+			<mx:DataGridColumn headerText="tipo" dataField="tipoCargue" width="80" visible="false"/>
+			<mx:DataGridColumn headerText="Fecha" itemRenderer="mx.controls.DateField" dataField="fechaTransaccion" width="130" visible="false"/>
+			<mx:DataGridColumn headerText="Linea" dataField="contenidoLineaPlano" wordWrap="false" itemRenderer="mx.controls.TextArea" resizable="true" width="250" editable="false"/>
+			<mx:DataGridColumn headerText="Mensaje" dataField="mensajeError" resizable="true" wordWrap="false" itemRenderer="mx.controls.TextArea" width="300" editable="false"/>
+			<mx:DataGridColumn headerText="nombreArchivo" dataField="nombreArchivo" visible="false" itemRenderer="mx.controls.TextArea"/>			
+		</mx:columns>
+	</mx:DataGrid>
+	<s:Label x="31" y="150" text="Archivos Cargados&#xd;" fontWeight="bold"/>
+	<s:Label x="7" y="387" text="Detalle de lineas en los archivos cargados" fontWeight="bold"/>
+	<mx:Form y="9" height="119" left="110" horizontalCenter="6" right="98">
+		<mx:VBox height="87">
+			<mx:HBox>
+				<s:Label width="120" text="# Batch"/>
+				<s:TextInput id="numeroBatchCargue" restrict="{restrict_}" maxChars="100" width="150"/>
+				<mx:HBox>
+					<s:Label text="# Ref" width="120"/>
+					<s:TextInput id="numeroRefCargue" restrict="{restrict_}" maxChars="100" width="150"/>
+				</mx:HBox>
+			</mx:HBox>
+			<mx:HBox>
+				<s:Label text="Nombre Txt" width="120"/>
+				<s:TextInput id="txtNombreTxt" width="150" change="txtNombreTxt_changeHandler(event)" maxChars="30"/>
+				<s:Label text="Fecha Cargue Avalúos" width="140"/>
+				<mx:DateField id="fechaAvaluoFiltro" formatString="DD/MM/YYYY" creationComplete="dateChooser_init(fechaAvaluoFiltro)" yearNavigationEnabled="true" editable="true" width="146"/>
+			</mx:HBox>
+			<mx:HBox visible="{myUsuario.codigoPerfil == 'PGBADMINIST01'}">
+				<s:Label text="Identificación Perito" width="120" visible="{myUsuario.codigoPerfil == 'PGBADMINIST01'}"/>
+				<s:TextInput id="txtIdentificacionPerito" width="105" maxChars="30" visible="{myUsuario.codigoPerfil == 'PGBADMINIST01'}" change="txtIdentificacionPerito_changeHandler(event)"/>
+				<s:Button label="..." width="37" id="btnExaminar" click="btnExaminar_clickHandler(event)" visible="{myUsuario.codigoPerfil == 'PGBADMINIST01'}"/>
+			</mx:HBox>
+		</mx:VBox>
+	</mx:Form>
+	<mx:Form y="321" height="62" left="72" horizontalCenter="22" right="28">
+		<mx:VBox height="30">
+			<mx:HBox>
+				<s:Label text=" Estado Cargue Avalúo" width="136"/>
+				<!--s:ComboBox id="cbxEstadoRegistro" width="150" creationComplete="cbxEstadoAvaluo_creationCompleteHandler(event)" labelField="rvMeaning" visible="{isEnabled}"-->
+				<s:ComboBox id="cbxEstadoRegistro" width="150" creationComplete="cbxEstadoAvaluo_creationCompleteHandler(event)" labelField="rvMeaning" >
+					<s:AsyncListView list="{getValoresDominioResult78.lastResult}"/>
+				</s:ComboBox>
+				<s:Label text="Línea Plano" width="120"/>
+				<s:TextInput id="txtLineaPlano" width="150" change="txtNombreTxt_changeHandler(event)" maxChars="30"/>
+				<s:Button label="Filtrar" id="filtrar" click="button1_clickHandler(event)" enabled="false"/>
+			</mx:HBox>
+		</mx:VBox>
+		
+	</mx:Form>
+	<s:Label id="registrosHijosEncontrados" width="100%" x="28" y="581" fontWeight="bold" verticalAlign="middle" textAlign="center" text="TOTAL:" visible="true"/>
+	<s:Label id="registrosEncontrados" width="100%" fontWeight="bold" verticalAlign="middle" textAlign="center" text="TOTAL:" x="84" y="132"/>
+	<s:Button x="15" y="577" label="Exportar a Excel" click="button2_clickHandler(event)" />
+	<mx:ProgressBar id="downloadProgress" label="" mode="manual" y="574" horizontalCenter="-247" height="27" width="72" visible="false"/>
+</mx:Module>

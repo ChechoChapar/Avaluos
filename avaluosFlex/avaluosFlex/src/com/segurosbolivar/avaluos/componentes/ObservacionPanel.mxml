@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" 
+		 xmlns:valueObjects="valueObjects.*"
+		 xmlns:comp="com.segurosbolivar.avaluos.componentes.*"
+		 width="100%" height="100%">
+	<s:layout>
+		<s:VerticalLayout/>
+	</s:layout>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.segurosbolivar.avaluos.modulos.Utilidad;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.rpc.events.ResultEvent;
+			
+			import valueObjects.Avaluo;
+			import valueObjects.CampoRequeridoDTO;
+			import valueObjects.Usuario;
+			
+			private static var nombreSeccionDirecccion:String = ""; 
+			
+			protected function direccionAnexosTextInput_changeHandler(event:FocusEvent):void
+			{
+				if(convierteDireccionDaneResult3.token == null){
+					nombreSeccionDirecccion = "direccionAnexosTextInput"; 
+					if(direccionAnexosTextInput.text != null && direccionAnexosTextInput.text.length > 0){
+						convierteDireccionDaneResult3.token = parentDocument.tercerosWebService.convierteDireccionDane(direccionAnexosTextInput.text);					
+					}
+				}else{
+					convierteDireccionDaneResult3.token = null ;
+					convierteDireccionDaneResult3.lastResult = null ;					
+				}
+			}
+			
+			protected function validarOtrasDireccciones(event:FocusEvent):void{
+				if(convierteDireccionDaneResult3.token == null){
+					nombreSeccionDirecccion = "otrasDireccionesTextInput";
+					if(otrasDireccionesTextInput.text != null && otrasDireccionesTextInput.text.length > 0){
+						convierteDireccionDaneResult3.token = parentDocument.tercerosWebService.convierteDireccionDane(otrasDireccionesTextInput.text);
+					}				
+				}else{
+					convierteDireccionDaneResult3.token = null ;
+					convierteDireccionDaneResult3.lastResult = null ;					
+				}
+			}
+			
+			protected function convierteDireccionDaneResult3_resultHandler(event:ResultEvent):void
+			{
+				if(!((convierteDireccionDaneResult3.lastResult != " ") && (convierteDireccionDaneResult3.lastResult))){
+					Alert.show("Dirección no válida",null, null, null, null, null, Alert.OK);
+				}else{					
+					if(nombreSeccionDirecccion == "direccionAnexosTextInput"){
+						observacionVO.direccionAnexos =  convierteDireccionDaneResult3.lastResult;												
+					}else if(nombreSeccionDirecccion == "otrasDireccionesTextInput"){
+						observacionVO.otrasDirecciones =  convierteDireccionDaneResult3.lastResult;
+					}else {
+						Alert.show("Dirección no válida",null, null, null, null, null, Alert.OK);						
+					}
+				}
+				convierteDireccionDaneResult3.token = null ; 
+				convierteDireccionDaneResult3.lastResult = null;
+			}
+			
+			public function validarCamposVacios():Boolean{
+				return true; 
+			}
+			
+			/**
+			 * Crea o actualiza la sección observaciones
+			 * */
+			public function guardarObservacion(avaluo:Avaluo, myUsuario:Usuario):Observaciones{
+				
+				observacionVO.avaluo = avaluo;
+				
+				if(avaluo.observacion != null && avaluo.observacion.length > 0){ 
+					var observacion:Observaciones = avaluo.observacion.getItemAt(0) as Observaciones ; 
+					if(observacion != null){
+						observacionVO.idObservacion = observacion.idObservacion ; 
+						observacionVO.fechaCreacion = observacion.fechaCreacion ; 
+						observacionVO.usuarioCreacion = observacion.usuarioCreacion ;
+					}
+				}
+					
+				observacionVO.direccionAnexos = direccionAnexosTextInput.text;
+				observacionVO.otrasDirecciones = otrasDireccionesTextInput.text;
+				observacionVO.observacionAvaluo = observacionAvaluoTextInput.text;
+				
+				if (observacionVO.idObservacion != null){
+					observacionVO.usuarioTransaccion = myUsuario.codigoUsuario;						
+				}
+				else {
+					observacionVO.usuarioCreacion = myUsuario.codigoUsuario;
+					observacionVO.usuarioTransaccion = myUsuario.codigoUsuario;					
+				}
+				return observacionVO; 
+			}
+			
+			public function ejecutarValidacionCamposObligatorios(categoria:int):void{
+				Utilidad.validarCamposObligarios(Utilidad.obtenerCamposVacios(getListaCampos(categoria), this),this); 
+			}
+			
+			protected function getListaCampos(categoria:int):ArrayCollection
+			{
+				var arrayDto : ArrayCollection = new ArrayCollection();
+				var mapCampos:Object = new Object();
+				
+				mapCampos["direccionAnexosTextInput"] = "T_DIRANEXOS";
+				mapCampos["otrasDireccionesTextInput"] = "T_OTRASDIR";
+				mapCampos["observacionAvaluoTextInput"] = "T_OBSERVAVALUO";
+				
+				for (var key:String in mapCampos) {
+					trace(" " + key + " - " +mapCampos[key]);
+					var campoDto:CampoRequeridoDTO = new CampoRequeridoDTO();
+					campoDto.nombretablaBD="PGB_OBSERVACIONES";
+					campoDto.nombrecampoBD=mapCampos[key];
+					campoDto.nombreComponente=key;
+					campoDto.categoriaInmueble=categoria.toString();
+					
+					arrayDto.addItem(campoDto);
+					
+				}
+				return arrayDto;
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<valueObjects:Observaciones id="observacionVO"></valueObjects:Observaciones>
+		
+		<s:CallResponder id="convierteDireccionDaneResult3" result="convierteDireccionDaneResult3_resultHandler(event)"/>
+		
+	</fx:Declarations>
+	
+	<mx:FormItem label="Dirección Anexos">
+		<s:TextInput id="direccionAnexosTextInput" text="{observacionVO.direccionAnexos}" width="405" restrict="{Utilidad.restrict_}" maxChars="100" enabled="true" tabIndex="293" focusOut="direccionAnexosTextInput_changeHandler(event)"/>
+	</mx:FormItem>
+	<mx:FormItem label="Otras Direcciones">
+		<s:TextInput id="otrasDireccionesTextInput" text="{observacionVO.otrasDirecciones}" width="404" restrict="{Utilidad.restrict_}" maxChars="100" enabled="true" tabIndex="294" focusOut="validarOtrasDireccciones(event)"/>
+	</mx:FormItem>
+	<mx:FormItem label="Observación Avaluo">
+		<s:TextArea id="observacionAvaluoTextInput" text="{observacionVO.observacionAvaluo}" width="689" height="78" restrict="{Utilidad.restrict_}" maxChars="2000" enabled="true" tabIndex="295"/>
+		<s:Label x="3" y="65" text="(Max 1999 Caracteres)" fontSize="9"/>
+	</mx:FormItem>
+	
+</s:Group>

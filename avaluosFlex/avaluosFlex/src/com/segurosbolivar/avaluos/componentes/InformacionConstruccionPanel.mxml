@@ -1,0 +1,2036 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:valueObjects="valueObjects.*"
+		 xmlns:comp="com.segurosbolivar.avaluos.componentes.*"
+		 width="100%" height="100%" updateComplete="group1_updateCompleteHandler(event)">
+	
+	<s:layout>
+		<s:VerticalLayout/>
+	</s:layout>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.segurosbolivar.avaluos.modulos.Utilidad;
+			
+			import mx.collections.ArrayCollection;
+			import mx.events.FlexEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			import spark.events.IndexChangeEvent;
+			
+			import valueObjects.Avaluo;
+			import valueObjects.CampoRequeridoDTO;
+			import valueObjects.Dominios;
+			import valueObjects.Usuario;
+			
+			[Bindable]
+			public static var selectafirmarcercafuenthidri:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public static var selectdistanciametros:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public static var selectalura:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public static var selectpisosbodega:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public static var selectestadoconstruccion:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public static var selectestadoconservacion:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public static var selectparapetos:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public static var selectestructura:ArrayCollection = new ArrayCollection();
+			[Bindable]			
+			public var selectestructuraReforzadaBUA:ArrayCollection = new ArrayCollection();			
+			[Bindable]
+			public var selectmaterialConstruccionBUA:ArrayCollection = new ArrayCollection();
+			[Bindable]			
+			public var selectdetalleMaterialSFBUA:ArrayCollection = new ArrayCollection();
+			[Bindable]			
+			public var selectirregularidadAlturaBUA:ArrayCollection = new ArrayCollection();
+			[Bindable]			
+			public var selectirregularidadPlantaBUA:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public static var selectfachada:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public static var selecttipofachada:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public static var selectcubierta:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public static var selecttanquesagua:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public static var selectlongluces:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public static var selectsimetriaaltura:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public static var selectsimetriaplanta:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public static var selectsobrepeso:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public static var selectgolpeteo:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public static var selectasentamientos:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public static var selectdanosprevios:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public static var selectventilacion:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public static var selectiluminacion:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public static var selectreccondsalubri:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public static var selectcondsalubridad:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public static var selectaroborizacion:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public static var selectaguasservidas:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public static var selectbasura:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public static var selectruido:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public static var selectparques:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public static var selectzonasverdes:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public static var selectinseguridad:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public static var selectporaire:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public static var selectestpisos:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public static var selectcalpisos:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public static var selectestmuros:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public static var selectcalmuros:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public static var selectesttechos:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public static var selectcaltechos:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public static var selectestmadera:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public static var selectcalmadera:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public static var selectestmetal:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public static var selectcalmetal:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public static var selectestbanos:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public static var selectcalbanos:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public static var selectestcocina:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public static var selectcalcocina:ArrayCollection = new ArrayCollection();			
+			[Bindable]
+			public static var selectconjcerrado:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public static var selectubicacion:ArrayCollection = new ArrayCollection();
+			[Bindable]			
+			public var selectdanoPrevioBUA:ArrayCollection = new ArrayCollection();
+			[Bindable]			
+			public var selectreparadosBUA:ArrayCollection = new ArrayCollection();
+			[Bindable]
+			public static var selectprophorizontal:ArrayCollection = new ArrayCollection();
+			
+			protected function cbxFuentesHidricas_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectafirmarcercafuenthidri==null || selectafirmarcercafuenthidri.length<1)
+					selectafirmarcercafuenthidri = parentDocument.selectafirmacion ; 
+			}
+			
+			protected function cbxDistancia_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectdistanciametros==null || selectdistanciametros.length<1)
+					getValoresDominioResult34.token = parentDocument.dominiosAuxDao.getValoresDominio("NIVEL");
+			}
+			
+			protected function getValoresDominioResult34_resultHandler(event:ResultEvent):void
+			{
+				selectdistanciametros = getValoresDominioResult34.lastResult;
+				
+			}
+			
+			protected function getValoresDominioResult35_resultHandler(event:ResultEvent):void
+			{
+				selectalura = getValoresDominioResult35.lastResult;
+			}
+			
+			protected function cbxAltura_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectalura==null || selectalura.length<1)
+					getValoresDominioResult35.token = parentDocument.dominiosAuxDao.getValoresDominio("ALTURA");
+			}
+			
+			protected function cbxPisosBodega_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectpisosbodega==null || selectpisosbodega.length<1)
+					getValoresDominioResult36.token = parentDocument.dominiosAuxDao.getValoresDominio("PISOSBODEGA");
+			}
+			
+			protected function getValoresDominioResult36_resultHandler(event:ResultEvent):void
+			{
+				if(selectpisosbodega==null || selectpisosbodega.length<1)
+					selectpisosbodega = getValoresDominioResult36.lastResult;
+			}
+			
+			protected function cbxEstadoConstruccion_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectestadoconstruccion==null || selectestadoconstruccion.length<1)
+					getValoresDominioResult37.token = parentDocument.dominiosAuxDao.getValoresDominio("ESTADOCONSTRUCCION");
+				
+			}
+			
+			protected function getValoresDominioResult37_resultHandler(event:ResultEvent):void
+			{
+				if(selectestadoconstruccion==null || selectestadoconstruccion.length<1)
+					selectestadoconstruccion = getValoresDominioResult37.lastResult;
+				cbxEstadoConstruccion_changeHandler(null);
+			}
+			
+			protected function cbxEstadoConstruccion_changeHandler(event:IndexChangeEvent):void
+			{
+				if(cbxEstadoConstruccion.selectedItem == null){
+					return ; 
+				}
+				var estadoSelccionado:String = cbxEstadoConstruccion.selectedItem.rvMeaning;
+				if(estadoSelccionado.toUpperCase() == "Usada".toUpperCase()){
+					chbTerminado.enabled = true;
+					chbSinTerminar.enabled = true;
+					
+					chkTerminadoNueva.enabled = false;
+					chkSinTerminarNueva.enabled = false;
+					avanceObraTextInput.enabled = false;
+					
+					chkTerminadoNueva.selected = false;
+					chkSinTerminarNueva.selected = false;
+					avanceObraTextInput.text = "";
+					
+					//Valida el combo de estado de conservación
+					cbxEstadoConservacion.selectedIndex = -1;
+					cbxEstadoConservacion.enabled = true;
+					
+					
+					
+				}
+				else {
+					chkTerminadoNueva.enabled = true;
+					chkSinTerminarNueva.enabled = true;
+					
+					chbTerminado.enabled = false;
+					chbSinTerminar.enabled = false;
+					chbRemodelado.enabled = false;
+					
+					chbTerminado.selected = false;
+					chbSinTerminar.selected = false;
+					chbRemodelado.selected = false;
+				}
+			}
+			
+			protected function cbxEstadoConstruccion_focusOutHandler(event:FocusEvent):void
+			{
+				cbxEstadoConstruccion_changeHandler(null); 
+			}
+			
+			protected function chkSinTerminarNueva_clickHandler(event:MouseEvent):void
+			{
+				avanceObraTextInput.enabled = chkSinTerminarNueva.selected;
+				chkTerminadoNueva.selected = false;
+			}
+			
+			
+			protected function chkTerminadoNueva_clickHandler(event:MouseEvent):void
+			{
+				if(chkTerminadoNueva.selected){
+					avanceObraTextInput.enabled = false;
+					avanceObraTextInput.text = "";
+					chkSinTerminarNueva.selected = false;
+					
+					if (selectestadoconservacion != null)
+					{
+						for(var x:int = 0; x<selectestadoconservacion.length; x++){
+							var estadoConservacion:Dominios = selectestadoconservacion[x] as Dominios;
+							if(estadoConservacion.rvLowValue == '1'){
+								cbxEstadoConservacion.selectedIndex = x;
+								break;
+							}
+						}
+					}
+					cbxEstadoConservacion.enabled = false;
+				}
+				else 
+				{
+					cbxEstadoConservacion.selectedIndex = -1;
+					cbxEstadoConservacion.enabled = true;
+				}
+			}
+			
+			protected function cbxEstadoConservacioon_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectestadoconservacion==null || selectestadoconservacion.length<1)
+					getValoresDominioResult13.token = parentDocument.dominiosAuxDao.getValoresDominio("ESTADOCONSERVACION");
+				
+			}
+			
+			protected function getValoresDominioResult13_resultHandler(event:ResultEvent):void
+			{
+				selectestadoconservacion = getValoresDominioResult13.lastResult;
+			}			
+			
+			protected function chbTerminado_clickHandler(event:MouseEvent):void
+			{
+				chbRemodelado.enabled = chbTerminado.selected;
+				chbSinTerminar.selected = false;
+				
+				if(!chbTerminado.selected){
+					chbRemodelado.selected = false;
+				}else{
+					if(informacionConstruccionVO.estadoRemodelacion=="1"){ 
+						chbRemodelado.selected = true;
+					}else{
+						chbRemodelado.selected = false;
+					}					
+				}
+			}
+			
+			protected function chbRemodelado_focusInHandler(event:FocusEvent):void
+			{
+				chbTerminado_clickHandler(null); 
+			}			
+			
+			protected function chbSinTerminar_clickHandler(event:MouseEvent):void
+			{
+				if(chbSinTerminar.selected){
+					chbRemodelado.enabled = false;
+					chbRemodelado.selected = false;
+					chbTerminado.selected = false;
+				}
+			}
+			
+			protected function chbTerminado_changeHandler(event:Event):void
+			{
+				chbTerminado_clickHandler(null); 
+			}
+			
+			protected function cbxParapetosCubierta_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectparapetos==null || selectparapetos.length<1)
+					selectparapetos = parentDocument.selectafirmacion ; 
+				
+			}
+			
+			protected function getValoresDominioResult14_resultHandler(event:ResultEvent):void
+			{
+				if(selectestructura==null || selectestructura.length<1)
+					selectestructura = getValoresDominioResult14.lastResult;
+			}
+			
+			protected function cbxEstructura_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectestructura==null || selectestructura.length<1)
+					getValoresDominioResult14.token = parentDocument.dominiosAuxDao.getValoresDominio("ESTRUCTURA");			
+			}
+			
+			protected function getValoresDominioResult87_resultHandler(event:ResultEvent):void
+			{
+				selectestructuraReforzadaBUA = getValoresDominioResult87.lastResult;
+			}
+			
+			protected function cbxestructuraReforzadaBUA_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectestructuraReforzadaBUA==null || selectestructuraReforzadaBUA.length<1)
+					getValoresDominioResult87.token = parentDocument.dominiosAuxDao.getValoresDominio("ESTRUCTURAREFORZADA_BUA");
+			}
+			
+			protected function getValoresDominioResult90_resultHandler(event:ResultEvent):void
+			{
+				selectmaterialConstruccionBUA = getValoresDominioResult90.lastResult;
+				
+				if((informacionConstruccionVO != null) && (informacionConstruccionVO.materialConstruccionBUA != null)) {
+					cbxdetalleMaterialSFBUA.enabled = true;
+					var indexMaterial:int = Utilidad.getItemIndex(informacionConstruccionVO.materialConstruccionBUA,selectmaterialConstruccionBUA,'rvLowValue');
+					var rvLowvalue:String=null;
+					rvLowvalue = (selectmaterialConstruccionBUA[indexMaterial] as Dominios).rvHighValue;
+					getValoresDominioResult86.token = parentDocument.dominiosAuxDao.getValoresDominioByAbbreviation("C_ESTRUCTURA_SF_BUA",rvLowvalue);					
+				}
+			}
+			
+			protected function cbxmaterialConstruccionBUA_creationCompleteHandler(event:FlexEvent):void
+			{
+				cbxdetalleMaterialSFBUA.enabled = false;
+				if(selectmaterialConstruccionBUA==null || selectmaterialConstruccionBUA.length<1)
+					getValoresDominioResult90.token = parentDocument.dominiosAuxDao.getValoresDominio("ESTRUCTURA2_BUA");
+			}
+			
+			protected function getValoresDominioResult86_resultHandler(event:ResultEvent):void
+			{
+				selectdetalleMaterialSFBUA = getValoresDominioResult86.lastResult;
+			}
+			
+			protected function cbxmaterialConstruccionBUA_changeHandler(event:IndexChangeEvent):void
+			{
+				cbxdetalleMaterialSFBUA.enabled = true;
+				cbxdetalleMaterialSFBUA.invalidateDisplayList();
+				cbxdetalleMaterialSFBUA.selectedIndex = -1;
+				
+				var rvLowvalue:String=null;				
+				rvLowvalue = (selectmaterialConstruccionBUA[event.newIndex] as Dominios).rvHighValue;
+				getValoresDominioResult86.token = parentDocument.dominiosAuxDao.getValoresDominioByAbbreviation("C_ESTRUCTURA_SF_BUA",rvLowvalue);
+			}
+			
+			protected function getValoresDominioResult89_resultHandler(event:ResultEvent):void
+			{
+				selectirregularidadPlantaBUA = getValoresDominioResult89.lastResult;
+			}
+			
+			protected function cbxirregularidadPlantaBUA_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectirregularidadPlantaBUA==null || selectirregularidadPlantaBUA.length<1)
+					getValoresDominioResult89.token = parentDocument.dominiosAuxDao.getValoresDominio("IRREGULARIDAD_BUA");
+			}
+			
+			protected function getValoresDominioResult88_resultHandler(event:ResultEvent):void
+			{
+				selectirregularidadAlturaBUA = getValoresDominioResult88.lastResult;
+			}
+			
+			protected function cbxirregularidadAlturaBUA_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectirregularidadAlturaBUA==null || selectirregularidadAlturaBUA.length<1)
+					getValoresDominioResult88.token = parentDocument.dominiosAuxDao.getValoresDominio("IRREGULARIDAD_BUA");
+			}
+			
+			protected function cbxFachada_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectfachada==null || selectfachada.length<1)
+					getValoresDominioResult16.token = parentDocument.dominiosAuxDao.getValoresDominio("FACHADA");
+				
+			}
+			
+			protected function cbxTipoFachada_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selecttipofachada==null || selecttipofachada.length<1)
+					getValoresDominioResult17.token = parentDocument.dominiosAuxDao.getValoresDominio("TIPOFACHADA");
+			}
+			
+			protected function getValoresDominioResult16_resultHandler(event:ResultEvent):void
+			{
+				selectfachada = getValoresDominioResult16.lastResult;
+			}			
+			
+			protected function getValoresDominioResult17_resultHandler(event:ResultEvent):void
+			{
+				selecttipofachada = getValoresDominioResult17.lastResult;
+			}
+			
+			protected function cbxCubierta_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectcubierta==null || selectcubierta.length<1)
+					getValoresDominioResult18.token = parentDocument.dominiosAuxDao.getValoresDominio("CUBIERTA");			
+			}
+									
+			protected function cbxLongLues_creationCompleteHandler(event:FlexEvent):void
+			{
+				getValoresDominioResult20.token = parentDocument.dominiosAuxDao.getValoresDominio("LUCES");
+			}
+			
+			protected function cbxSimetriaAltura_creationCompleteHandler(event:FlexEvent):void
+			{
+				getValoresDominioResult21.token = parentDocument.dominiosAuxDao.getValoresDominio("SIMETRIA");
+			}
+						
+			protected function cbxGolpeteo_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectgolpeteo==null || selectgolpeteo.length<1)
+					getValoresDominioResult22.token = parentDocument.dominiosAuxDao.getValoresDominio("GOLPETEO");
+				
+			}
+			
+			protected function cbxDanoPrevio_creationCompleteHandler(event:FlexEvent):void
+			{
+				getValoresDominioResult23.token = parentDocument.dominiosAuxDao.getValoresDominio("DANOS");
+			}
+			
+			protected function cbxEstadoCocina_creationCompleteHandler(event:FlexEvent):void
+			{
+				getValoresDominioResult24.token = parentDocument.dominiosAuxDao.getValoresDominio("INFOCONSTR");
+			}
+			
+			protected function cbxCalidadCocina_creationCompleteHandler(event:FlexEvent):void
+			{
+				getValoresDominioResult25.token = parentDocument.dominiosAuxDao.getValoresDominio("COCINA");
+			}
+			
+			protected function cbxUbicacionInmueble_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectubicacion==null || selectubicacion.length<1)
+					getValoresDominioResult27.token = parentDocument.dominiosAuxDao.getValoresDominio("UBICACION");
+				
+			}
+			
+			protected function getValoresDominioResult18_resultHandler(event:ResultEvent):void
+			{
+				if(selectcubierta==null || selectcubierta.length<1)
+					selectcubierta = getValoresDominioResult18.lastResult;
+			}
+			
+			
+			protected function getValoresDominioResult19_resultHandler(event:ResultEvent):void
+			{
+				if(selecttanquesagua==null || selecttanquesagua.length<1)
+					selecttanquesagua = getValoresDominioResult19.lastResult;
+			}
+			
+			
+			protected function getValoresDominioResult20_resultHandler(event:ResultEvent):void
+			{
+				if(selectlongluces==null || selectlongluces.length<1)
+					selectlongluces = getValoresDominioResult20.lastResult;
+			}
+			
+			
+			protected function getValoresDominioResult21_resultHandler(event:ResultEvent):void
+			{
+				if(selectsimetriaaltura==null || selectsimetriaaltura.length<1)
+					selectsimetriaaltura = getValoresDominioResult21.lastResult;
+			}
+			
+			
+			protected function getValoresDominioResult22_resultHandler(event:ResultEvent):void
+			{
+				if(selectgolpeteo==null || selectgolpeteo.length<1)
+					selectgolpeteo = getValoresDominioResult22.lastResult;
+			}
+			
+			
+			protected function getValoresDominioResult23_resultHandler(event:ResultEvent):void
+			{
+				if(selectdanosprevios==null || selectdanosprevios.length<1)
+					selectdanosprevios = getValoresDominioResult23.lastResult;
+			}
+			
+			
+			protected function getValoresDominioResult24_resultHandler(event:ResultEvent):void
+			{
+				if(selectestcocina==null || selectestcocina.length<1)
+					selectestcocina  = getValoresDominioResult24.lastResult;
+			}
+			
+			
+			protected function getValoresDominioResult25_resultHandler(event:ResultEvent):void
+			{
+				if(selectcalcocina==null || selectcalcocina.length<1)
+					selectcalcocina  = getValoresDominioResult25.lastResult;
+			}
+			
+			
+			protected function getValoresDominioResult27_resultHandler(event:ResultEvent):void
+			{
+				if(selectubicacion==null || selectubicacion.length<1)
+					selectubicacion = getValoresDominioResult27.lastResult;
+			}
+			
+			protected function getValoresDominioResult81_resultHandler(event:ResultEvent):void
+			{
+				selectdanoPrevioBUA = getValoresDominioResult81.lastResult;
+			}
+			
+			protected function cbxdanoPrevioBUA_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectdanoPrevioBUA==null || selectdanoPrevioBUA.length<1)
+					getValoresDominioResult81.token = parentDocument.dominiosAuxDao.getValoresDominio("DANOSPREVIOS_BUA");
+			}			
+			
+			protected function getValoresDominioResult82_resultHandler(event:ResultEvent):void
+			{
+				selectreparadosBUA = getValoresDominioResult82.lastResult;
+			}
+			
+			protected function cbxreparadosBUA_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectreparadosBUA==null || selectreparadosBUA.length<1)
+					getValoresDominioResult82.token = parentDocument.dominiosAuxDao.getValoresDominio("REPARADOS_BUA");
+			}
+			
+			protected function cbxVentilacion_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectventilacion==null || selectventilacion.length<1)
+					selectventilacion = parentDocument.selectvalueMRB ; 
+			}
+			
+			protected function cbxIluminacion_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectiluminacion==null || selectiluminacion.length<1)
+					selectiluminacion = parentDocument.selectvalueMRB;
+			}
+			protected function cbxReqCondSalubirda_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectreccondsalubri==null || selectreccondsalubri.length<1)
+					selectreccondsalubri = parentDocument.selectafirmacion; 
+					
+			}
+			protected function cbxCondSalubridad_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectcondsalubridad==null || selectcondsalubridad.length<1)
+					selectcondsalubridad = parentDocument.selectvalueMRB;
+			}
+			protected function cbxArborizacion_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectaroborizacion==null || selectaroborizacion.length<1)
+					selectaroborizacion = parentDocument.selectafirmacionDos ;  
+			}
+			protected function cbxParques_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectparques==null || selectparques.length<1)
+					selectparques = parentDocument.selectafirmacionDos ;					
+			}
+			protected function cbxZonaVerde_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectzonasverdes==null || selectzonasverdes.length<1)
+					selectzonasverdes = parentDocument.selectafirmacionDos ;					
+			}
+			protected function cbxPorAire_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectporaire==null || selectporaire.length<1)
+					selectporaire = parentDocument.selectafirmacionDos ;					
+			}
+			protected function cbxBasura_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectbasura==null || selectbasura.length<1)
+					selectbasura = parentDocument.selectafirmacionDos ;					
+			}
+			protected function cbxInseguridad_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectinseguridad==null || selectinseguridad.length<1)
+					selectinseguridad = parentDocument.selectafirmacionDos ;					
+			}
+			protected function cbxRuido_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectruido==null || selectruido.length<1)
+					selectruido = parentDocument.selectafirmacionDos ;					
+			}
+			protected function cbxAguasServidas_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectaguasservidas==null || selectaguasservidas.length<1)
+					selectaguasservidas = parentDocument.selectafirmacionDos ;					
+			}
+			
+			protected function cbxEstadoPisos_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectestpisos==null || selectestpisos.length<1)
+					selectestpisos = parentDocument.selectInfoConstruccion;
+			}
+			protected function cbxEstadoMuros_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectestmuros==null || selectestmuros.length<1)
+					selectestmuros = parentDocument.selectInfoConstruccion;
+			}
+			protected function cbxEstadoTecho_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectesttechos==null || selectesttechos.length<1)	
+					selectesttechos = parentDocument.selectInfoConstruccion;
+			}
+			protected function cbxEstadoMadera_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectestmadera==null || selectestmadera.length<1)
+					selectestmadera = parentDocument.selectInfoConstruccion;
+			}
+			protected function cbxEstadoMetal_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectestmetal==null || selectestmetal.length<1)
+					selectestmetal = parentDocument.selectInfoConstruccion;
+			}
+			protected function cbxEstadobanos_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectestbanos==null || selectestbanos.length<1)
+					selectestbanos = parentDocument.selectInfoConstruccion;
+			}
+			
+			protected function cbxCalidadPisos_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectcalpisos==null || selectcalpisos.length<1)
+					selectcalpisos = parentDocument.selectCalidad;
+			}
+			protected function cbxCalidadMuros_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectcalmuros==null || selectcalmuros.length<1)
+					selectcalmuros = parentDocument.selectCalidad;
+			}
+			protected function cbxCalidadTechos_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectcaltechos==null || selectcaltechos.length<1)
+					selectcaltechos = parentDocument.selectCalidad;
+			}
+			protected function cbxCalidadMadera_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectcalmadera==null || selectcalmadera.length<1)
+					selectcalmadera = parentDocument.selectCalidad;
+			}
+			protected function cbxCalidadMetal_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectcalmetal==null || selectcalmetal.length<1)
+					selectcalmetal = parentDocument.selectCalidad;
+			}
+			protected function cbxCalidadBanos_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectcalbanos==null || selectcalbanos.length<1)
+					selectcalbanos = parentDocument.selectCalidad;
+			}
+			
+			protected function cbxAguCerrada_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectconjcerrado==null || selectconjcerrado.length<1)
+					selectconjcerrado = parentDocument.selectafirmacion ;
+			}
+			
+			protected function ascensorTextInput_clickHandler(event:MouseEvent):void
+			{
+				if(ascensorTextInput.selected){
+					numeroAscensoresTextInput.enabled = true;
+				}
+				else {
+					numeroAscensoresTextInput.text = "";
+					numeroAscensoresTextInput.enabled = false;
+				}
+			}
+			
+			public function validarCamposVacios():Boolean{
+				return true; 
+			}
+			
+			public function guardarInformacionConstruccion(avaluo:Avaluo,myUsuario:Usuario):InformacionConstruccion{
+				try{ 
+					if(avaluo.informacionConstruccion != null && avaluo.informacionConstruccion.length > 0){
+						var construccion:InformacionConstruccion = avaluo.informacionConstruccion.getItemAt(0) as InformacionConstruccion ;
+						if(construccion != null){
+							informacionConstruccionVO.idInformacionConstruccion = construccion.idInformacionConstruccion; 
+							informacionConstruccionVO.fechaCreacion = construccion.fechaCreacion ; 
+							informacionConstruccionVO.usuarioCreacion = construccion.usuarioCreacion ; 
+						}	
+					}
+					
+					//Construccion
+					if((cbxFuentesHidricas != null) && (cbxFuentesHidricas.selectedIndex > -1)) {
+						informacionConstruccionVO.ubicacionFuentesHidricas = cbxFuentesHidricas.selectedItem.rvLowValue;
+					}
+					if((cbxDistancia != null) && (cbxDistancia.selectedIndex > -1)) {
+						informacionConstruccionVO.ubicacionNivelVia = cbxDistancia.selectedItem.rvLowValue;
+					}
+					
+					
+					if((parentDocument.categoria.rvLowValue != null) && (parentDocument.categoria.rvLowValue.length > 0) &&(parentDocument.categoria.rvLowValue == '5')){
+						parentDocument.isBodega = true;
+						
+						if((cbxAltura != null) && (cbxAltura.selectedIndex > -1)) {
+							informacionConstruccionVO.altura = cbxAltura.selectedItem.rvLowValue;
+						}
+						if((cbxPisosBodega != null) && (cbxPisosBodega.selectedIndex > -1)) {
+							informacionConstruccionVO.pisosBodega = cbxPisosBodega.selectedItem.rvLowValue;
+						}
+					}
+					else {
+						parentDocument.isBodega = false;
+						if(cbxAltura != null){
+							cbxAltura.selectedIndex = -1;
+							txtAltura.setVisible(parentDocument.isBodega);
+							cbxAltura.setVisible(parentDocument.isBodega);
+						}
+						if(cbxPisosBodega!= null){
+							cbxPisosBodega.selectedIndex = -1;
+							txtPisosBodega.setVisible(parentDocument.isBodega);
+							cbxPisosBodega.setVisible(parentDocument.isBodega);
+						}
+					}
+					
+					
+					if((cbxEstadoConstruccion != null) && (cbxEstadoConstruccion.selectedIndex > -1)) {
+						informacionConstruccionVO.estadoConstruccion = cbxEstadoConstruccion.selectedItem.rvLowValue;
+					}
+					if((cbxEstadoConservacion != null) && (cbxEstadoConservacion.selectedIndex > -1)) {
+						informacionConstruccionVO.estadoConservacion = cbxEstadoConservacion.selectedItem.rvLowValue;
+					}
+					if((cbxEstructura != null) && (cbxEstructura.selectedIndex > -1)) {
+						informacionConstruccionVO.estructura = cbxEstructura.selectedItem.rvLowValue;
+					}
+					
+					if((cbxFachada != null) && (cbxFachada.selectedIndex > -1)) {
+						informacionConstruccionVO.fachada = cbxFachada.selectedItem.rvLowValue;
+					}
+					if((cbxTipoFachada != null) && (cbxTipoFachada.selectedIndex > -1)) {
+						informacionConstruccionVO.tipoFachada = cbxTipoFachada.selectedItem.rvLowValue;
+					}
+					if((cbxCubierta != null) && (cbxCubierta.selectedIndex > -1)) {
+						informacionConstruccionVO.cubierta = cbxCubierta.selectedItem.rvLowValue;
+					}
+					if((cbxParapetosCubierta != null) && (cbxParapetosCubierta.selectedIndex > -1)) {
+						informacionConstruccionVO.parapetosCubierta = cbxParapetosCubierta.selectedItem.rvLowValue;
+					}
+					
+					if((cbxGolpeteo != null) && (cbxGolpeteo.selectedIndex > -1)) {
+						informacionConstruccionVO.golpeteo = cbxGolpeteo.selectedItem.rvLowValue;
+					}
+					
+					if((cbxCalidadPisos != null) && (cbxCalidadPisos.selectedIndex > -1)) {
+						informacionConstruccionVO.calidadPiso = cbxCalidadPisos.selectedItem.rvLowValue;
+					}
+					if((cbxEstadoPisos != null) && (cbxEstadoPisos.selectedIndex > -1)) {
+						informacionConstruccionVO.estadoPisos = cbxEstadoPisos.selectedItem.rvLowValue;
+					}
+					if((cbxCalidadMuros != null) && (cbxCalidadMuros.selectedIndex > -1)) {
+						informacionConstruccionVO.calidadMuro = cbxCalidadMuros.selectedItem.rvLowValue;
+					}
+					if((cbxEstadoMuros != null) && (cbxEstadoMuros.selectedIndex > -1)) {
+						informacionConstruccionVO.estadoMuros = cbxEstadoMuros.selectedItem.rvLowValue;
+					}
+					if((cbxCalidadTechos != null) && (cbxCalidadTechos.selectedIndex > -1)) {
+						informacionConstruccionVO.calidadTecho = cbxCalidadTechos.selectedItem.rvLowValue;
+					}
+					if((cbxEstadoTecho != null) && (cbxEstadoTecho.selectedIndex > -1)) {
+						informacionConstruccionVO.estructuraTechos = cbxEstadoTecho.selectedItem.rvLowValue;
+					}
+					if((cbxCalidadMadera != null) && (cbxCalidadMadera.selectedIndex > -1)) {
+						informacionConstruccionVO.calidadMadera = cbxCalidadMadera.selectedItem.rvLowValue;
+					}
+					if((cbxEstadoMadera != null) && (cbxEstadoMadera.selectedIndex > -1)) {
+						informacionConstruccionVO.estadoMadera = cbxEstadoMadera.selectedItem.rvLowValue;
+					}
+					if((cbxCalidadMetal != null) && (cbxCalidadMetal.selectedIndex > -1)) {
+						informacionConstruccionVO.calidMetal = cbxCalidadMetal.selectedItem.rvLowValue;
+					}
+					if((cbxEstadoMetal != null) && (cbxEstadoMetal.selectedIndex > -1)) {
+						informacionConstruccionVO.estadoMetal = cbxEstadoMetal.selectedItem.rvLowValue;
+					}
+					if((cbxEstadobanos != null) && (cbxEstadobanos.selectedIndex > -1)) {
+						informacionConstruccionVO.estadoBanios = cbxEstadobanos.selectedItem.rvLowValue;
+					}
+					if((cbxCalidadBanos != null) && (cbxCalidadBanos.selectedIndex > -1)) {
+						informacionConstruccionVO.calidadBanio = cbxCalidadBanos.selectedItem.rvLowValue;
+					}
+					if((cbxCalidadCocina != null) && (cbxCalidadCocina.selectedIndex > -1)) {
+						informacionConstruccionVO.calidadCocina = cbxCalidadCocina.selectedItem.rvLowValue;
+					}
+					if((cbxEstadoCocina != null) && (cbxEstadoCocina.selectedIndex > -1)) {
+						informacionConstruccionVO.estadoCocina = cbxEstadoCocina.selectedItem.rvLowValue;
+					}
+					
+					informacionConstruccionVO.propiedadHorizontal = '1';				
+					
+					if((cbxAguCerrada != null) && (cbxAguCerrada.selectedIndex > -1)) {
+						informacionConstruccionVO.conjuntoAgrupacionCerrada = cbxAguCerrada.selectedItem.rvLowValue;
+					}
+					if((cbxUbicacionInmueble != null) && (cbxUbicacionInmueble.selectedIndex > -1)) {
+						informacionConstruccionVO.ubicacionInmueble = cbxUbicacionInmueble.selectedItem.rvLowValue;
+					}
+					if((cbxDistancia != null) && (cbxDistancia.selectedIndex > -1)) {
+						informacionConstruccionVO.ubicacionNivelVia = cbxDistancia.selectedItem.rvLowValue;
+					}
+					if((cbxVentilacion != null) && (cbxVentilacion.selectedIndex > -1)) {
+						informacionConstruccionVO.ventilacion = cbxVentilacion.selectedItem.rvLowValue;
+					}
+					if((cbxIluminacion != null) && (cbxIluminacion.selectedIndex > -1)) {
+						informacionConstruccionVO.iluminacion = cbxIluminacion.selectedItem.rvLowValue;
+					}
+					if(chbTerminado != null) {
+						informacionConstruccionVO.estadoTerminadoUsado = chbTerminado.selected ?"1":"0";
+					}
+					if(chbSinTerminar != null) {
+						informacionConstruccionVO.sinTerminar = chbSinTerminar.selected ?"1":"0";
+					}
+					if(chbRemodelado != null) {
+						informacionConstruccionVO.estadoRemodelacion = chbRemodelado.selected ?"1":"0";
+					}
+					if(chkTerminadoNueva != null) {
+						informacionConstruccionVO.estadoTerminadaNueva = chkTerminadoNueva.selected ?"1":"0";
+					}
+					if(chkSinTerminarNueva != null) {
+						informacionConstruccionVO.enObra = chkSinTerminarNueva.selected ?"1":"0";
+					}
+					if(chkPorteria != null) {
+						informacionConstruccionVO.porteria = chkPorteria.selected ?"1":"0";
+					}
+					if(chkCitofono != null) {
+						informacionConstruccionVO.citofono = chkCitofono.selected ?"1":"0";
+					}
+					if(bicicleteroTextInput != null) {
+						informacionConstruccionVO.bicicletero = bicicleteroTextInput.selected ?"1":"0";
+					}
+					if(piscinaTextInput != null) {
+						informacionConstruccionVO.piscina = piscinaTextInput.selected ?"1":"0";
+					}
+					if(tanqueAguaTextInput != null) {
+						informacionConstruccionVO.tanqueAgua = tanqueAguaTextInput.selected ?"1":"0";
+					}
+					if(clubHouseTextInput != null) {
+						informacionConstruccionVO.clubHouse = clubHouseTextInput.selected ?"1":"0";
+					}
+					if(garajeVisitanteTextInput != null) {
+						informacionConstruccionVO.garajeVisitante = garajeVisitanteTextInput.selected ?"1":"0";
+					}
+					if(juegoNinosTextInput != null) {
+						informacionConstruccionVO.juegoNinos = juegoNinosTextInput.selected ?"1":"0";
+					}
+					if(canchaMultipleTextInput != null) {
+						informacionConstruccionVO.canchaMultiple = canchaMultipleTextInput.selected ?"1":"0";
+					}
+					if(bombaEyectoraTextInput != null) {
+						informacionConstruccionVO.bombaEyectora = bombaEyectoraTextInput.selected ?"1":"0";
+					}
+					if(aireAcondicionadoTextInput != null) {
+						informacionConstruccionVO.aireAcondicionado = aireAcondicionadoTextInput.selected ?"1":"0";
+					}
+					if(squashTextInput != null) {
+						informacionConstruccionVO.squash = squashTextInput.selected ?"1":"0";
+					}
+					if(zonasVerdesTextInput2 != null) {
+						informacionConstruccionVO.zonasVerdes = zonasVerdesTextInput2.selected ?"1":"0";
+					}
+					if(gimnasioTextInput != null) {
+						informacionConstruccionVO.gimnasio = gimnasioTextInput.selected ?"1":"0";
+					}
+					if(golfitoTextInput != null) {
+						informacionConstruccionVO.golfito = golfitoTextInput.selected ?"1":"0";
+					}
+					if(salonComunalTextInput != null) {
+						informacionConstruccionVO.salonComunal = salonComunalTextInput.selected ?"1":"0";
+					}
+					if(shutBasurasTextInput != null) {
+						informacionConstruccionVO.shutBasuras = shutBasurasTextInput.selected ?"1":"0";
+					}
+					if(presionTextInput != null) {
+						informacionConstruccionVO.presion = presionTextInput.selected ?"1":"0";
+					}
+					if(plantaTextInput != null) {
+						informacionConstruccionVO.planta = plantaTextInput.selected ?"1":"0";
+					}
+					if(ascensorTextInput != null) {
+						informacionConstruccionVO.ascensor = ascensorTextInput.selected ?"1":"0";
+					}
+					if(pisosTextInput != null) {
+						informacionConstruccionVO.pisos = pisosTextInput.text;
+					}
+					if(sotanosTextInput != null) {
+						informacionConstruccionVO.sotanos = sotanosTextInput.text;
+					}
+					if(vetustezTextInput != null) {
+						informacionConstruccionVO.vetustez = vetustezTextInput.text.replace(",",".");
+					}
+					if(pisoInmuebleTextInput != null) {
+						informacionConstruccionVO.pisoInmueble = pisoInmuebleTextInput.text;
+					}
+					if(avanceObraTextInput != null) {
+						informacionConstruccionVO.avanceObra = avanceObraTextInput.text;
+					}				
+					if(salaTextInput != null) {
+						informacionConstruccionVO.sala = salaTextInput.text;
+					}
+					if(comedorTextInput != null) {
+						informacionConstruccionVO.comedor = comedorTextInput.text;
+					}
+					if(estudioTextInput != null) {
+						informacionConstruccionVO.estudio = estudioTextInput.text;
+					}
+					if(banioSocialTextInput != null) {
+						informacionConstruccionVO.banioSocial = banioSocialTextInput.text;
+					}
+					if(estarHabitacionTextInput != null) {
+						informacionConstruccionVO.estarHabitacion = estarHabitacionTextInput.text;
+					}
+					if(numeroHabitacionesTextInput != null) {
+						informacionConstruccionVO.numeroHabitaciones = numeroHabitacionesTextInput.text;
+					}
+					if(banioPrivadoTextInput != null) {
+						informacionConstruccionVO.banioPrivado = banioPrivadoTextInput.text;
+					}
+					if( cocinaTextInput!= null) {
+						informacionConstruccionVO.cocina = cocinaTextInput.text;
+					}
+					if(cuartoServicioTextInput != null) {
+						informacionConstruccionVO.cuartoServicio = cuartoServicioTextInput.text;
+					}
+					if(banioServicioTextInput != null) {
+						informacionConstruccionVO.banioServicio = banioServicioTextInput.text;
+					}
+					if(patioInteriorTextInput != null) {
+						informacionConstruccionVO.patioInterior = patioInteriorTextInput.text;
+					}
+					if(terrazaTextInput != null) {
+						informacionConstruccionVO.terraza = terrazaTextInput.text;
+					}
+					if(jardinTextInput != null) {
+						informacionConstruccionVO.jardin = jardinTextInput.text;
+					}
+					if(balconTextInput != null) {
+						informacionConstruccionVO.balcon = balconTextInput.text;
+					}
+					if(zonaVerdePrivadaTextInput != null) {
+						informacionConstruccionVO.zonaVerdePrivada = zonaVerdePrivadaTextInput.text;
+					}
+					if(totalGarajesTextInput != null) {
+						informacionConstruccionVO.totalGarajes = totalGarajesTextInput.text;
+					}
+					if(cubiertoTextInput != null) {
+						informacionConstruccionVO.cubierto = cubiertoTextInput.text;
+					}
+					if( descubiertoTextInput != null) {
+						informacionConstruccionVO.descubierto = descubiertoTextInput.text;
+					}
+					if(usoExclusivoTextInput != null) {
+						informacionConstruccionVO.usoExclusivo = usoExclusivoTextInput.text;
+					}
+					if(privadoTextInput != null) {
+						informacionConstruccionVO.privado = privadoTextInput.text;
+					}
+					if(bahiaComunalTextInput != null) {
+						informacionConstruccionVO.bahiaComunal = bahiaComunalTextInput.text;
+					}
+					if(sencilloTextInput != null) {
+						informacionConstruccionVO.sencillo = sencilloTextInput.text;
+					}
+					if(dobleTextInput != null) {
+						informacionConstruccionVO.doble = dobleTextInput.text;
+					}
+					if(servidumbreTextInput != null) {
+						informacionConstruccionVO.servidumbre = servidumbreTextInput.text;
+					}
+					if(depositoTextInput != null) {
+						informacionConstruccionVO.deposito = depositoTextInput.text;
+					}
+					if(localTextInput != null) {
+						informacionConstruccionVO.local = localTextInput.text;
+					}
+					if(bodegaTextInput != null) {
+						informacionConstruccionVO.bodega = bodegaTextInput.text;
+					}
+					if(oficinaTextInput != null) {
+						informacionConstruccionVO.oficina = oficinaTextInput.text;
+					}
+					
+					if(numeroEdificiosTextInput != null) {
+						informacionConstruccionVO.numeroEdificios = numeroEdificiosTextInput.text;
+					}
+					if(unidadPorPisoTextInput != null) {
+						informacionConstruccionVO.unidadPorPiso = unidadPorPisoTextInput.text;
+					}
+					if(totalUnidadesTextInput != null) {
+						informacionConstruccionVO.totalUnidades = totalUnidadesTextInput.text;
+					}
+					if(numeroAscensoresTextInput != null) {
+						informacionConstruccionVO.numeroAscensores = numeroAscensoresTextInput.text;
+					}
+					if(otrosDotacionTextInput != null) {
+						informacionConstruccionVO.otrosDotacion = otrosDotacionTextInput.text;
+					}
+					if(otrosDotacion2TextInput != null) {
+						informacionConstruccionVO.otrosDotacion2 = otrosDotacion2TextInput.text;
+					}
+					
+					if(chkSinTerminarNueva==null || !chkSinTerminarNueva.selected )
+					{
+						if(avanceObraTextInput!= null && avanceObraTextInput.text.length>0)
+						{
+							avanceObraTextInput.text = "";	
+						}
+					}	
+					
+					if((cbxdanoPrevioBUA != null) && (cbxdanoPrevioBUA.selectedIndex > -1)) {
+						informacionConstruccionVO.danoPrevioBUA = cbxdanoPrevioBUA.selectedItem.rvLowValue;
+					}
+					
+					if((cbxreparadosBUA != null) && (cbxreparadosBUA.selectedIndex > -1)) {
+						informacionConstruccionVO.reparadosBUA = cbxreparadosBUA.selectedItem.rvLowValue;
+					}
+					
+					if((cbxdetalleMaterialSFBUA != null) && (cbxdetalleMaterialSFBUA.selectedIndex > -1)) {
+						informacionConstruccionVO.detalleMaterialSFBUA = cbxdetalleMaterialSFBUA.selectedItem.rvLowValue;
+					}
+					
+					if((cbxestructuraReforzadaBUA != null) && (cbxestructuraReforzadaBUA.selectedIndex > -1)) {
+						informacionConstruccionVO.estructuraReforzadaBUA = cbxestructuraReforzadaBUA.selectedItem.rvLowValue;
+					}
+					
+					if((cbxirregularidadAlturaBUA != null) && (cbxirregularidadAlturaBUA.selectedIndex > -1)) {
+						informacionConstruccionVO.irregularidadAlturaBUA = cbxirregularidadAlturaBUA.selectedItem.rvLowValue;
+					}
+					
+					if((cbxirregularidadPlantaBUA != null) && (cbxirregularidadPlantaBUA.selectedIndex > -1)) {
+						informacionConstruccionVO.irregularidadPlantaBUA = cbxirregularidadPlantaBUA.selectedItem.rvLowValue;
+					}
+					
+					if((cbxmaterialConstruccionBUA != null) && (cbxmaterialConstruccionBUA.selectedIndex > -1)) {
+						informacionConstruccionVO.materialConstruccionBUA = cbxmaterialConstruccionBUA.selectedItem.rvLowValue;
+					}									
+					
+					//Avance de obra constructor
+					if(avanceObraTextInput!= null && chkSinTerminarNueva!=null && chkTerminadoNueva!=null)
+					{
+						if(avanceObraTextInput.text.length>0)
+						{	
+							var avanceInt:int=0;
+							avanceInt=parseInt(avanceObraTextInput.text);
+							//if(chkSinTerminarNueva.selected && avanceInt>69)
+							if(chkSinTerminarNueva.selected && avanceInt>=Utilidad.PORCENTAJE_ASOBANCARIA)
+							{
+								avaluo.tipoInforme="1";
+							}else if(chkSinTerminarNueva.selected && avanceInt<Utilidad.PORCENTAJE_ASOBANCARIA)	
+							{
+								//mantis 39594 cambia criterio para definir avaluos constructor
+								avaluo.tipoInforme="1";
+							}	//mantis 39594 cambia criterio para definir avaluos constructor
+							else if(chkTerminadoNueva.selected && avanceInt==100)	
+							{							
+								avaluo.tipoInforme="2";							
+							}else{
+								avaluo.tipoInforme="1";							
+							}	
+						}//mantis 39594 cambia criterio para definir avaluos constructor
+						else if(chkTerminadoNueva.selected /*&& avanceInt==100*/){							
+							avaluo.tipoInforme="2";						
+						}else{
+							avaluo.tipoInforme="1";						
+						}	
+					}
+					informacionConstruccionVO.avaluo = avaluo;
+				}catch(error:Error){
+					error.getStackTrace(); 
+					trace(error.message); 
+					parentDocument.imprimirEstadoProceso(error.message);
+				}
+				return informacionConstruccionVO ; 	
+			}
+			
+			public function guardarInformacionCondicionesSalubridad(avaluo:Avaluo,myUsuario:Usuario):CondicionesSalubridad{
+				try{
+					if(avaluo.condicionSalubridad != null && avaluo.condicionSalubridad.length > 0){
+						var condicion:CondicionesSalubridad = avaluo.condicionSalubridad.getItemAt(0) as CondicionesSalubridad ; 
+						if(condicion != null){
+							condicionesSalubridadVO.idCondicionSalubridad = condicion.idCondicionSalubridad ; 
+							condicionesSalubridadVO.fechaCreacion = condicion.fechaCreacion ; 
+							condicionesSalubridadVO.usuarioCreacion = condicion.usuarioCreacion ; 
+						}
+					}
+					
+					if(impactoNegativoOtrosTextInput != null) {
+						condicionesSalubridadVO.impactoNegativoOtros = impactoNegativoOtrosTextInput.text;
+					}
+					if( ambientalOtrosTextInput != null) {
+						condicionesSalubridadVO.ambientalOtros = ambientalOtrosTextInput.text;
+					}
+					
+					if((cbxReqCondSalubirda != null) && (cbxReqCondSalubirda.selectedIndex > -1)) {
+						condicionesSalubridadVO.requiereCondicionesSalubridad = cbxReqCondSalubirda.selectedItem.rvLowValue;
+					}
+					if((cbxCondSalubridad != null) && (cbxCondSalubridad.selectedIndex > -1)) {
+						condicionesSalubridadVO.condicionesSalubridad = cbxCondSalubridad.selectedItem.rvLowValue;
+					}
+					if((cbxArborizacion != null) && (cbxArborizacion.selectedIndex > -1)) {
+						condicionesSalubridadVO.ambientalArborizacion = cbxArborizacion.selectedItem.rvLowValue;
+					}
+					if((cbxAguasServidas != null) && (cbxAguasServidas.selectedIndex > -1)) {
+						condicionesSalubridadVO.aguasServidas = cbxAguasServidas.selectedItem.rvLowValue;
+					}
+					if((cbxBasura != null) && (cbxBasura.selectedIndex > -1)) {
+						condicionesSalubridadVO.impactoNegativoBasura = cbxBasura.selectedItem.rvLowValue;
+					}
+					if((cbxRuido != null) && (cbxRuido.selectedIndex > -1)) {
+						condicionesSalubridadVO.impactoNegativoRuido = cbxRuido.selectedItem.rvLowValue;
+					}
+					if((cbxParques != null) && (cbxParques.selectedIndex > -1)) {
+						condicionesSalubridadVO.ambientalParques = cbxParques.selectedItem.rvLowValue;
+					}
+					if((cbxZonaVerde != null) && (cbxZonaVerde.selectedIndex > -1)) {
+						condicionesSalubridadVO.ambientalZonaVerde = cbxZonaVerde.selectedItem.rvLowValue;
+					}
+					if((cbxInseguridad != null) && (cbxInseguridad.selectedIndex > -1)) {
+						condicionesSalubridadVO.impactoNegativoInseguridad = cbxInseguridad.selectedItem.rvLowValue;
+					}
+					if((cbxPorAire != null) && (cbxPorAire.selectedIndex > -1)) {
+						condicionesSalubridadVO.impactoNegativoPorAire = cbxPorAire.selectedItem.rvLowValue;
+					}
+					condicionesSalubridadVO.usuarioCreacion = myUsuario.codigoUsuario;
+					condicionesSalubridadVO.usuarioTransaccion = myUsuario.codigoUsuario;
+					condicionesSalubridadVO.avaluo = avaluo ;
+				}catch(error:Error){
+					error.getStackTrace(); 
+					trace(error.message); 
+					parentDocument.imprimirEstadoProceso(error.message);
+				}
+				return condicionesSalubridadVO ; 	
+			}
+			
+			protected function button1_clickHandler(event:MouseEvent):void
+			{
+				if(tbnAvaluosConstruccion.selectedIndex<tbnAvaluosConstruccion.numChildren){
+					if(tbnAvaluosConstruccion.selectedIndex<tbnAvaluosConstruccion.numElements){
+						tbnAvaluosConstruccion.selectedIndex = tbnAvaluosConstruccion.selectedIndex+1; 
+					}
+					if(tbnAvaluosConstruccion.selectedIndex == (tbnAvaluosConstruccion.numChildren - 1) ||
+						tbnAvaluosConstruccion.selectedIndex == (tbnAvaluosConstruccion.numElements - 1)){
+						bnSiguiente.visible=false; 
+						btAnterior.visible=true; 
+					}else{
+						btAnterior.visible=true; 
+						bnSiguiente.visible=true;						
+					}
+					administrarPanelesInformacionConstruccion();
+				}
+			}
+			
+			
+			protected function button2_clickHandler(event:MouseEvent):void
+			{
+				if(tbnAvaluosConstruccion.selectedIndex>0){
+					if(tbnAvaluosConstruccion.selectedIndex>0){
+						tbnAvaluosConstruccion.selectedIndex = tbnAvaluosConstruccion.selectedIndex-1; 
+					}
+					if(tbnAvaluosConstruccion.selectedIndex == 0 ||
+						tbnAvaluosConstruccion.selectedIndex == 0){
+						btAnterior.visible=false; 
+						bnSiguiente.visible=true;
+					}else{
+						btAnterior.visible=true; 
+						bnSiguiente.visible=true;						
+					}
+					administrarPanelesInformacionConstruccion();
+				}
+			}
+
+			protected function group1_updateCompleteHandler(event:FlexEvent):void
+			{
+				informacionConstruccionVO.sala="0";
+				informacionConstruccionVO.banioSocial="0";
+				informacionConstruccionVO.banioPrivado="0";
+				informacionConstruccionVO.banioServicio="0";
+				informacionConstruccionVO.jardin="0";
+				informacionConstruccionVO.comedor="0";
+				informacionConstruccionVO.estarHabitacion="0";
+				informacionConstruccionVO.cocina="0";
+				informacionConstruccionVO.patioInterior="0";
+				informacionConstruccionVO.balcon="0";
+				informacionConstruccionVO.estudio="0";
+				informacionConstruccionVO.numeroHabitaciones="0";
+				informacionConstruccionVO.cuartoServicio="0";
+				informacionConstruccionVO.terraza="0";
+				informacionConstruccionVO.zonaVerdePrivada="0";
+				informacionConstruccionVO.totalGarajes="0";
+				informacionConstruccionVO.usoExclusivo="0";
+				informacionConstruccionVO.sencillo="0";
+				informacionConstruccionVO.deposito="0";
+				informacionConstruccionVO.local="0";
+				informacionConstruccionVO.cubierto="0";
+				informacionConstruccionVO.privado="0";
+				informacionConstruccionVO.doble="0";
+				informacionConstruccionVO.bodega="0";
+				informacionConstruccionVO.descubierto="0";
+				informacionConstruccionVO.bahiaComunal="0";
+				informacionConstruccionVO.servidumbre="0";
+				informacionConstruccionVO.oficina="0"
+			}
+			
+			private function administrarPanelesInformacionConstruccion():void{
+				tbnAvaluosConstruccion.validateNow();
+				
+				switch(tbnAvaluosConstruccion.selectedIndex)
+				{
+					case 1: 
+						salaTextInput.setFocus();
+						break;
+					case 2: 
+						cbxReqCondSalubirda.setFocus();
+						break;						
+					case 3: 
+						cbxEstadoPisos.setFocus();
+						break;
+					case 4: 
+						cbxAguCerrada.setFocus();						
+						break;
+					case 5: 
+						chkPorteria.setFocus();
+						break;						
+				}						
+				
+			}
+
+			protected function cbxreparadosBUA_focusOutHandler(event:FocusEvent):void{
+				bnSiguiente.setFocus();				 
+			}
+
+
+			protected function cbxIluminacion_focusOutHandler(event:FocusEvent):void
+			{
+				bnSiguiente.setFocus();				 
+			}
+
+
+			protected function ambientalOtrosTextInput_focusOutHandler(event:FocusEvent):void
+			{
+				bnSiguiente.setFocus();				
+			}
+
+
+			protected function cbxCalidadCocina_focusOutHandler(event:FocusEvent):void
+			{
+				bnSiguiente.setFocus();				
+			}
+
+
+			protected function totalUnidadesTextInput_focusOutHandler(event:FocusEvent):void
+			{
+				bnSiguiente.setFocus();				
+			}
+
+
+			protected function otrosDotacion2TextInput_focusOutHandler(event:FocusEvent):void
+			{
+				parentDocument.btGuardar.setFocus(); 
+			}
+			
+			protected function cbxPorpiedadHorizontal_creationCompleteHandler(event:FlexEvent):void
+			{
+				if(selectprophorizontal==null || selectprophorizontal.length<1)
+					getValoresDominioResult66.token = parentDocument.dominiosAuxDao.getValoresDominio("SOMETIDOPROPIEDAD");
+			}
+			
+			protected function getValoresDominioResult66_resultHandler(event:ResultEvent):void
+			{
+				selectprophorizontal = getValoresDominioResult66.lastResult;
+			}
+			
+			public function ejecutarValidacionCamposObligatorios(categoria:int,todos:Boolean):void{
+				Utilidad.validarCamposObligarios(Utilidad.obtenerCamposVacios(getListaCampos(categoria,todos), this),this); 
+			}
+			
+			protected function getListaCampos(categoria:int,todos:Boolean):ArrayCollection
+			{
+				var arrayDto : ArrayCollection = new ArrayCollection();
+				var mapCampos:Object = new Object();
+				
+				mapCampos["pisosTextInput"] = "N_PISOS";
+				mapCampos["cbxFuentesHidricas"] = "A_UBICFUENTESH";
+				mapCampos["sotanosTextInput"] = "N_SOTANOS";
+				//OJO
+				mapCampos["cbxDistancia"] = "A_UBICNIVELZ";			
+				mapCampos["vetustezTextInput"] = "N_VETUSTEZ";
+				mapCampos["cbxAltura"] = "C_ALTURA";
+				mapCampos["pisoInmuebleTextInput"] = "A_EDIPISO";
+				mapCampos["cbxPisosBodega"] = "C_PISOSBODEGA";
+				mapCampos["cbxEstadoConstruccion"] = "R_ESTCONS";
+				
+				mapCampos["cbxEstadoConservacion"] = "C_ESTCONSERVACION";
+				mapCampos["cbxEstructura"] = "C_ESTRUCTURA";
+				mapCampos["cbxFachada"] = "C_FACHADA";
+				mapCampos["cbxTipoFachada"] = "C_TIPOFACHADA";
+				mapCampos["cbxCubierta"] = "C_CUBIERTA";
+				mapCampos["cbxParapetosCubierta"] = "A_EDIPARAPET";
+				mapCampos["cbxirregularidadAlturaBUA"] = "C_IRRALTURA";
+				mapCampos["cbxirregularidadPlantaBUA"] = "C_IRRPLANTA";
+				
+				mapCampos["cbxGolpeteo"] = "A_GOLPETEO";
+				mapCampos["cbxdanoPrevioBUA"] = "C_DANOPREVIO";
+				
+				mapCampos["cbxreparadosBUA"] = "C_REPARADOS";
+				
+				mapCampos["salaTextInput"] = "N_SALA";				
+				mapCampos["comedorTextInput"] = "N_COMEDOR";
+				mapCampos["estudioTextInput"] = "N_ESTUDIO";
+				mapCampos["totalGarajesTextInput"] = "N_TOTALGARAJES";
+				mapCampos["cubiertoTextInput"] = "N_CUBIERTO";
+				
+				mapCampos["descubiertoTextInput"] = "N_DESCUBIERTO";
+				//OJO
+				mapCampos["cbxVentilacion"] = "C_VENTILACION";
+				mapCampos["banioSocialTextInput"] = "N_BANIOSOCIAL";
+				mapCampos["estarHabitacionTextInput"] = "N_ESTARHAB";				
+				mapCampos["numeroHabitacionesTextInput"] = "N_HABITACIONES";
+				mapCampos["usoExclusivoTextInput"] = "N_USOEXCLUSIVO";
+				mapCampos["privadoTextInput"] = "N_PRIVADO";
+				mapCampos["bahiaComunalTextInput"] = "N_BAHIACOMUNAL";
+				mapCampos["banioPrivadoTextInput"] = "N_BANIOPRIVADO";
+				mapCampos["cocinaTextInput"] = "N_COCINA";
+				mapCampos["cuartoServicioTextInput"] = "N_CUARTOSERV";
+				mapCampos["sencilloTextInput"] = "N_SENCILLO";
+				mapCampos["dobleTextInput"] = "N_DOBLE";
+				mapCampos["servidumbreTextInput"] = "N_SERVIDUMBRE";
+				//OJO
+				mapCampos["cbxIluminacion"] = "C_ILUMINACION";
+				mapCampos["banioServicioTextInput"] = "N_BANIOSERVICIO";
+				mapCampos["patioInteriorTextInput"] = "N_PATIOINT";
+				mapCampos["terrazaTextInput"] = "N_TERRAZA";
+				mapCampos["depositoTextInput"] = "N_DEPOSITO";
+				mapCampos["jardinTextInput"] = "N_JARDIN";
+				mapCampos["balconTextInput"] = "N_BALCON";
+				mapCampos["zonaVerdePrivadaTextInput"] = "N_ZVERDEPRIV";
+				mapCampos["localTextInput"] = "N_LOCAL";
+				mapCampos["bodegaTextInput"] = "N_BODEGA";
+				mapCampos["oficinaTextInput"] = "N_OFICINA";
+				mapCampos["cbxEstadoPisos"] = "C_ESTPISOS";
+				mapCampos["cbxEstadoMuros"] = "C_ESTMUROS";
+				mapCampos["cbxEstadoTecho"] = "C_ESTTECHOS";
+				mapCampos["cbxEstadoMadera"] = "C_ESTMADERA";
+				mapCampos["cbxEstadoMetal"] = "C_ESTMETAL";
+				mapCampos["cbxEstadobanos"] = "C_ESTBANIOS";
+				mapCampos["cbxEstadoCocina"] = "C_ESTCOCINA";
+				mapCampos["cbxCalidadPisos"] = "C_CALIDPISO";
+				mapCampos["cbxCalidadMuros"] = "C_CALIDPISO";
+				mapCampos["cbxCalidadTechos"] = "C_CALIDTECHO";
+				mapCampos["cbxCalidadMadera"] = "C_CALIDCMADER";
+				mapCampos["cbxCalidadMetal"] = "C_CALIDCMETAL";
+				mapCampos["cbxCalidadBanos"] = "C_CALIDBANIO";
+				mapCampos["cbxCalidadCocina"] = "C_CALIDCOCINA";
+				//OJO
+				mapCampos["cbxPorpiedadHorizontal"] = "C_PROPHORZ";
+				
+				var rvLowvaluePropHor:String = null;
+				
+				/** if(cbxPorpiedadHorizontal!=null)
+				 if(cbxPorpiedadHorizontal.selectedItem!=null)
+				 rvLowvaluePropHor = (cbxPorpiedadHorizontal.selectedItem as Dominios).rvLowValue;
+				 
+				 //OJO
+				 //Condicion pgbavaluos
+				 if(rvLowvalue!=null)
+				 if(rvLowvalue!='12' && rvLowvalue!='15'){
+				 mapCampos["numeroEdificiosTextInput"] = "N_NUMEDIF";				
+				 mapCampos["unidadPorPisoTextInput"] = "N_UNDPISO";
+				 mapCampos["totalUnidadesTextInput"] = "N_TOTALUND";				
+				 }
+				/**/
+				
+				if(todos==true)
+				{	
+					mapCampos["numeroEdificiosTextInput"] = "N_NUMEDIF";				
+					mapCampos["unidadPorPisoTextInput"] = "N_UNDPISO";
+					mapCampos["totalUnidadesTextInput"] = "N_TOTALUND";
+				}
+				//Condicion pgbavaluos
+				//Nota 62182 mantis 13739
+				
+				
+				mapCampos["cbxAguCerrada"] = "C_CONJAGRUPCERR";
+				mapCampos["cbxUbicacionInmueble"] = "C_UBICACIONINM";					
+				
+				////Condicion pgbavaluos 
+				
+				/** if(ascensorTextInput!=null)
+				 if(ascensorTextInput.selected)
+				 mapCampos["numeroAscensoresTextInput"] = "N_NUMASCENSORES"; */ 
+				
+				if(todos==true)
+					mapCampos["numeroAscensoresTextInput"] = "N_NUMASCENSORES";
+				
+				mapCampos["otrosDotacionTextInput"] = "T_OTROSDOTACION";
+				mapCampos["otrosDotacion2TextInput"] = "T_OTROSDOTACION2";
+				
+				mapCampos["cbxestructuraReforzadaBUA"] = "C_ESTRUCTURAREFORZADA";
+				mapCampos["cbxmaterialConstruccionBUA"] = "C_MATERIAL";
+				mapCampos["cbxdetalleMaterialSFBUA"] = "C_DETALLEMATERIAL";
+				
+				for (var key:String in mapCampos) {
+					trace(" " + key + " - " +mapCampos[key]);
+					var campoDto:CampoRequeridoDTO = new CampoRequeridoDTO();
+					campoDto.nombretablaBD="PGB_INFCONSTRUCCION";
+					campoDto.nombrecampoBD=mapCampos[key];
+					campoDto.nombreComponente=key;
+					campoDto.categoriaInmueble=categoria.toString();
+					
+					arrayDto.addItem(campoDto);
+					
+				}
+				
+				mapCampos= new Object();
+				mapCampos["cbxReqCondSalubirda"] = "A_REQUIERE_COND_SALUB";
+				mapCampos["cbxCondSalubridad"] = "C_SALUBRIDAD";
+				mapCampos["cbxArborizacion"] = "K_AMBARBORIZA";
+				mapCampos["cbxParques"] = "K_AMBPARQUES";
+				mapCampos["cbxZonaVerde"] = "K_AMBZVERDE";
+				mapCampos["cbxPorAire"] = "K_PORAIRE";
+				mapCampos["cbxBasura"] = "K_BASURA";
+				mapCampos["cbxInseguridad"] = "K_INSERGURIDAD";
+				mapCampos["cbxRuido"] = "K_RUIDO";
+				mapCampos["cbxAguasServidas"] = "K_AGUASHERV";
+				mapCampos["impactoNegativoOtrosTextInput"] = "T_AMBNEGOTRO";
+				mapCampos["ambientalOtrosTextInput"] = "T_AMBOTRO";
+				
+				
+				for (var key:String in mapCampos) {
+					trace(" " + key + " - " +mapCampos[key]);
+					var campoDto:CampoRequeridoDTO = new CampoRequeridoDTO();
+					campoDto.nombretablaBD="PGB_CONDSALUBRIDAD";
+					campoDto.nombrecampoBD=mapCampos[key];
+					campoDto.nombreComponente=key;
+					campoDto.categoriaInmueble=categoria.toString();
+					
+					arrayDto.addItem(campoDto);
+					
+				}
+								
+				return arrayDto;
+			}
+
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<valueObjects:InformacionConstruccion id="informacionConstruccionVO" />
+		<valueObjects:CondicionesSalubridad id="condicionesSalubridadVO"/>
+		
+		<s:CallResponder id="getValoresDominioResult13" result="getValoresDominioResult13_resultHandler(event)"/>
+		<s:CallResponder id="getValoresDominioResult14" result="getValoresDominioResult14_resultHandler(event)"/>
+		
+		<s:CallResponder id="getValoresDominioResult16" result="getValoresDominioResult16_resultHandler(event)"/>
+		<s:CallResponder id="getValoresDominioResult17" result="getValoresDominioResult17_resultHandler(event)"/>
+		<s:CallResponder id="getValoresDominioResult18" result="getValoresDominioResult18_resultHandler(event)"/>
+		<s:CallResponder id="getValoresDominioResult19" result="getValoresDominioResult19_resultHandler(event)"/>
+		<s:CallResponder id="getValoresDominioResult20" result="getValoresDominioResult20_resultHandler(event)"/>
+		<s:CallResponder id="getValoresDominioResult21" result="getValoresDominioResult21_resultHandler(event)"/>
+		<s:CallResponder id="getValoresDominioResult22" result="getValoresDominioResult22_resultHandler(event)"/>
+		<s:CallResponder id="getValoresDominioResult23" result="getValoresDominioResult23_resultHandler(event)"/>
+		<s:CallResponder id="getValoresDominioResult24" result="getValoresDominioResult24_resultHandler(event)"/>
+		<s:CallResponder id="getValoresDominioResult25" result="getValoresDominioResult25_resultHandler(event)"/>
+		
+		<s:CallResponder id="getValoresDominioResult27" result="getValoresDominioResult27_resultHandler(event)"/>
+		
+		<s:CallResponder id="getValoresDominioResult34" result="getValoresDominioResult34_resultHandler(event)"/>
+		<s:CallResponder id="getValoresDominioResult35" result="getValoresDominioResult35_resultHandler(event)" />
+		<s:CallResponder id="getValoresDominioResult36" result="getValoresDominioResult36_resultHandler(event)" />
+		<s:CallResponder id="getValoresDominioResult37" result="getValoresDominioResult37_resultHandler(event)" />
+		
+		<s:CallResponder id="getValoresDominioResult66" result="getValoresDominioResult66_resultHandler(event)" />
+		
+		<s:CallResponder id="getValoresDominioResult81" result="getValoresDominioResult81_resultHandler(event)"/>
+		<s:CallResponder id="getValoresDominioResult82" result="getValoresDominioResult82_resultHandler(event)"/>
+		
+		<s:CallResponder id="getValoresDominioResult86" result="getValoresDominioResult86_resultHandler(event)"/>
+		<s:CallResponder id="getValoresDominioResult87" result="getValoresDominioResult87_resultHandler(event)"/>
+		<s:CallResponder id="getValoresDominioResult88" result="getValoresDominioResult88_resultHandler(event)"/>
+		<s:CallResponder id="getValoresDominioResult89" result="getValoresDominioResult89_resultHandler(event)"/>
+		<s:CallResponder id="getValoresDominioResult90" result="getValoresDominioResult90_resultHandler(event)"/>
+		
+	</fx:Declarations>
+	
+	
+	<mx:TabNavigator width="100%" height="100%" id="tbnAvaluosConstruccion" dropShadowVisible="false" paddingLeft="10" paddingRight="10">
+		<s:NavigatorContent label="Adicional" width="100%" height="100%" id="navigatorContent">
+			<s:Scroller width="100%" height="100%">
+				
+				<s:Group width="100%">
+					<s:layout>
+						<s:VerticalLayout>
+							
+						</s:VerticalLayout>
+					</s:layout>
+					
+					<s:Group width="100%" height="22" >
+						<s:layout>
+							<s:HorizontalLayout>
+								
+							</s:HorizontalLayout>
+						</s:layout>
+						<s:Label text="Número de Pisos" width="110" height="100%" verticalAlign="middle"/>
+						<s:TextInput id="pisosTextInput" text="{informacionConstruccionVO.pisos}" width="60" restrict ="0-9" maxChars="2" enabled="true" tabIndex="105"/>
+						<s:Label text="Número de Sótanos" width="120" height="100%" verticalAlign="middle"/>
+						<s:TextInput id="sotanosTextInput" text="{informacionConstruccionVO.sotanos}" width="60" restrict ="0-9" maxChars="2" enabled="true" tabIndex="106"/>
+						<s:Label text="Vetustez" width="60" height="100%" verticalAlign="middle"/>
+						<s:TextInput id="vetustezTextInput" text="{informacionConstruccionVO.vetustez}" width="114" restrict ="0-9,." maxChars="23" enabled="true" tabIndex="107"/>
+						<s:Label text="Piso Inmueble" width="95" height="100%" verticalAlign="middle"/>
+						<s:TextInput id="pisoInmuebleTextInput" text="{informacionConstruccionVO.pisoInmueble}" width="60" restrict ="0-9" maxChars="3" enabled="true" tabIndex="108"/>
+					</s:Group>
+					
+					<s:Group width="100%" height="22">
+						<s:layout>
+							<s:HorizontalLayout>
+								
+							</s:HorizontalLayout>
+						</s:layout>
+						<s:Label text="Cerca de Fuentes Hídricas" width="160" height="100%" verticalAlign="middle"/>
+						<s:ComboBox selectedIndex="{Utilidad.getItemIndex(informacionConstruccionVO.ubicacionFuentesHidricas,selectafirmarcercafuenthidri,'rvLowValue')}"  id="cbxFuentesHidricas" dataProvider="{selectafirmarcercafuenthidri}" creationComplete="cbxFuentesHidricas_creationCompleteHandler(event)" labelField="rvMeaning" width="60" enabled="true" tabIndex="108"/>
+						<s:Label text="Edificación Vs. Vía" width="120" height="100%" verticalAlign="middle"/>
+						<s:ComboBox selectedIndex="{Utilidad.getItemIndex(informacionConstruccionVO.ubicacionNivelVia,selectdistanciametros,'rvLowValue')}"  id="cbxDistancia" dataProvider="{selectdistanciametros}" creationComplete="cbxDistancia_creationCompleteHandler(event)"  labelField="rvMeaning" width="60" enabled="true" tabIndex="109"/>
+						<s:Label id="txtAltura" text="Altura" width="60" visible="{parentDocument.isBodega}" height="100%" verticalAlign="middle"/>
+						<s:ComboBox selectedIndex="{Utilidad.getItemIndex(informacionConstruccionVO.altura,selectalura,'rvLowValue')}"  id="cbxAltura" dataProvider="{selectalura}" creationComplete="cbxAltura_creationCompleteHandler(event)" labelField="rvMeaning"  width="60" enabled="true" visible="{parentDocument.isBodega}" tabIndex="110"/>
+						<s:Label id="txtPisosBodega" text="Pisos Bodega" width="95" visible="{parentDocument.isBodega}" height="100%" verticalAlign="middle"/>
+						<s:ComboBox selectedIndex="{Utilidad.getItemIndex(informacionConstruccionVO.pisosBodega,selectpisosbodega,'rvLowValue')}"  id="cbxPisosBodega" dataProvider="{selectpisosbodega}" creationComplete="cbxPisosBodega_creationCompleteHandler(event)" labelField="rvMeaning"  width="95" enabled="true" visible="{parentDocument.isBodega}" tabIndex="111"/>
+					</s:Group>
+					
+					<s:Group width="100%" height="22">
+						<s:layout>
+							<s:HorizontalLayout>
+								
+							</s:HorizontalLayout>
+						</s:layout>					
+						<s:Label text="Estado Construcción" height="100%" verticalAlign="middle"/>
+						<s:ComboBox selectedIndex="{Utilidad.getItemIndex(informacionConstruccionVO.estadoConstruccion,selectestadoconstruccion,'rvLowValue')}"  id="cbxEstadoConstruccion" dataProvider="{selectestadoconstruccion}" labelField="rvMeaning" creationComplete="cbxEstadoConstruccion_creationCompleteHandler(event)" change="cbxEstadoConstruccion_changeHandler(event)" enabled="true" tabIndex="112" focusOut="cbxEstadoConstruccion_focusOutHandler(event)" width="80" />	
+						
+						<s:Label text="Terminado" height="100%" verticalAlign="middle"/>
+						<s:CheckBox id="chkTerminadoNueva" selected="{Utilidad.isTrue(informacionConstruccionVO.estadoTerminadaNueva)}" enabled="false" click="chkTerminadoNueva_clickHandler(event)" tabIndex="113"/>
+						
+						<s:Label text="En Obra" height="100%" verticalAlign="middle"/>
+						<s:CheckBox id="chkSinTerminarNueva" selected="{Utilidad.isTrue(informacionConstruccionVO.enObra)}" enabled="false" click="chkSinTerminarNueva_clickHandler(event)" tabIndex="114"/>
+						
+						<s:Label text="Avance Obra" height="100%" verticalAlign="middle"/>
+						<s:TextInput id="avanceObraTextInput" text="{informacionConstruccionVO.avanceObra}" width="50" restrict ="0-9" maxChars="3" enabled="true" tabIndex="115"/>	
+						
+						<s:Label text="Terminado" height="100%" verticalAlign="middle"/>
+						<s:CheckBox id="chbTerminado" selected="{Utilidad.isTrue(informacionConstruccionVO.estadoTerminadoUsado)}" click="chbTerminado_clickHandler(event)" tabIndex="116" change="chbTerminado_changeHandler(event)"/>
+						
+						<s:Label text="Sin terminar" height="100%" verticalAlign="middle"/>
+						<s:CheckBox id="chbSinTerminar" selected="{Utilidad.isTrue(informacionConstruccionVO.sinTerminar)}" enabled="false" click="chbSinTerminar_clickHandler(event)" tabIndex="117"/>
+						
+						<s:Label text="Remodelado" height="100%" verticalAlign="middle"/>
+						<s:CheckBox id="chbRemodelado" selected="{Utilidad.isTrue(informacionConstruccionVO.estadoRemodelacion)}" tabIndex="118" focusIn="chbRemodelado_focusInHandler(event)"/>
+						
+					</s:Group>
+					
+					<s:Group width="100%" height="22">
+						<s:layout>
+							<s:HorizontalLayout>
+								
+							</s:HorizontalLayout>
+						</s:layout>
+						<s:Label width="150" text="Estado Conservación" height="100%" verticalAlign="middle"/>
+						<s:ComboBox selectedIndex="{Utilidad.getItemIndex(informacionConstruccionVO.estadoConservacion,selectestadoconservacion,'rvLowValue')}"  id="cbxEstadoConservacion" dataProvider="{selectestadoconservacion}" creationComplete="cbxEstadoConservacioon_creationCompleteHandler(event)" labelField="rvMeaning"  width="170" enabled="true" tabIndex="119"/>
+						<s:Label width="130" text="Parapetos Cubierta" height="100%" verticalAlign="middle"/>
+						<s:ComboBox selectedIndex="{Utilidad.getItemIndex(informacionConstruccionVO.parapetosCubierta,selectparapetos,'rvLowValue')}"  id="cbxParapetosCubierta" dataProvider="{selectparapetos}" creationComplete="cbxParapetosCubierta_creationCompleteHandler(event)" labelField="rvMeaning"  width="226" enabled="true" tabIndex="128"/>
+					</s:Group>
+					<s:Group width="100%" height="22">
+						<s:layout>
+							<s:HorizontalLayout>
+								
+							</s:HorizontalLayout>
+						</s:layout>
+						<s:Label width="150" text="Estructura" height="100%" verticalAlign="middle"/>
+						<s:ComboBox selectedIndex="{Utilidad.getItemIndex(informacionConstruccionVO.estructura,selectestructura,'rvLowValue')}"  id="cbxEstructura" dataProvider="{selectestructura}" labelField="rvMeaning" creationComplete="cbxEstructura_creationCompleteHandler(event)"  width="170" enabled="true" tabIndex="120"/>
+						<s:Label width="130" text="Estructura Reforzada" height="100%" verticalAlign="middle"/>
+						<s:ComboBox selectedIndex="{Utilidad.getItemIndex(informacionConstruccionVO.estructuraReforzadaBUA,selectestructuraReforzadaBUA,'rvLowValue')}"  id="cbxestructuraReforzadaBUA" dataProvider="{selectestructuraReforzadaBUA}" creationComplete="cbxestructuraReforzadaBUA_creationCompleteHandler(event)" labelField="rvMeaning"  width="226" enabled="true"  tabIndex="129"/>
+						
+					</s:Group>
+					<s:Group width="100%" height="22">
+						<s:layout>
+							<s:HorizontalLayout>
+								
+							</s:HorizontalLayout>
+						</s:layout>
+						<s:Label width="150" text="Material Estructura" height="100%" verticalAlign="middle"/>
+						<s:ComboBox selectedIndex="{Utilidad.getItemIndex(informacionConstruccionVO.materialConstruccionBUA,selectmaterialConstruccionBUA,'rvLowValue')}"  id="cbxmaterialConstruccionBUA" dataProvider="{selectmaterialConstruccionBUA}" creationComplete="cbxmaterialConstruccionBUA_creationCompleteHandler(event)" labelField="rvMeaning" enabled="true" width="170" change="cbxmaterialConstruccionBUA_changeHandler(event)"  tabIndex="121"/>
+						<s:Label width="130" text="Detalle Material" height="100%" verticalAlign="middle"/>											
+						<s:ComboBox selectedIndex="{Utilidad.getItemIndex(informacionConstruccionVO.detalleMaterialSFBUA,selectdetalleMaterialSFBUA,'rvLowValue')}"  id="cbxdetalleMaterialSFBUA" dataProvider="{selectdetalleMaterialSFBUA}" enabled="true" labelField="rvMeaning"  width="226"  tabIndex="130"/>
+					</s:Group>
+					<s:Group width="100%" height="22">
+						<s:layout>
+							<s:HorizontalLayout>
+								
+							</s:HorizontalLayout>
+						</s:layout>
+						<s:Label width="150" text="Irregularidad Planta" height="100%" verticalAlign="middle"/>
+						<s:ComboBox selectedIndex="{Utilidad.getItemIndex(informacionConstruccionVO.irregularidadPlantaBUA,selectirregularidadPlantaBUA,'rvLowValue')}"  id="cbxirregularidadPlantaBUA" dataProvider="{selectirregularidadPlantaBUA}" creationComplete="cbxirregularidadPlantaBUA_creationCompleteHandler(event)" labelField="rvMeaning" enabled="true" width="170"  tabIndex="122"/>
+						<s:Label width="130" text="Irregularidad Altura" height="100%" verticalAlign="middle"/>
+						<s:ComboBox selectedIndex="{Utilidad.getItemIndex(informacionConstruccionVO.irregularidadAlturaBUA,selectirregularidadAlturaBUA,'rvLowValue')}"  id="cbxirregularidadAlturaBUA" dataProvider="{selectirregularidadAlturaBUA}" creationComplete="cbxirregularidadAlturaBUA_creationCompleteHandler(event)" labelField="rvMeaning" enabled="true" width="226" tabIndex="131"/>
+					</s:Group>
+					<s:Group width="100%" height="22">
+						<s:layout>
+							<s:HorizontalLayout>
+								
+							</s:HorizontalLayout>
+						</s:layout>
+						<s:Label width="150" text="Fachada" height="100%" verticalAlign="middle"/>
+						<s:ComboBox selectedIndex="{Utilidad.getItemIndex(informacionConstruccionVO.fachada,selectfachada,'rvLowValue')}"  id="cbxFachada" dataProvider="{selectfachada}" creationComplete="cbxFachada_creationCompleteHandler(event)" labelField="rvMeaning"  width="170" enabled="true" tabIndex="123"/>
+						<s:Label width="130" text="Tipo Fachada" height="100%" verticalAlign="middle"/>
+						<s:ComboBox selectedIndex="{Utilidad.getItemIndex(informacionConstruccionVO.tipoFachada,selecttipofachada,'rvLowValue')}"  id="cbxTipoFachada" dataProvider="{selecttipofachada}" creationComplete="cbxTipoFachada_creationCompleteHandler(event)" labelField="rvMeaning"  width="226" enabled="true" tabIndex="132"/>
+					</s:Group>
+					<s:Group width="100%" height="22">
+						<s:layout>
+							<s:HorizontalLayout>
+								
+							</s:HorizontalLayout>
+						</s:layout>
+						<s:Label width="150" text="Cubierta" height="100%" verticalAlign="middle"/>
+						<s:ComboBox selectedIndex="{Utilidad.getItemIndex(informacionConstruccionVO.cubierta,selectcubierta,'rvLowValue')}"  id="cbxCubierta" dataProvider="{selectcubierta}" creationComplete="cbxCubierta_creationCompleteHandler(event)" labelField="rvMeaning"  width="170" enabled="true" tabIndex="124"/>
+						<s:Label width="130" text="Golpeteo" height="100%" verticalAlign="middle"/>
+						<s:ComboBox selectedIndex="{Utilidad.getItemIndex(informacionConstruccionVO.golpeteo,selectgolpeteo,'rvLowValue')}"  id="cbxGolpeteo" dataProvider="{selectgolpeteo}" creationComplete="cbxGolpeteo_creationCompleteHandler(event)" labelField="rvMeaning"  width="226" enabled="true" tabIndex="133"/>
+					</s:Group>
+					<s:Group width="100%" height="22">
+						<s:layout>
+							<s:HorizontalLayout>
+								
+							</s:HorizontalLayout>
+						</s:layout>
+						<s:Label width="150" text="Daño Previo" height="100%" verticalAlign="middle"/>
+						<s:ComboBox selectedIndex="{Utilidad.getItemIndex(informacionConstruccionVO.danoPrevioBUA,selectdanoPrevioBUA,'rvLowValue')}"  id="cbxdanoPrevioBUA" dataProvider="{selectdanoPrevioBUA}" creationComplete="cbxdanoPrevioBUA_creationCompleteHandler(event)" labelField="rvMeaning"  width="170" enabled="true"  tabIndex="125"/>
+						<s:Label width="130" text="Reparados" height="100%" verticalAlign="middle"/>
+						<s:ComboBox selectedIndex="{Utilidad.getItemIndex(informacionConstruccionVO.reparadosBUA,selectreparadosBUA,'rvLowValue')}"  id="cbxreparadosBUA" dataProvider="{selectreparadosBUA}" creationComplete="cbxreparadosBUA_creationCompleteHandler(event)" labelField="rvMeaning"  width="226" enabled="true" tabIndex="134" focusOut="cbxreparadosBUA_focusOutHandler(event)"/>
+					</s:Group>
+					
+					
+				</s:Group>
+			</s:Scroller>
+		</s:NavigatorContent>
+		
+		
+		<s:NavigatorContent label="Dependencias" width="100%" height="100%" id="nvcDependencias" tabIndex="135">
+			<s:Scroller width="100%" height="100%">
+				<s:Group width="100%" >
+					<s:layout>
+						<s:VerticalLayout>
+							
+						</s:VerticalLayout>
+					</s:layout>
+					
+					<mx:HBox>
+						<s:Label width="70" text="Sala"/>
+						<s:TextInput id="salaTextInput" text="{informacionConstruccionVO.sala}" width="50" restrict ="0-9" maxChars="2" enabled="true" tabIndex="136"/>
+						<s:Label width="75" text="Baño Social"/>
+						<s:TextInput id="banioSocialTextInput" text="{informacionConstruccionVO.banioSocial}" width="50" restrict ="0-9" maxChars="2" enabled="true" tabIndex="139"/>
+						<s:Label width="85" text="Baño Privado"/>
+						<s:TextInput id="banioPrivadoTextInput" text="{informacionConstruccionVO.banioPrivado}" width="50" restrict ="0-9" maxChars="2" enabled="true" tabIndex="142"/>
+						<s:Label width="75" text="Baño Servicio"/>
+						<s:TextInput id="banioServicioTextInput" text="{informacionConstruccionVO.banioServicio}" width="50" restrict ="0-9" maxChars="2" enabled="true" tabIndex="145"/>
+						<s:Label width="90" text="Jardín"/>
+						<s:TextInput id="jardinTextInput" text="{informacionConstruccionVO.jardin}" width="50" restrict ="0-9" maxChars="2" enabled="true" tabIndex="148"/>
+					</mx:HBox>
+					<mx:HBox>
+						<s:Label width="70" text="Comedor"/>
+						<s:TextInput id="comedorTextInput" text="{informacionConstruccionVO.comedor}" width="50" restrict ="0-9" maxChars="2" enabled="true" tabIndex="137"/>
+						<s:Label width="75" text="Estar"/>
+						<s:TextInput id="estarHabitacionTextInput" text="{informacionConstruccionVO.estarHabitacion}" width="50" restrict ="0-9" maxChars="2" enabled="true" tabIndex="140"/>
+						<s:Label width="85" text="Cocina"/>
+						<s:TextInput id="cocinaTextInput" text="{informacionConstruccionVO.cocina}" width="50" restrict ="0-9" maxChars="2" enabled="true" tabIndex="143"/>
+						<s:Label width="75" text="Patio Interior"/>
+						<s:TextInput id="patioInteriorTextInput" text="{informacionConstruccionVO.patioInterior}" width="50" restrict ="0-9" maxChars="2" enabled="true" tabIndex="146"/>
+						<s:Label width="90" text="Balcón"/>
+						<s:TextInput id="balconTextInput" text="{informacionConstruccionVO.balcon}" width="50" restrict ="0-9" maxChars="2" enabled="true" tabIndex="149"/>
+					</mx:HBox>
+					<mx:HBox>
+						<s:Label width="70" text="Estudio"/>
+						<s:TextInput width="50" id="estudioTextInput" text="{informacionConstruccionVO.estudio}" restrict ="0-9" maxChars="2" enabled="true" tabIndex="138"/>
+						<s:Label width="75" text="Habitaciones"/>
+						<s:TextInput width="50" id="numeroHabitacionesTextInput" text="{informacionConstruccionVO.numeroHabitaciones}" restrict ="0-9" maxChars="2" enabled="true" tabIndex="141"/>
+						<s:Label width="85" text="Cuarto Servicio"/>
+						<s:TextInput width="50" id="cuartoServicioTextInput" text="{informacionConstruccionVO.cuartoServicio}" restrict ="0-9" maxChars="2" enabled="true" tabIndex="144"/>
+						<s:Label width="75" text="Terraza"/>
+						<s:TextInput width="50" id="terrazaTextInput" text="{informacionConstruccionVO.terraza}" restrict ="0-9" maxChars="2" enabled="true" tabIndex="147"/>
+						<s:Label width="90" text="Z. Verde Privada" />
+						<s:TextInput width="50" id="zonaVerdePrivadaTextInput" text="{informacionConstruccionVO.zonaVerdePrivada}" restrict ="0-9" maxChars="2" enabled="true" tabIndex="150"/>
+					</mx:HBox>
+					<mx:HBox>
+						<s:Label width="70" text="Total Garajes"/>
+						<s:TextInput width="50" id="totalGarajesTextInput" text="{informacionConstruccionVO.totalGarajes}" restrict ="0-9" maxChars="2" enabled="true" tabIndex="151"/>
+						<s:Label width="75" text="Uso Exclusivo"/>
+						<s:TextInput width="50" id="usoExclusivoTextInput" text="{informacionConstruccionVO.usoExclusivo}" restrict ="0-9" maxChars="2" enabled="true" tabIndex="154"/>
+						<s:Label width="85" text="Sencillo"/>
+						<s:TextInput width="50" id="sencilloTextInput" text="{informacionConstruccionVO.sencillo}" restrict ="0-9" maxChars="2" enabled="true" tabIndex="157"/>
+						<s:Label width="75" text="Depósito"/>
+						<s:TextInput width="50" id="depositoTextInput" text="{informacionConstruccionVO.deposito}" restrict ="0-9" maxChars="2" enabled="true" tabIndex="160"/>
+						<s:Label width="90" text="Local"/>
+						<s:TextInput width="50" id="localTextInput" text="{informacionConstruccionVO.local}" restrict ="0-9" maxChars="2" enabled="true" tabIndex="161"/>
+					</mx:HBox>
+					<mx:HBox>
+						<s:Label width="70" text="Cubierto"/>
+						<s:TextInput width="50" id="cubiertoTextInput" text="{informacionConstruccionVO.cubierto}" restrict ="0-9" maxChars="2" enabled="true" tabIndex="152"/>
+						<s:Label width="75" text="Privado"/>
+						<s:TextInput width="50" id="privadoTextInput" text="{informacionConstruccionVO.privado}" restrict ="0-9" maxChars="2" enabled="true" tabIndex="155"/>
+						<s:Label width="85" text="Doble"/>
+						<s:TextInput width="50" id="dobleTextInput" text="{informacionConstruccionVO.doble}" restrict ="0-9" maxChars="2" enabled="true" tabIndex="158"/>
+						<s:Label width="133" text=""/>
+						<s:Label width="90" text="Bodega"/>
+						<s:TextInput width="50" id="bodegaTextInput" text="{informacionConstruccionVO.bodega}" restrict ="0-9" maxChars="2" enabled="true" tabIndex="162"/>
+					</mx:HBox>
+					<mx:HBox>
+						<s:Label width="70" text="Descubierto"/>
+						<s:TextInput width="50" id="descubiertoTextInput" text="{informacionConstruccionVO.descubierto}" restrict ="0-9" maxChars="2" enabled="true" tabIndex="153"/>
+						<s:Label width="75" text="Bahia Común"/>
+						<s:TextInput width="50" id="bahiaComunalTextInput" text="{informacionConstruccionVO.bahiaComunal}" restrict ="0-9" maxChars="2" enabled="true" tabIndex="156"/>
+						<s:Label width="85" text="Servidumbre"/>
+						<s:TextInput width="50" id="servidumbreTextInput" text="{informacionConstruccionVO.servidumbre}" restrict ="0-9" maxChars="2" enabled="true" tabIndex="159"/>
+						<s:Label width="133" text=""/>
+						<s:Label width="90" text="Oficina"/>
+						<s:TextInput width="50" id="oficinaTextInput" text="{informacionConstruccionVO.oficina}" restrict ="0-9" maxChars="2" enabled="true" tabIndex="163"/>
+					</mx:HBox>
+					<mx:HBox>
+						<s:Label text="Ventilación" width="70"/>
+						<s:ComboBox selectedIndex="{Utilidad.getItemIndex(informacionConstruccionVO.ventilacion,selectventilacion,'rvLowValue')}"  id="cbxVentilacion" dataProvider="{selectventilacion}" creationComplete="cbxVentilacion_creationCompleteHandler(event)" labelField="rvMeaning"  enabled="true" tabIndex="164"/>
+						
+						<s:Label text="Iluminación" width="82"/>
+						<s:ComboBox selectedIndex="{Utilidad.getItemIndex(informacionConstruccionVO.iluminacion,selectiluminacion,'rvLowValue')}"  id="cbxIluminacion" dataProvider="{selectiluminacion}" creationComplete="cbxIluminacion_creationCompleteHandler(event)" labelField="rvMeaning"  tabIndex="165" focusOut="cbxIluminacion_focusOutHandler(event)"/>
+					</mx:HBox>
+				</s:Group>
+			</s:Scroller>
+		</s:NavigatorContent>
+		<s:NavigatorContent label="Salubridad" width="100%" height="100%" tabIndex="166">
+			<s:Scroller width="100%" height="100%">
+				<s:Group width="100%" >
+					<s:layout>
+						<s:HorizontalLayout>
+							
+						</s:HorizontalLayout>
+					</s:layout>
+					
+					
+					<mx:VBox width="50%">
+						<mx:FormItem label="Requiere condiciones de salubridad" labelWidth="200" width="100%">
+							<s:ComboBox width="100%" selectedIndex="{Utilidad.getItemIndex(condicionesSalubridadVO.requiereCondicionesSalubridad,selectreccondsalubri,'rvLowValue')}"  id="cbxReqCondSalubirda" dataProvider="{selectreccondsalubri}" creationComplete="cbxReqCondSalubirda_creationCompleteHandler(event)" labelField="rvMeaning"  enabled="true" tabIndex="167"/>
+						</mx:FormItem>
+						
+						<mx:FormItem label="Arborización" labelWidth="200" width="100%">
+							<s:ComboBox width="100%" selectedIndex="{Utilidad.getItemIndex(condicionesSalubridadVO.ambientalArborizacion,selectaroborizacion,'rvLowValue')}"  id="cbxArborizacion" dataProvider="{selectaroborizacion}" creationComplete="cbxArborizacion_creationCompleteHandler(event)" labelField="rvMeaning"  enabled="true" tabIndex="169"/>
+						</mx:FormItem>
+						
+						<mx:FormItem label="Zona Verde" labelWidth="200" width="100%">
+							<s:ComboBox width="100%" selectedIndex="{Utilidad.getItemIndex(condicionesSalubridadVO.ambientalZonaVerde,selectzonasverdes,'rvLowValue')}"  id="cbxZonaVerde" dataProvider="{selectzonasverdes}" creationComplete="cbxZonaVerde_creationCompleteHandler(event)" labelField="rvMeaning"  enabled="true" tabIndex="171"/>
+						</mx:FormItem>
+						
+						<mx:FormItem label="Impacto Negativo Por Basura" labelWidth="200" width="100%">
+							<s:ComboBox width="100%" selectedIndex="{Utilidad.getItemIndex(condicionesSalubridadVO.impactoNegativoBasura,selectbasura,'rvLowValue')}"  id="cbxBasura" dataProvider="{selectbasura}" creationComplete="cbxBasura_creationCompleteHandler(event)" labelField="rvMeaning"  enabled="true" tabIndex="173"/>
+						</mx:FormItem>
+						
+						<mx:FormItem label="Impacto Negativo Ruido" labelWidth="200" width="100%">
+							<s:ComboBox width="100%" selectedIndex="{Utilidad.getItemIndex(condicionesSalubridadVO.impactoNegativoRuido,selectruido,'rvLowValue')}"  id="cbxRuido" dataProvider="{selectruido}" labelField="rvMeaning" creationComplete="cbxRuido_creationCompleteHandler(event)"  enabled="true" tabIndex="175"/>
+						</mx:FormItem>
+						
+						<mx:FormItem label="Impacto Negativo Otros" labelWidth="200" horizontalAlign="right" width="100%">
+							<s:TextInput width="100%" id="impactoNegativoOtrosTextInput" text="{condicionesSalubridadVO.impactoNegativoOtros}" restrict="{Utilidad.restrict_}" maxChars="100" enabled="true" tabIndex="177"/>
+						</mx:FormItem>
+						
+					</mx:VBox>
+					
+					<mx:VBox width="50%">
+						
+						<mx:FormItem label="Condiciones Salubridad" labelWidth="200" width="100%">
+							<s:ComboBox width="100%" selectedIndex="{Utilidad.getItemIndex(condicionesSalubridadVO.condicionesSalubridad,selectcondsalubridad,'rvLowValue')}"  id="cbxCondSalubridad" dataProvider="{selectcondsalubridad}" creationComplete="cbxCondSalubridad_creationCompleteHandler(event)" labelField="rvMeaning"  enabled="true" tabIndex="168"/>
+						</mx:FormItem>
+						
+						<mx:FormItem label="Parques" labelWidth="200" width="100%">
+							<s:ComboBox width="100%" selectedIndex="{Utilidad.getItemIndex(condicionesSalubridadVO.ambientalParques,selectparques,'rvLowValue')}"  id="cbxParques" dataProvider="{selectparques}" creationComplete="cbxParques_creationCompleteHandler(event)" labelField="rvMeaning"  enabled="true" tabIndex="170"/>
+						</mx:FormItem>
+						
+						<mx:FormItem label="Impacto Negativo Por Aire" labelWidth="200" width="100%">
+							<s:ComboBox width="100%" selectedIndex="{Utilidad.getItemIndex(condicionesSalubridadVO.impactoNegativoPorAire,selectporaire,'rvLowValue')}"  id="cbxPorAire" dataProvider="{selectporaire}" creationComplete="cbxPorAire_creationCompleteHandler(event)" labelField="rvMeaning"  enabled="true" tabIndex="172"/>
+						</mx:FormItem>
+						
+						<mx:FormItem label="Impacto Negativo Inseguridad" labelWidth="200" width="100%">
+							<s:ComboBox width="100%" selectedIndex="{Utilidad.getItemIndex(condicionesSalubridadVO.impactoNegativoInseguridad,selectinseguridad,'rvLowValue')}"  id="cbxInseguridad" dataProvider="{selectinseguridad}" creationComplete="cbxInseguridad_creationCompleteHandler(event)" labelField="rvMeaning"  enabled="true" tabIndex="174"/>
+						</mx:FormItem>
+						
+						<mx:FormItem label="Aguas Servidas" labelWidth="200" width="100%">
+							<s:ComboBox width="100%" selectedIndex="{Utilidad.getItemIndex(condicionesSalubridadVO.aguasServidas,selectaguasservidas,'rvLowValue')}"  id="cbxAguasServidas" dataProvider="{selectaguasservidas}" creationComplete="cbxAguasServidas_creationCompleteHandler(event)" labelField="rvMeaning"  enabled="true" tabIndex="176"/>
+						</mx:FormItem>
+						
+						<mx:FormItem label="Otros" labelWidth="200" width="100%">
+							<s:TextInput width="100%" id="ambientalOtrosTextInput" text="{condicionesSalubridadVO.ambientalOtros}" restrict="{Utilidad.restrict_}" maxChars="100" enabled="true" tabIndex="178" focusOut="ambientalOtrosTextInput_focusOutHandler(event)"/>
+						</mx:FormItem>
+					</mx:VBox>
+					
+				</s:Group>
+			</s:Scroller>
+		</s:NavigatorContent>
+		<s:NavigatorContent label="Acabados" width="100%" height="100%" id="nvcAcabadosEstado" tabIndex="179">
+			<s:Scroller width="100%" height="100%">
+				<s:Group width="100%" >
+					<s:layout>
+						<s:VerticalLayout>
+							
+						</s:VerticalLayout>
+					</s:layout>
+					
+					
+					<mx:HBox>
+						<s:Label  width="80"/>
+						<s:Label text="ESTADO" fontWeight="bold" width="150"/>
+						<s:Label text="CALIDAD" fontWeight="bold"/>
+					</mx:HBox>
+					<mx:HBox paddingLeft="5">
+						<s:Label text="Pisos"  width="50"/>
+						<s:ComboBox selectedIndex="{Utilidad.getItemIndex(informacionConstruccionVO.estadoPisos,selectestpisos,'rvLowValue')}"  id="cbxEstadoPisos" dataProvider="{selectestpisos}" creationComplete="cbxEstadoPisos_creationCompleteHandler(event)" labelField="rvMeaning"  enabled="true" tabIndex="180"/>
+						<s:ComboBox selectedIndex="{Utilidad.getItemIndex(informacionConstruccionVO.calidadPiso,selectcalpisos,'rvLowValue')}"  id="cbxCalidadPisos" dataProvider="{selectcalpisos}" creationComplete="cbxCalidadPisos_creationCompleteHandler(event)" labelField="rvMeaning"  enabled="true" tabIndex="181"/>
+					</mx:HBox>
+					<mx:HBox paddingLeft="5">
+						<s:Label text="Muros" width="50"/>
+						<s:ComboBox selectedIndex="{Utilidad.getItemIndex(informacionConstruccionVO.estadoMuros,selectestmuros,'rvLowValue')}"  id="cbxEstadoMuros" dataProvider="{selectestmuros}" creationComplete="cbxEstadoMuros_creationCompleteHandler(event)" labelField="rvMeaning"  enabled="true" tabIndex="182"/>
+						<s:ComboBox selectedIndex="{Utilidad.getItemIndex(informacionConstruccionVO.calidadMuro,selectcalmuros,'rvLowValue')}"  id="cbxCalidadMuros" dataProvider="{selectcalmuros}" creationComplete="cbxCalidadMuros_creationCompleteHandler(event)" labelField="rvMeaning"  enabled="true" tabIndex="183"/>
+					</mx:HBox>
+					<mx:HBox paddingLeft="5">
+						<s:Label text="Techos" width="50"/>
+						<s:ComboBox selectedIndex="{Utilidad.getItemIndex(informacionConstruccionVO.estructuraTechos,selectesttechos,'rvLowValue')}"  id="cbxEstadoTecho" dataProvider="{selectesttechos}" creationComplete="cbxEstadoTecho_creationCompleteHandler(event)" labelField="rvMeaning"  enabled="true" tabIndex="184"/>
+						<s:ComboBox selectedIndex="{Utilidad.getItemIndex(informacionConstruccionVO.calidadTecho,selectcaltechos,'rvLowValue')}"  id="cbxCalidadTechos" dataProvider="{selectcaltechos}" creationComplete="cbxCalidadTechos_creationCompleteHandler(event)" labelField="rvMeaning"  enabled="true" tabIndex="185"/>
+					</mx:HBox>
+					<mx:HBox paddingLeft="5">
+						<s:Label text="Madera" width="50"/>
+						<s:ComboBox selectedIndex="{Utilidad.getItemIndex(informacionConstruccionVO.estadoMadera,selectestmadera,'rvLowValue')}"  id="cbxEstadoMadera" dataProvider="{selectestmadera}" creationComplete="cbxEstadoMadera_creationCompleteHandler(event)" labelField="rvMeaning"  enabled="true" tabIndex="186"/>
+						<s:ComboBox selectedIndex="{Utilidad.getItemIndex(informacionConstruccionVO.calidadMadera,selectcalmadera,'rvLowValue')}"  id="cbxCalidadMadera" dataProvider="{selectcalmadera}" creationComplete="cbxCalidadMadera_creationCompleteHandler(event)" labelField="rvMeaning"  enabled="true" tabIndex="187"/>
+					</mx:HBox>	
+					<mx:HBox paddingLeft="5">
+						<s:Label text="Metal" width="50"/>
+						<s:ComboBox selectedIndex="{Utilidad.getItemIndex(informacionConstruccionVO.estadoMetal,selectestmetal,'rvLowValue')}"  id="cbxEstadoMetal" dataProvider="{selectestmetal}" creationComplete="cbxEstadoMetal_creationCompleteHandler(event)" labelField="rvMeaning"  enabled="true" tabIndex="188"/>
+						<s:ComboBox selectedIndex="{Utilidad.getItemIndex(informacionConstruccionVO.calidMetal,selectcalmetal,'rvLowValue')}"  id="cbxCalidadMetal" dataProvider="{selectcalmetal}" creationComplete="cbxCalidadMetal_creationCompleteHandler(event)" labelField="rvMeaning"  enabled="true" tabIndex="189"/>
+					</mx:HBox>
+					<mx:HBox paddingLeft="5">
+						<s:Label text="Baños" width="50"/>
+						<s:ComboBox selectedIndex="{Utilidad.getItemIndex(informacionConstruccionVO.estadoBanios,selectestbanos,'rvLowValue')}"  id="cbxEstadobanos" dataProvider="{selectestbanos}" creationComplete="cbxEstadobanos_creationCompleteHandler(event)" labelField="rvMeaning"  enabled="true" tabIndex="190"/>
+						<s:ComboBox selectedIndex="{Utilidad.getItemIndex(informacionConstruccionVO.calidadBanio,selectcalmetal,'rvLowValue')}"  id="cbxCalidadBanos" dataProvider="{selectcalbanos}" creationComplete="cbxCalidadBanos_creationCompleteHandler(event)" labelField="rvMeaning"  enabled="true" tabIndex="191"/>
+					</mx:HBox>
+					<mx:HBox paddingLeft="5">
+						<s:Label text="Cocina" width="50"/>
+						<s:ComboBox selectedIndex="{Utilidad.getItemIndex(informacionConstruccionVO.estadoCocina,selectestcocina,'rvLowValue')}"  id="cbxEstadoCocina" dataProvider="{selectestcocina}"  creationComplete="cbxEstadoCocina_creationCompleteHandler(event)" labelField="rvMeaning"  tabIndex="192"/>
+						<s:ComboBox selectedIndex="{Utilidad.getItemIndex(informacionConstruccionVO.calidadCocina,selectcalcocina,'rvLowValue')}"  id="cbxCalidadCocina" dataProvider="{selectcalcocina}" creationComplete="cbxCalidadCocina_creationCompleteHandler(event)" labelField="rvMeaning"  tabIndex="193" focusOut="cbxCalidadCocina_focusOutHandler(event)"/>
+					</mx:HBox>
+					
+				</s:Group>
+			</s:Scroller>
+		</s:NavigatorContent>
+		<s:NavigatorContent label="Propiedad Horizontal" width="100%" height="100%" id="nvcPropiedadHorizontal"  tabIndex="194">
+			<s:Scroller width="100%" height="100%">
+				<s:Group width="100%" >
+					<s:layout>
+						<s:HorizontalLayout>
+							
+						</s:HorizontalLayout>
+					</s:layout>
+					
+					
+					
+					<mx:VBox width="50%">
+						<mx:FormItem label="Sometido a Propiedad Horizontal" width="100%" labelWidth="200">
+							<s:ComboBox selectedIndex="{Utilidad.getItemIndex(informacionConstruccionVO.propiedadHorizontal,selectprophorizontal,'rvLowValue')}"  id="cbxPorpiedadHorizontal" dataProvider="{selectprophorizontal}" creationComplete="cbxPorpiedadHorizontal_creationCompleteHandler(event)" labelField="rvMeaning" width="100%" enabled="true" tabIndex="195" />
+						</mx:FormItem>
+						
+						<mx:FormItem label="Conjunto Agrupacion Cerrada" width="100%" labelWidth="200">
+							<s:ComboBox selectedIndex="{Utilidad.getItemIndex(informacionConstruccionVO.conjuntoAgrupacionCerrada,selectconjcerrado,'rvLowValue')}"  id="cbxAguCerrada" dataProvider="{selectconjcerrado}" creationComplete="cbxAguCerrada_creationCompleteHandler(event)" labelField="rvMeaning"  enabled="true" width="100%" tabIndex="196"/>
+						</mx:FormItem>
+						<mx:FormItem label="Ubicación Inmueble" width="100%" labelWidth="200">
+							<s:ComboBox selectedIndex="{Utilidad.getItemIndex(informacionConstruccionVO.ubicacionInmueble,selectubicacion,'rvLowValue')}"  id="cbxUbicacionInmueble" dataProvider="{selectubicacion}" creationComplete="cbxUbicacionInmueble_creationCompleteHandler(event)" labelField="rvMeaning"  enabled="true" width="100%" tabIndex="197"/>
+						</mx:FormItem>
+					</mx:VBox>
+					<mx:VBox width="50%">
+						<mx:FormItem label="Número Edificios" width="100%" labelWidth="200">
+							<s:TextInput id="numeroEdificiosTextInput" text="{informacionConstruccionVO.numeroEdificios}" restrict="0-9" maxChars="2" enabled="true" width="100%" tabIndex="198"/>
+						</mx:FormItem>
+						<mx:FormItem label="Unidad Por Piso" width="100%" labelWidth="200">
+							<s:TextInput id="unidadPorPisoTextInput" text="{informacionConstruccionVO.unidadPorPiso}" restrict="0-9" maxChars="2" enabled="true" width="100%" tabIndex="199"/>
+						</mx:FormItem>
+						<mx:FormItem label="Total Unidades" width="100%" labelWidth="200">
+							<s:TextInput id="totalUnidadesTextInput" text="{informacionConstruccionVO.totalUnidades}" restrict="0-9" maxChars="3" enabled="true" width="100%" tabIndex="200" focusOut="totalUnidadesTextInput_focusOutHandler(event)"/>
+						</mx:FormItem>
+					</mx:VBox>
+					
+				</s:Group>
+			</s:Scroller>
+		</s:NavigatorContent>
+		<s:NavigatorContent label="Dotación Comunal" width="100%" height="100%" id="nvcDotacionComunal" tabIndex="201">
+			<s:Scroller width="100%" height="100%">
+				<s:Group width="100%" >
+					<s:layout>
+						<s:VerticalLayout>
+							
+						</s:VerticalLayout>
+					</s:layout>
+					
+					
+					<s:Group width="100%" >
+						<s:layout>
+							<s:HorizontalLayout>
+								
+							</s:HorizontalLayout>
+						</s:layout>
+						<s:Label width="110"  text="Porteria"/>
+						<s:CheckBox id="chkPorteria" selected="{Utilidad.isTrue(informacionConstruccionVO.porteria)}" enabled="true" tabIndex="202"/>
+						<s:Label width="110"  text="Piscina"/>
+						<s:CheckBox id="piscinaTextInput" selected="{Utilidad.isTrue(informacionConstruccionVO.piscina)}" enabled="true" tabIndex="206"/>
+						<s:Label width="110"  text="Garaje Visitante"/>
+						<s:CheckBox id="garajeVisitanteTextInput" selected="{Utilidad.isTrue(informacionConstruccionVO.garajeVisitante)}" enabled="true" tabIndex="210"/>
+						<s:Label width="110"  text="Bomba Eyectora"/>
+						<s:CheckBox id="bombaEyectoraTextInput" selected="{Utilidad.isTrue(informacionConstruccionVO.bombaEyectora)}" enabled="true" tabIndex="214"/>
+						<s:Label width="110"  text="Zonas Verdes"/>
+						<s:CheckBox id="zonasVerdesTextInput2" selected="{Utilidad.isTrue(informacionConstruccionVO.zonasVerdes)}" enabled="true" tabIndex="218"/>
+					</s:Group>
+					<s:Group width="100%" >
+						<s:layout>
+							<s:HorizontalLayout>
+								
+							</s:HorizontalLayout>
+						</s:layout>
+						<s:Label width="110"  text="Citófono"/>
+						<s:CheckBox id="chkCitofono" selected="{Utilidad.isTrue(informacionConstruccionVO.citofono)}" enabled="true" tabIndex="203"/>	
+						<s:Label width="110"  text="Tanque Agua"/>
+						<s:CheckBox id="tanqueAguaTextInput" selected="{Utilidad.isTrue(informacionConstruccionVO.tanqueAgua)}" enabled="true" tabIndex="207"/>
+						<s:Label width="110"  text="Juego Niños"/>
+						<s:CheckBox id="juegoNinosTextInput" selected="{Utilidad.isTrue(informacionConstruccionVO.juegoNinos)}" enabled="true" tabIndex="211"/>
+						<s:Label width="110"  text="Aire Acondicionado"/>
+						<s:CheckBox id="aireAcondicionadoTextInput" selected="{Utilidad.isTrue(informacionConstruccionVO.aireAcondicionado)}" enabled="true" tabIndex="215"/>
+						<s:Label width="110"  text="Gimnasio"/>
+						<s:CheckBox id="gimnasioTextInput" selected="{Utilidad.isTrue(informacionConstruccionVO.gimnasio)}" enabled="true" tabIndex="219"/>
+					</s:Group>
+					<s:Group width="100%" >
+						<s:layout>
+							<s:HorizontalLayout>
+								
+							</s:HorizontalLayout>
+						</s:layout>
+						<s:Label width="110"  text="Bicicletero"/>
+						<s:CheckBox id="bicicleteroTextInput" selected="{Utilidad.isTrue(informacionConstruccionVO.bicicletero)}" enabled="true" tabIndex="204"/>
+						<s:Label width="110"  text="Club House"/>
+						<s:CheckBox id="clubHouseTextInput" selected="{Utilidad.isTrue(informacionConstruccionVO.clubHouse)}" enabled="true" tabIndex="208"/>
+						<s:Label width="110"  text="Cancha Multiple"/>
+						<s:CheckBox id="canchaMultipleTextInput" selected="{Utilidad.isTrue(informacionConstruccionVO.canchaMultiple)}" enabled="true" tabIndex="212"/>
+						<s:Label width="110"  text="Squash"/>
+						<s:CheckBox id="squashTextInput" selected="{Utilidad.isTrue(informacionConstruccionVO.squash)}" enabled="true" tabIndex="216"/>
+						<s:Label width="110"  text="Golfito"/>
+						<s:CheckBox id="golfitoTextInput" selected="{Utilidad.isTrue(informacionConstruccionVO.golfito)}" enabled="true" tabIndex="220"/>
+					</s:Group>
+					<s:Group width="100%" >
+						<s:layout>
+							<s:HorizontalLayout>
+								
+							</s:HorizontalLayout>
+						</s:layout>
+						<s:Label width="110"  text="Salón Comunal"/>
+						<s:CheckBox id="salonComunalTextInput" selected="{Utilidad.isTrue(informacionConstruccionVO.salonComunal)}" enabled="true" tabIndex="205"/>
+						<s:Label width="110"  text="Planta Eléctrica"/>
+						<s:CheckBox id="plantaTextInput" selected="{Utilidad.isTrue(informacionConstruccionVO.planta)}" enabled="true" tabIndex="209"/>
+						<s:Label width="110"  text="Shut Basuras"/>
+						<s:CheckBox id="shutBasurasTextInput" selected="{Utilidad.isTrue(informacionConstruccionVO.shutBasuras)}" enabled="true" tabIndex="213"/>
+						<s:Label width="110"  text="Presión"/>
+						<s:CheckBox id="presionTextInput" selected="{Utilidad.isTrue(informacionConstruccionVO.presion)}" enabled="true" tabIndex="217"/>
+						<s:Label text="Ascensor" width="110"/>
+						<s:CheckBox id="ascensorTextInput" selected="{Utilidad.isTrue(informacionConstruccionVO.ascensor)}" click="ascensorTextInput_clickHandler(event)" enabled="true" tabIndex="221"/>
+					</s:Group>
+					<s:Group width="100%" >
+						<s:layout>
+							<s:HorizontalLayout>
+								
+							</s:HorizontalLayout>
+						</s:layout>
+						<s:Label text=""  width="570"/>
+						<s:Label text="Ascensores" width="100" />
+						<s:TextInput id="numeroAscensoresTextInput" text="{informacionConstruccionVO.numeroAscensores}" width="30" enabled="false" maxChars="2" tabIndex="222"/>
+					</s:Group>
+					<s:Group width="100%" >
+						<s:layout>
+							<s:HorizontalLayout>
+								
+							</s:HorizontalLayout>
+						</s:layout>
+						<mx:FormItem label="Otros" width="50%">
+							<s:TextInput id="otrosDotacionTextInput" text="{informacionConstruccionVO.otrosDotacion}" width="320" restrict="{Utilidad.restrict_}" maxChars="30" enabled="true" tabIndex="223"/>
+						</mx:FormItem>
+						<mx:FormItem width="50%" >
+							<s:TextInput id="otrosDotacion2TextInput" text="{informacionConstruccionVO.otrosDotacion2}" width="320" restrict="{Utilidad.restrict_}" maxChars="30" enabled="true" tabIndex="224" focusOut="otrosDotacion2TextInput_focusOutHandler(event)"/>
+						</mx:FormItem>
+					</s:Group>
+					
+				</s:Group>
+			</s:Scroller>
+		</s:NavigatorContent>
+		
+	</mx:TabNavigator>
+	
+	<mx:HBox width="100%" height="20">
+		<mx:FormItem width="50%" horizontalAlign="left" >
+			<s:Button label="Anterior" visible="false" id="btAnterior" click="button2_clickHandler(event)"> </s:Button>	
+		</mx:FormItem>
+		<mx:FormItem width="50%" horizontalAlign="right">
+			<s:Button label="Siguiente" id="bnSiguiente" click="button1_clickHandler(event)"> </s:Button>	
+		</mx:FormItem>
+	</mx:HBox>
+		
+</s:Group>

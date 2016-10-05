@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Module xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		   xmlns:s="library://ns.adobe.com/flex/spark" 
+		   xmlns:mx="library://ns.adobe.com/flex/mx"
+		   xmlns:file="com.segurosbolivar.avaluos.modulos.*"
+		   implements="modulos.IModule"
+		   layout="absolute" width="772" height="228" xmlns:services="services.*" initialize="module1_initializeHandler(event)">
+	<fx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			import mx.events.FlexEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			import valueObjects.Archivo;
+			import valueObjects.Usuario;
+			import permisos.Permiso;
+			
+			[Bindable]
+			var myListaPermisos:Permiso=null;
+			
+			public function setTexto(t:String):void
+			{
+				null;
+			}
+			
+			public function setPermisos(listaPermisos:Permiso):void
+			{
+				myListaPermisos = listaPermisos;
+			}	
+			
+			public function getPermisos():Permiso
+			{
+				return myListaPermisos;
+			}		
+			
+			
+			
+			public function ejecutar():void
+			{
+				null;
+			}
+			public function adicionar():void
+			{
+				null;
+			}
+			public function consultar():void
+			{
+				null;
+			}
+			public function imprimir():void
+			{
+				null;
+			}
+			public function editar():void
+			{
+				null;
+			}
+			public function eliminar():void
+			{
+				null;
+			}							
+			 
+			public var nombreArchivo:String;
+			
+			protected function btnDescargar_clickHandler(event:MouseEvent):void
+			{
+				var padre:DisplayObjectContainer = pnlDescarga.parent;
+				padre.removeChild(pnlDescarga);
+				padre.addChild(pnlDescarga);
+				if(nombreArchivo == null) {
+					Alert.show("No hay Formatos almacenados, debe cargar un formato");
+				}
+				else {
+					fileDownload.startDownload(nombreArchivo);
+				}
+				
+			}
+			
+
+			protected function descargarArchivoResult_resultHandler(event:ResultEvent):void
+			{
+				nombreArchivo = descargarArchivoResult.lastResult;
+				if(nombreArchivo == null) {
+					Alert.show("No hay Formatos almacenados, debe cargar un formato");
+				}
+			}
+
+
+			protected function panel1_creationCompleteHandler(event:FlexEvent):void
+			{
+				
+				cargarArchivo();
+				
+			}
+			
+			public function cargarArchivo():void
+			{
+				descargarArchivoResult.token = archivoService.descargarArchivo();
+				nombreArchivo = descargarArchivoResult.lastResult;
+			}
+
+
+			protected function startUpload_clickHandler(event:MouseEvent):void
+			{
+				fileUpload.startUpload();				
+			}
+
+
+			protected function button1_clickHandler(event:MouseEvent):void
+			{
+				cargarArchivo();
+			}
+
+
+			protected function module1_initializeHandler(event:FlexEvent):void
+			{
+				pnlUpload.visible = false; 
+				var usuario:Usuario = parentApplication.getUsuarioActual();
+				var codigoPerfil:String = usuario.codigoPerfil;
+				if(codigoPerfil == "PGBADMINIST01"){
+					pnlUpload.visible = true;
+				}
+			}
+
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		
+		<s:CallResponder id="descargarArchivoResult" result="descargarArchivoResult_resultHandler(event)"/>
+		<services:ArchivoService id="archivoService" fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)" showBusyCursor="true" />
+	</fx:Declarations>
+	<fx:Style source="assets/css/AvaluosBolivar.css"/>
+	<fx:Style source="assets/css/AvaluosBolivarPanel.css"/>
+	
+	<file:FileUpload id="fileUpload" creationComplete="fileUpload.init(uploadProgress, cancelUpload,this);"/>
+	<file:FileDownload id="fileDownload" creationComplete="fileDownload.init(downloadProgress, cancelDownload);"  />
+	<mx:HBox>
+	</mx:HBox>
+	<mx:Panel id="pnlUpload" title="Cargar Archivo" paddingTop="10" paddingBottom="10" paddingLeft="10" paddingRight="10" x="156" y="23" height="176" width="255" dropShadowVisible="false">
+		<mx:ProgressBar id="uploadProgress" label="" mode="manual" />
+		<mx:ControlBar horizontalAlign="right">
+			<mx:Button id="startUpload" label="Cargar" click="startUpload_clickHandler(event)"/>
+			<mx:Button id="cancelUpload" label="Cancelar" click="fileUpload.cancelUpload();" enabled="false" />
+		</mx:ControlBar>
+	</mx:Panel>
+	<mx:Panel id="pnlDescarga" title="Descargar Archivo" paddingTop="10" paddingBottom="10" paddingLeft="10" paddingRight="10" x="431" y="23" width="263" height="175" creationComplete="panel1_creationCompleteHandler(event)" dropShadowVisible="false">
+		<mx:ProgressBar id="downloadProgress" label="" mode="manual" />
+		<mx:ControlBar horizontalAlign="right">
+			<s:Button label="Descargar" id="btnDescargar" click="btnDescargar_clickHandler(event)"  />
+			<mx:Button id="cancelDownload" label="Cancelar" click="fileDownload.cancelDownload();" enabled="false" />
+		</mx:ControlBar>
+	</mx:Panel>
+</mx:Module>

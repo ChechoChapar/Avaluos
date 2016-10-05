@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" height="470" xmlns:services="services.*"
+			    enabled="true" borderVisible="true" focusEnabled="true">
+	<fx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			import mx.events.FlexEvent;
+			
+			protected function dataGrid_creationCompleteHandler(event:FlexEvent):void
+			{
+				//buscarLogCargueResult.token = carguePlano.buscarLogCargue(/*Enter value(s) for */ arg0);
+				buscarLogCargueResult.token = carguePlano.buscarLogCargue("88");
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<s:CallResponder id="buscarLogCargueResult"/>
+		<services:CarguePlano id="carguePlano" fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)" showBusyCursor="true"/>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Style source="assets/css/AvaluosBolivar.css"/>
+	<fx:Style source="assets/css/AvaluosBolivarPanel.css"/>
+
+	<mx:DataGrid verticalScrollPolicy="auto" wordWrap="true"  showScrollTips="true" useRollOver="true" id="dataGrid" resizableColumns="true" creationComplete="dataGrid_creationCompleteHandler(event)" dataProvider="{buscarLogCargueResult.lastResult}" left="15" right="20" top="15" horizontalCenter="0" variableRowHeight="false" enabled="true" bottom="15">
+		<mx:columns>
+			<mx:DataGridColumn headerText="consecutivo" dataField="consecutivoTmp" width="80" visible="false"/>
+			<mx:DataGridColumn headerText="# linea" dataField="lineaPlano" resizable="true" wordWrap="false" width="60"/>
+			<mx:DataGridColumn headerText="# Ref" dataField="numeroRefCargue" wordWrap="false" width="40"/>
+			<mx:DataGridColumn headerText="Estado" dataField="estadoCargue" width="90"/>
+			<mx:DataGridColumn headerText="usuarioTransaccion" dataField="usuarioTransaccion" visible="false"/>
+			<mx:DataGridColumn headerText="tipo" dataField="tipoCargue" width="80"/>
+			<mx:DataGridColumn headerText="Fecha" itemRenderer="mx.controls.DateField" dataField="fechaTransaccion" width="130"/>
+			<mx:DataGridColumn headerText="Linea" dataField="contenidoLineaPlano" wordWrap="false" itemRenderer="mx.controls.TextArea" resizable="true" width="250"/>
+			<mx:DataGridColumn headerText="Mensaje" dataField="mensajeError" resizable="true" wordWrap="false" itemRenderer="mx.controls.TextArea" width="300"/>
+			<!--<mx:DataGridColumn  headerText="msg"  dataField="mensajeError" >
+				<mx:itemRenderer>
+					<fx:Component>
+						<mx:TextArea text="{parentDocument.ChildResult}" x="918" y="57">
+							<fx:Script>
+								<![CDATA[
+									import org.flexunit.runners.ParentRunner;
+									import org.flexunit.token.ChildResult;
+								]]>
+							</fx:Script>
+						</mx:TextArea>
+
+					</fx:Component>												
+				</mx:itemRenderer>
+			</mx:DataGridColumn>-->
+						
+		</mx:columns>
+	</mx:DataGrid>
+	
+</s:TitleWindow>

@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="1.0"
+	xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd">
+	<persistence-unit name="avaluosJpa" transaction-type="RESOURCE_LOCAL">
+		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+		<class>com.segurosbolivar.avaluos.entities.VResumenCargue</class>
+		<class>com.segurosbolivar.avaluos.entities.UsuarioAvaluo</class>
+		<class>com.segurosbolivar.avaluos.entities.PgbCargueTmp</class>
+		<class>com.segurosbolivar.avaluos.entities.PgbArchivosTmp</class>
+		<class>com.segurosbolivar.avaluos.entities.PeritosEmpresa</class>
+		<class>com.segurosbolivar.avaluos.entities.Observaciones</class>
+		<class>com.segurosbolivar.avaluos.entities.MaestroCarguePK</class>
+		<class>com.segurosbolivar.avaluos.entities.MaestroCargue</class>
+		<class>com.segurosbolivar.avaluos.entities.LogsGeneraArchivo</class>
+		<class>com.segurosbolivar.avaluos.entities.LiquidacionAvaluoTotal</class>
+		<class>com.segurosbolivar.avaluos.entities.LiquidacionAvaluo</class>
+		<class>com.segurosbolivar.avaluos.entities.InformacionInmueble</class>
+		<class>com.segurosbolivar.avaluos.entities.InformacionConstruccion</class>
+		<class>com.segurosbolivar.avaluos.entities.InformacionBarrio</class>
+		<class>com.segurosbolivar.avaluos.entities.HorasCorteArchivo</class>
+		<class>com.segurosbolivar.avaluos.entities.HistoricoAvaluo</class>
+		<class>com.segurosbolivar.avaluos.entities.FormatoAvaluo</class>
+		<class>com.segurosbolivar.avaluos.entities.EstructuraArchivoPlano</class>
+		<class>com.segurosbolivar.avaluos.entities.ErroresCarguePK</class>
+		<class>com.segurosbolivar.avaluos.entities.ErroresCargue</class>
+		<class>com.segurosbolivar.avaluos.entities.EmpresasAvaluos</class>
+		<class>com.segurosbolivar.avaluos.entities.DominiosAux</class>
+		<class>com.segurosbolivar.avaluos.entities.Dominios</class>
+		<class>com.segurosbolivar.avaluos.entities.Departamento</class>
+		<class>com.segurosbolivar.avaluos.entities.CondicionesSalubridad</class>
+		<class>com.segurosbolivar.avaluos.entities.ComportamientoOfertaDemanda</class>
+		<class>com.segurosbolivar.avaluos.entities.Ciudad</class>
+		<class>com.segurosbolivar.avaluos.entities.Calendario</class>
+		<class>com.segurosbolivar.avaluos.entities.Avaluo</class>
+		<class>com.segurosbolivar.avaluos.entities.Archivo</class>
+		<class>com.segurosbolivar.avaluos.entities.AnexoFotografico</class>
+		<class>com.segurosbolivar.avaluos.entities.Alarma</class>
+		<class>com.segurosbolivar.avaluos.entities.ComplementosExcel</class>
+		<class>com.segurosbolivar.avaluos.entities.PgbBloqLogsGeneraArchivo</class>
+		<class>com.segurosbolivar.avaluos.entities.HistoricoLogsGeneraArch</class>
+		<properties>
+		
+			<property name="javax.persistence.jdbc.url" value="jdbc:oracle:thin:@10.1.0.197:1521:test"/>
+			<property name="javax.persistence.jdbc.user" value="avaluos"/>			
+			<property name="javax.persistence.jdbc.password" value="avaluos"/>
+			
+			<property name="javax.persistence.logging.level" value="FINEST" />
+			<!--<property name="javax.persistence.target-database" value="Oracle10g" />-->
+			<property name="eclipselink.target-database" value="Oracle"/>	
+			<property name="javax.persistence.session-name" value="avaluosSession"/>
+			<property name="javax.persistence.jdbc.driver" value="oracle.jdbc.OracleDriver" />
+			<property name="javax.persistence.target-server" value="WebLogic_10" />
+			<property name="javax.persistence.cache.type.EmpresasAvaluos" value="NONE" />
+			<property name="eclipselink.cache.type.VResumenCargue" value="NONE" />
+			<property name="eclipselink.cache.type.PgbCargueTmp" value="NONE" />
+			<property name="eclipselink.cache.type.LogsGeneraArchivo" value="NONE"/>
+			<property name="javax.persistence.cache.type.HorasCorteArchivo" value="NONE"/>
+			<property name="eclipselink.logging.timestamp" value="true"/>
+			<property name="eclipselink.logging.thread" value="true"/>
+			<property name="eclipselink.logging.session" value="true"/>
+			<property name="eclipselink.logging.exceptions" value="true"/>
+			<!--<property name="eclipselink.target-database" value="Oracle10g"/>-->
+		</properties>
+	</persistence-unit>
+</persistence>

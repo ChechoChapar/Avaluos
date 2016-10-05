@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report5c11_subreport5" language="groovy" pageWidth="752" pageHeight="547" orientation="Landscape" columnWidth="752" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" scriptletClass="reportes.ScripletJpaReporteAvaluos" whenResourceMissingType="Empty">
+	<property name="ireport.zoom" value="2.5937424601000036"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<queryString language="ejbql">
+		<![CDATA[select l from LiquidacionAvaluo l]]>
+	</queryString>
+	<field name="areaLiquidacion" class="java.math.BigDecimal"/>
+	<field name="avaluo" class="com.segurosbolivar.avaluos.entities.Avaluo"/>
+	<field name="class" class="java.lang.Class"/>
+	<field name="consecutivo" class="java.math.BigDecimal"/>
+	<field name="descripcionDependencia" class="java.lang.String"/>
+	<field name="descripcionLiquidacion" class="java.math.BigDecimal"/>
+	<field name="fechaCreacion" class="java.util.Date"/>
+	<field name="fechaTransaccion" class="java.util.Date"/>
+	<field name="idLiqavaluo" class="java.math.BigDecimal"/>
+	<field name="usuarioCreacion" class="java.lang.String"/>
+	<field name="usuarioTransaccion" class="java.lang.String"/>
+	<field name="valor" class="java.math.BigDecimal"/>
+	<field name="valorTotal" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="9" splitType="Stretch">
+			<staticText>
+				<reportElement x="4" y="0" width="74" height="9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[LIQUIDACION AVALUO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="206" y="0" width="128" height="9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[AREA (M2)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="334" y="0" width="128" height="9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[VALOR UNITARIO (m2)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="462" y="0" width="105" height="9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[VALOR TOTAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="78" y="0" width="128" height="9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DESCRIPCION DEPENDENCIA]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="8" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="5" y="0" width="73" height="8"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{descripcionLiquidacion}==null?"":$P{REPORT_SCRIPTLET}.retornarDominioReporte("DESCLIQUIDACION",$F{descripcionLiquidacion}.toString(),false)]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement x="206" y="0" width="128" height="8"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{areaLiquidacion}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$ ###,###,###,##0.00" isBlankWhenNull="true">
+				<reportElement x="334" y="0" width="128" height="8"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valor}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="78" y="0" width="128" height="8"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{descripcionDependencia}]]></textFieldExpression>
+			</textField>
+			<textField pattern="$ ###,###,###,##0.00" isBlankWhenNull="true">
+				<reportElement x="462" y="0" width="105" height="8"/>
+				<box rightPadding="2">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="6" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valorTotal}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." default="buildwar" name="PlantillaSeguridadWeb-WAR">
+	
+   <target description="Build jar" name="buildJar">  	
+	<mkdir dir="${basedir}/dist"/>
+    <copy todir="${basedir}/dist">
+        <fileset dir="${basedir}"/>
+    </copy>
+	<mkdir dir="${basedir}/dist/WebContent/WEB-INF/classes"/>
+    <copy todir="${basedir}/dist/WebContent/WEB-INF/classes">
+        <fileset dir="${basedir}/src"/>
+        <fileset file="${basedir}/.project"/>
+    	<fileset file="${basedir}/build1.xml"/>
+    </copy>		   	
+	<mkdir dir="${basedir}/dist/WebContent/WEB-INF/classes/.settings"/>
+    <copy todir="${basedir}/dist/WebContent/WEB-INF/classes/.settings">
+        <fileset dir="${basedir}/.settings"/>
+    </copy>
+
+   	<jar basedir="${basedir}/dist/WebContent/WEB-INF/classes/" destfile="PlantillaSeguridadWebJAR.jar">
+    	<fileset dir="${basedir}/src"/>   	
+    </jar>
+   	<delete dir="${basedir}/dist"/>
+   </target>
+	
+	<target name="buildwar" >
+		<mkdir dir="${basedir}/dist"/>
+        <copy todir="${basedir}/dist">
+            <fileset dir="${basedir}"/>
+        </copy>
+		<mkdir dir="${basedir}/dist/WebContent/.settings"/>
+        <copy todir="${basedir}/dist/WebContent/.settings">
+            <fileset dir="${basedir}/.settings"/>
+        </copy>
+        <copy todir="${basedir}/dist/WebContent">
+            <fileset file="${basedir}/.project"/>
+        </copy>
+		<mkdir dir="${basedir}/dist/WebContent/WEB-INF/classes"/>
+        <copy todir="${basedir}/dist/WebContent/WEB-INF/classes">
+            <fileset dir="${basedir}/src"/>
+        </copy>		
+        <copy todir="${basedir}/dist/WEB-INF/lib">
+            <fileset dir="${basedir}/../PlantillaSeguridadJPA/build/lib"/>
+        </copy>
+	    <war basedir="${basedir}/dist/WebContent" destfile="PlantillaSeguridad.war"
+	      webxml="${basedir}/WebContent/WEB-INF/web.xml" >
+	      	<include name="modulos/**"/>
+	      	<include name="assets/**"/>
+	      	<include name="images/**"/>
+	      	<include name="WEB-INF/flex/remoting-config.xml"/>
+	      	<include name="WEB-INF/classes/**"/>		
+		    <!--<include name="WEB-INF/**"/>-->	      		
+	      	<!--<exclude name="WEB-INF/lib/**"/>-->
+	      	<include name="AC_OETags.js"/>
+	      	<include name="CustomModuleLoader.swf"/>
+	      	<include name="global.css"/>
+	      	<include name="login.html"/>
+	      	<include name="login.jsp"/>
+	      	<include name="main.css"/>
+	      	<include name="MenuPrincipal.html"/>
+	      	<include name="MenuPrincipal.jsp"/>
+	      	<include name="MenuPrincipal.swf"/>
+	      	<include name="sparkskins_4.0.0.14159.swf"/>
+	      	<include name="spark_4.0.0.14159.swf"/>
+	      	<include name="swfobject.js"/>
+	      	<include name="tema.css.css"/>
+	      	<include name="textLayout_1.0.0.595.swf"/>
+	    </war>
+		<delete dir="${basedir}/dist"/>
+	</target>
+</project>

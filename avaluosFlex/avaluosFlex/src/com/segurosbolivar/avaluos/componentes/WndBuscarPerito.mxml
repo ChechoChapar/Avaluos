@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="library://ns.adobe.com/flex/mx"
+				xmlns:fx="http://ns.adobe.com/mxml/2009"
+				width="564" 
+				height="348"  close="title_close();" 
+				xmlns:services="services.*" title="Buscar Perito">
+	<fx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			import mx.events.FlexEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.ResultEvent;
+			
+			import valueObjects.EmpresasAvaluos;
+			
+			private var documentoPerito:String;
+			
+			public function title_close():void{
+				PopUpManager.removePopUp(this);
+			}
+			
+			protected function dtgPeritos_creationCompleteHandler(event:FlexEvent):void
+			{
+				//getEmpresaPorDescEmpresaResult.token = empresasAvaluosService.getEmpresaPorDescEmpresa(/*Enter value(s) for */ arg0);
+			}
+			
+			protected function btnBuscarPerito_clickHandler(event:MouseEvent):void
+			{
+				getEmpresaPorDescEmpresaResult.token = empresasAvaluosService.getEmpresaPorDescEmpresa(txtNombrePerito.text);
+			}
+			
+			protected function getEmpresaPorDescEmpresaResult_resultHandler(event:ResultEvent):void
+			{
+				if((getEmpresaPorDescEmpresaResult.lastResult == null) || (getEmpresaPorDescEmpresaResult.lastResult.length == 0)) {
+					dtgPeritos.dataProvider.removeAll();
+					Alert.show("La consulta no arroja resultados, intente otros criterios de búsqueda");
+				}
+				dtgPeritos.invalidateDisplayList();
+			}
+			
+			protected function btnSeleccionarPerito_clickHandler(event:MouseEvent):void
+			{
+					
+				PopUpManager.removePopUp(this);
+				
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<mx:CallResponder id="getEmpresaPorDescEmpresaResult" result="getEmpresaPorDescEmpresaResult_resultHandler(event)"/>
+		<services:EmpresasAvaluosService id="empresasAvaluosService" fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)" showBusyCursor="true"/>
+	</fx:Declarations>	
+
+	<mx:HBox>
+		<mx:Label text="Nombre del Perito:"/>
+		<mx:TextInput width="340" id="txtNombrePerito"/>
+		<mx:Button label="Buscar" id="btnBuscarPerito" click="btnBuscarPerito_clickHandler(event)"/>
+	</mx:HBox>
+	<mx:DataGrid id="dtgPeritos" dataProvider="{getEmpresaPorDescEmpresaResult.lastResult}" creationComplete="dtgPeritos_creationCompleteHandler(event)"  width="533" height="238" verticalAlign="top" textAlign="center" color="#000000">
+		<mx:columns>
+			<mx:DataGridColumn headerText="Tipo Documento" dataField="tipoDocumento" resizable="true"/>
+			<mx:DataGridColumn headerText="Número Documento" dataField="numeroDocumento" resizable="true"/>
+			<mx:DataGridColumn headerText="Nombre Empresa" dataField="descEmpresa" resizable="true"/>
+		</mx:columns>
+	</mx:DataGrid>
+	<mx:HBox>
+		<mx:Button label="Seleccionar" id="btnSeleccionarPerito" click="btnSeleccionarPerito_clickHandler(event)"/>
+		<mx:Button label="Cancelar" click="PopUpManager.removePopUp(this);"/>
+	</mx:HBox>
+</mx:TitleWindow>
+

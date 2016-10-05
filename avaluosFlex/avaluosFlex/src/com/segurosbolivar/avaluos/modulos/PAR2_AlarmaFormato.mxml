@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--- 
+Modulo para la parametrización de Alarmas
+@implements modulos.IModule
+@see mx.modules.Module
+-->
+<mx:Module xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		   xmlns:s="library://ns.adobe.com/flex/spark" 
+		   xmlns:mx="library://ns.adobe.com/flex/mx" layout="absolute" width="698" height="300" xmlns:services="services.*" xmlns:componentes="com.segurosbolivar.avaluos.componentes.*"
+		   implements="modulos.IModule"
+		   initialize="module1_initializeHandler(event)">
+    <fx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			import mx.events.FlexEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			import permisos.Permiso;
+			
+			import valueObjects.Alarma;
+			import valueObjects.Usuario;
+			
+			[Bindable]
+			public var myUsuario:Usuario;	
+			
+			[Bindable]
+			public var alm:Alarma = new Alarma();
+			
+			[Bindable]
+			public var alarmaSel:Alarma = new Alarma();
+			
+			[Bindable]
+			public var mensaje:String = new String();
+			
+			[Bindable]
+			var myListaPermisos:Permiso;
+			
+			public function setTexto(t:String):void
+			{
+			}
+			
+			public function setPermisos(listaPermisos:Permiso):void
+			{
+				myListaPermisos = listaPermisos;
+			}	
+			
+			public function getPermisos():Permiso
+			{
+				return myListaPermisos;
+			}
+			
+			public function ejecutar():void
+			{
+			}
+			
+			/**
+			 * Envía los parámetros y guarda el objeto de Alarma
+			 **/ 
+			public function adicionar():void
+			{   var fechaActual:Date = new Date();
+				alm.descripcionAlerta = textoAlarma.text;
+				alm.numDias = numDias.text;
+				alm.fechaCreacion = fechaActual;
+				alm.usuarioCreacion = myUsuario.codigoUsuario;
+				alm.fechaTransaccion = fechaActual;
+				alm.usuarioTransaccion =  myUsuario.codigoUsuario;
+				if(textoAlarma.text != '' && numDias.text != '')
+				{	
+					guardaAlarmaResult.token = alarmaService.guardaAlarma(alm);
+					getMensajeTransaccionResult.token = alarmaService.getMensajeTransaccion();
+					consultaAlarmasResult.token = alarmaService.consultaAlarmas();
+					dataGrid.dataProvider = consultaAlarmasResult.lastResult;
+				}
+				else
+				{ Alert.show("No se puede guardar una alarma si no contiene el texyo y el número de días");
+				}	
+				
+			}
+			
+			public function consultar():void
+			{
+			}
+			
+			public function imprimir():void
+			{
+			}
+			
+			public function editar():void
+			{			  	
+			}
+			
+			public function eliminar():void
+			{
+			}
+
+			protected function module1_initializeHandler(event:FlexEvent):void
+			{ myUsuario = parentApplication.getUsuarioActual();
+			}
+
+			
+			protected function getMensajeTransaccion():void
+			{
+				getMensajeTransaccionResult.token = alarmaService.getMensajeTransaccion();
+			}
+			
+
+			/**
+			 * Retorna el resultado de la transacción
+			 **/ 
+			protected function getMensajeTransaccionResult_resultHandler(event:ResultEvent):void
+			{
+				mensaje = getMensajeTransaccionResult.lastResult as String;
+				if(mensaje!=null)
+				{
+					Alert.show(mensaje);
+				}
+			}
+
+
+			protected function dataGrid_creationCompleteHandler(event:FlexEvent):void
+			{
+				consultaAlarmasResult.token = alarmaService.consultaAlarmas();
+			}
+			
+
+			/**
+			 * Copia el texto de la alarma seleccionada para editar
+			 **/ 
+			protected function dataGrid_clickHandler(event:MouseEvent):void
+			{  if(dataGrid.selectedItem != null)
+			   { alarmaSel = dataGrid.selectedItem as Alarma;
+			     textoAlarma.text = alarmaSel.descripcionAlerta;
+			     numDias.text = alarmaSel.numDias;
+			   }	 
+			}
+
+			protected function numDias_keyDownHandler(event:KeyboardEvent):void
+			{ numDias.restrict = "0-9";
+			}
+
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<s:CallResponder id="guardaAlarmaResult"/>
+		<services:AlarmaService id="alarmaService" fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)" showBusyCursor="true"/>
+		<s:CallResponder id="getMensajeTransaccionResult" result="getMensajeTransaccionResult_resultHandler(event)"/>
+		<s:CallResponder id="consultaAlarmasResult"/>
+		<s:ArrayCollection id="alarmas"/>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<mx:NumberValidator source="{numDias}" property="text" domain="int" allowNegative="false"/>
+	</fx:Declarations>
+	<fx:Style source="assets/css/AvaluosBolivar.css"/>
+	<fx:Style source="assets/css/AvaluosBolivarPanel.css"/>
+
+	<s:VGroup width="100%" height="100%" y="1" x="1">
+		<s:VGroup width="100%" height="40%">
+			<s:Label text="Ingrese el texto de la Alarma:"/>
+			<s:TextArea width="438" height="30%" id="textoAlarma" maxChars="250"/>
+			<s:Label text="Ingrese los días de Vigencia de la alarma:"/>
+			<s:TextInput id="numDias" keyDown="numDias_keyDownHandler(event)" restrict="0-9" maxChars="3"/>
+		</s:VGroup>
+		<mx:DataGrid id="dataGrid" creationComplete="dataGrid_creationCompleteHandler(event)" dataProvider="{consultaAlarmasResult.lastResult}" click="dataGrid_clickHandler(event)" width="100%" height="60%">
+			<mx:columns>
+				<mx:DataGridColumn headerText="Texto Alerta" dataField="descripcionAlerta"/>
+				<mx:DataGridColumn headerText="Días de Vigencia" dataField="numDias"/>
+				<mx:DataGridColumn headerText="Usuario Creacion" dataField="usuarioCreacion"/>
+				<mx:DataGridColumn headerText="Fecha Creacion" dataField="fechaCreacion"/>
+				<mx:DataGridColumn headerText="Fecha Transaccion" dataField="fechaTransaccion"/>
+				<mx:DataGridColumn headerText="Usuario Transaccion" dataField="usuarioTransaccion"/>
+			</mx:columns>
+		</mx:DataGrid>
+	</s:VGroup>
+</mx:Module>

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report5c11_subreport6" language="groovy" pageWidth="752" pageHeight="572" orientation="Landscape" columnWidth="752" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" scriptletClass="reportes.ScripletJpaReporteAvaluos" whenResourceMissingType="Empty">
+	<property name="ireport.zoom" value="4.0"/>
+	<property name="ireport.x" value="553"/>
+	<property name="ireport.y" value="0"/>
+	<queryString language="ejbql">
+		<![CDATA[select t from LiquidacionAvaluoTotal t]]>
+	</queryString>
+	<field name="avaluo" class="com.segurosbolivar.avaluos.entities.Avaluo"/>
+	<field name="avaluoUvr" class="java.math.BigDecimal"/>
+	<field name="calificacion" class="java.math.BigDecimal"/>
+	<field name="class" class="java.lang.Class"/>
+	<field name="fechaCreacion" class="java.util.Date"/>
+	<field name="fechaTransaccion" class="java.util.Date"/>
+	<field name="idLiqavaluoTotal" class="java.math.BigDecimal"/>
+	<field name="totalAvaluo" class="java.math.BigDecimal"/>
+	<field name="usuarioCreacion" class="java.lang.String"/>
+	<field name="usuarioTransaccion" class="java.lang.String"/>
+	<field name="valorAsegurable" class="java.math.BigDecimal"/>
+	<field name="valorUvrDia" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="35" splitType="Stretch">
+			<rectangle>
+				<reportElement stretchType="RelativeToBandHeight" mode="Transparent" x="0" y="2" width="574" height="32"/>
+				<graphicElement>
+					<pen lineWidth="0.5"/>
+				</graphicElement>
+			</rectangle>
+			<textField pattern="$ ###,###,###,##0" isBlankWhenNull="true">
+				<reportElement x="462" y="3" width="105" height="14"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{totalAvaluo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="138" y="4" width="86" height="16"/>
+				<textElement>
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[CALIFICACION]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="348" y="3" width="114" height="15"/>
+				<textElement>
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[VALOR TOTAL AVALUO]]></text>
+			</staticText>
+			<textField pattern="#,##0.00000" isBlankWhenNull="true">
+				<reportElement x="65" y="20" width="89" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valorUvrDia}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.0000" isBlankWhenNull="true">
+				<reportElement x="224" y="21" width="93" height="10"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{avaluoUvr}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="5" y="20" width="60" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[VALOR UVR DEL DIA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="159" y="21" width="65" height="10"/>
+				<textElement>
+					<font size="5"/>
+				</textElement>
+				<text><![CDATA[VALOR AVALUO EN UVR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="348" y="19" width="114" height="15"/>
+				<textElement>
+					<font size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[VALOR ASEGURABLE]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="224" y="5" width="93" height="14"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{calificacion}==null?"":$P{REPORT_SCRIPTLET}.retornarDominioReporte("CALGARANTIA",$F{calificacion}.toString(),false)]]></textFieldExpression>
+			</textField>
+			<textField pattern="$ ###,###,###,##0" isBlankWhenNull="true">
+				<reportElement x="462" y="19" width="105" height="14"/>
+				<box leftPadding="1" rightPadding="1">
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right">
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{valorAsegurable}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

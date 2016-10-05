@@ -1,0 +1,1011 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--- 
+Aplicacion principal:
+Desde alli son cargados los modulos, es mostrado el arbol de opciones, 
+la barra de herramientas para cada modulo, y el usuario actual del sistema
+@implements IMenuPrincipal
+@see spark.components.Application
+-->
+<s:Application 
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:services="services.*"  
+	xmlns:custom="*"
+	xmlns:mod="modulos.IModule" 
+	xmlns:viewContainer="aurora.controls.viewContainer.*"	
+	applicationComplete="application1_applicationCompleteHandler(event)"
+	implements="IMenuPrincipal" xmlns:barra="componentes.barra.*" minHeight="510"  minWidth="974"
+	click="tn_clickHandler(event)"
+	initialize="application1_initializeHandler(event)">
+	<!--<fx:Style source="blue.css" />-->
+	<fx:Script>
+		<![CDATA[
+			import flash.events.*;
+			import flash.external.*;
+			import flash.net.*;
+			
+			import modulos.IModule;
+			
+			import mx.containers.VBox;
+			import mx.controls.*;
+			import mx.controls.Alert;
+			import mx.core.FlexGlobals;
+			import mx.events.*;
+			import mx.events.FlexEvent;
+			import mx.events.StyleEvent;
+			import mx.messaging.messages.IMessage;
+			import mx.modules.Module;
+			import mx.modules.ModuleLoader;
+			import mx.rpc.Fault;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			import mx.styles.StyleManager;
+			import mx.utils.object_proxy;
+			
+			import permisos.Permiso;
+			
+			import spark.components.*;
+			import spark.components.ButtonBar;
+			import spark.components.NavigatorContent;
+			
+			import util.Util;
+			
+			import valueObjects.Usuario;
+			
+			/**
+			 * Variables para almacenar datos como: El suaurio Actual
+			 * El fondo y los permisos actuales
+			*/
+			
+			[Bindable]
+			public var myCedula:String;
+			
+			[Bindable]
+			public var myBanner:String;
+
+			[Bindable]
+			public var myBackground:String;
+			
+			[Bindable]
+			public var myUsuario:Usuario;
+			
+			[Bindable]
+			var permisosActual:Permiso = null;
+
+			public var modeFunction:String;
+			
+			/**
+			 * Variables para almacenar la informacion del arbol de opciones
+			 * el modulo actual cargado
+			 */
+
+			
+			[Bindable]
+			var xml:XML;
+			var mod:CustomModuleLoader;
+			
+			[Bindable]
+			var modulo:String ="";
+			var tituloModulo:String = "";
+			
+			public var numChild:Number = 0;		
+			
+			var alarma:String;
+			
+			
+			private static var newVBoxIngreso:VBox = null;			
+			private static var mlIngreso:CustomModuleLoader = null;
+			
+			private static var newVBoxConsulta:VBox = null;			
+			private static var mlConsulta:CustomModuleLoader = null;
+
+			
+			//Clases y variables utilizadas para invocar servicio de mensajería 
+			//activado/enviado desde 
+			//Java(EnviaMensajeCargue es invocado desde Archivo Service y MultiUploadServlet)
+			//El mensaje es de tipo AsyncMessage
+			import mx.messaging.Consumer;
+			import mx.messaging.Producer;
+			import mx.messaging.messages.AsyncMessage;		
+			
+			[Bindable]
+			var producer:Producer=new Producer();
+			var consumer:Consumer=new Consumer();
+			
+			public function getProducer():Producer
+			{return producer;}	
+			public function getConsumer():Consumer
+			{return consumer;}
+			public function setTextoP(t:String):void
+			{
+				null;
+			}
+			
+			/**
+			 * metodo en el cual se captura el click en el arbol de opciones
+			 * */
+			private function changeEvt(event:Event):void {
+				var theData:String = ""
+				if (event.currentTarget.selectedItem.@data) {
+					theData = " Data: " + event.currentTarget.selectedItem.@data;
+				}
+				var modulo:String = event.currentTarget.selectedItem.@label;
+				var transaccion:String = event.currentTarget.selectedItem.@transaccion;
+														
+				if((modulo != null && modulo != "") && (transaccion != null && transaccion != "")) {					
+					
+					permisosActual = new Permiso();
+					
+					permisosActual.Adiciona=Util.StringBoolean(event.currentTarget.selectedItem.@adiciona);
+					permisosActual.Consulta=Util.StringBoolean(event.currentTarget.selectedItem.@consulta);
+					permisosActual.Edita=Util.StringBoolean(event.currentTarget.selectedItem.@actualiza);
+					permisosActual.Ejecuta=Util.StringBoolean(event.currentTarget.selectedItem.@ejecuta);
+					permisosActual.Elimina=Util.StringBoolean(event.currentTarget.selectedItem.@elimina);
+					permisosActual.Imprime=Util.StringBoolean(event.currentTarget.selectedItem.@imprime);
+					
+					addTab(transaccion,modulo);				
+					
+					init_bar();
+				}
+														
+				arbolMenu.selectedIndex=-1;				
+				
+			}												
+			
+			[Bindable]
+			private var myXml:XML;
+
+			/**
+			 * metodo que se dispara al terminar de pintar el arbol de opciones
+			 * */
+			protected function tree_creationCompleteHandler(event:FlexEvent):void
+			{				
+			}
+			
+			protected function trim( s:String ):String
+			{
+				return s.replace(/^[\s|"]+|[\s|"]+$/gs, '');
+			}
+			
+			/**
+			 * metodo al finalizar la carga de la aplicacion; alli son llamados los servicios
+			 * para cargar el usuario con el parametro de la cedula recibida, buscar el menu para 
+			 * esa cedula y cargar las alertas del sistema
+			 * */
+			protected function application1_initializeHandler(event:FlexEvent):void
+			{
+				myCedula = FlexGlobals.topLevelApplication.parameters.cedula;
+				myCedula=trim(myCedula);
+				if(myCedula!=null && myCedula!="" && myCedula!="null")
+				{	
+				  getDomMenuByCedulaResult.token = menuService.getDomMenuByCedula(myCedula);				
+				  findUsuarioByCedulaResult.token = usuarioService.findUsuarioByCedula(myCedula);				
+				  retornaAlarmaResult.token = alarmaService.retornaAlarma();
+				}
+				else
+				{
+					var alert:Alert = Alert.show("El número de identificación no puede estar vacío");
+					alert.addEventListener( Event.CLOSE, alertCloseHandler );
+				}
+				//Se modifica para incluir llamado a servicios streaming y evitar ser llamado varias veces
+				//El destination MensajeCargueDataPush se encuentra en messaging-config.xml
+				producer.destination="MensajeCargueDataPush";
+				consumer.destination="MensajeCargueDataPush";
+				var msg:AsyncMessage = new AsyncMessage();
+				msg.body = "New";
+				//El evento send llama a invoke en EnviaMensajeCargue.java
+				producer.send(msg);
+				//Aqui el consumer empieza a escuchar mensajes desde Java.
+				consumer.subscribe();								
+			}
+			
+			/**
+			 * metodo que es llamado cuando sucede un error en la llamada a algun servicio
+			 * */
+			protected function genericfaultHandler(event:FaultEvent):void
+			{
+				var alert:Alert = Alert.show("Se presentó un error en el sistema. \nPor favor cierre su navegador e inténtelo nuevamente. \nSi el problema persiste por favor comunicarse con el administrador de la aplicación");
+				alert.addEventListener( Event.CLOSE, alertCloseHandler );
+				/*var exception:Object = event.fault.rootCause;
+				Alert.show("iNICIAN eXCEPCIONES");
+				Alert.show("causa "+exception.cause);
+				Alert.show("MensajeLocalizado "+exception.localizedMessage);
+				Alert.show("Mensaje "+exception.message);
+				Alert.show("causa "+exception.customField);*/
+				
+			}
+			
+			/**
+			 * metodo llamado cuando sucede un error en la llamada al servicio que trae el menu
+			 * */
+			protected function getDomMenuByCedulaResult_faultHandler(event:FaultEvent):void
+			{
+				genericfaultHandler(event);
+			}
+			
+			/**
+			 * cuando se da click en aceptar para el AlertBox que se genera en caso de cualquier error
+			 * el aplicativo es redireccionado a la pagina login.html
+			 * */
+			private function alertCloseHandler( e:Event ):void  				
+			{  
+				//var u:URLRequest = new URLRequest("login.html");
+				var u:URLRequest = new URLRequest("http://www.segurosbolivar.com");
+				navigateToURL(u,"_self");
+				//salirJS();
+			}
+			
+			/**
+			 * Este metodo permite salir sin usar el navigateToURL de flex sino usando un 
+			 * javascript externo a la pelicula  
+			 * */
+			public function salirJS():void {
+				var s:String;
+				if (ExternalInterface.available) {
+					var wrapperFunction:String = "unload";
+					s = ExternalInterface.call(wrapperFunction);
+				} else {
+					s = "No se puede acceder a javascript";
+				}
+				if (ExternalInterface.available) {
+					var wrapperFunction:String = "salir";
+					s = ExternalInterface.call(wrapperFunction);
+				} else {
+					s = "No se puede acceder a javascript";
+				}
+				trace(s); 
+			}
+			
+			/**
+			 * Methodo que se dispara cuando Asincronamente finaliza de llamar al servicio del 
+			 * Menu, el resultado es cargado en la variable myXml
+			 * @deprecated use {@link #getDomMenuByCedulaResult_resultHandler(event)}
+			 */
+			protected function getDomResult_resultHandler(event:ResultEvent):void
+			{   
+				myXml = getDomResult.lastResult as XML;
+			}
+
+			/**
+			 * Methodo que se dispara cuando Asincronamente finaliza de llamar al servicio del 
+			 * Menu segun la cedula dada, el resultado es cargado en la variable myXml y se
+			 * trae el mensaje resultado de la transaccion 
+			 */
+			protected function getDomMenuByCedulaResult_resultHandler(event:ResultEvent):void
+			{   
+				myXml = getDomMenuByCedulaResult.lastResult as XML;
+				getMensajeTransaccionResult2.token = menuService.getMensajeTransaccion();				
+			}
+						
+			/**
+			 * Methodo que se dispara cuando Asincronamente finaliza de llamar al servicio de 
+			 * traer el usuario y permisos segun la cedula dada, el resultado es cargado en la variable myUsuario y se
+			 * trae el mensaje resultado de la transaccion 
+			 */
+			protected function findUsuarioByCedulaResult_resultHandler(event:ResultEvent):void
+			{	
+				myUsuario = findUsuarioByCedulaResult.lastResult as Usuario;
+				getMensajeTransaccionResult.token = usuarioService.getMensajeTransaccion();				
+			}
+
+			[Bindable]
+			public var mensaje:String = new String();
+			/**
+			 * Muestra una Alerta sirecibe algun mensaje como resultado de la transaccion
+			 */
+			protected function getMensajeTransaccionResult_resultHandler(event:ResultEvent):void
+			{
+				mensaje = getMensajeTransaccionResult.lastResult as String;
+				if(mensaje!=null)
+				{
+					var alert:Alert = Alert.show(mensaje);
+					alert.addEventListener( Event.CLOSE, alertCloseHandler );
+				}
+				mensaje = null;
+			} 
+			
+			[Bindable]
+			public var mensaje1:String = new String();
+			/**
+			 * Muestra una Alerta sirecibe algun mensaje como resultado de la transaccion
+			 */
+			protected function getMensajeTransaccionResult2_resultHandler(event:ResultEvent):void
+			{
+				mensaje1 = getMensajeTransaccionResult2.lastResult as String;
+				if(mensaje1!=null)
+				{
+					var alert:Alert = Alert.show(mensaje1);
+					alert.addEventListener( Event.CLOSE, alertCloseHandler );
+				}
+				mensaje1 = null;
+			}
+			
+			/**
+			 * crea una pestaña que contiene una opcion de menu y la agrega a 
+			 * la interfaz del aplicativo
+			 */
+			private function addTab(transaccion:String,titulo:String):void {
+				trace("Parametros transaccion: " + transaccion );
+				trace("Parametros titulo: " + titulo );
+				if(titulo == "INFORME DE AVALUO COMERCIAL"){
+					//Se agrega para mantener un numero aleatorio para evitar el cache
+					var randomnumber=Math.floor(Math.random()*1000);
+					if(mlIngreso==null){
+						mlIngreso= new CustomModuleLoader();
+						mlIngreso.applicationDomain=ApplicationDomain.currentDomain;
+						mlIngreso.url = transaccion +".swf?session="+randomnumber;
+						mlIngreso.addEventListener(ModuleEvent.READY, modEventHandler);
+						mlIngreso.alpha=100; 
+						mlIngreso.percentWidth=100;
+						mlIngreso.percentHeight=100; 
+					}
+					mlIngreso.validateNow();
+					mlIngreso.validateDisplayList(); 
+					randomnumber=Math.floor(Math.random()*1000);
+					if(mlConsulta==null){
+						mlConsulta= new CustomModuleLoader();
+						mlConsulta.applicationDomain=ApplicationDomain.currentDomain;
+						mlConsulta.url = transaccion +".swf?session="+randomnumber;
+						mlConsulta.addEventListener(ModuleEvent.READY, modEventHandler);
+						mlConsulta.alpha=100; 
+						mlConsulta.percentWidth=100;
+						mlConsulta.percentHeight=100;
+					}
+					mlConsulta.validateNow(); 
+					mlConsulta.validateDisplayList(); 
+					if(newVBoxIngreso==null){
+						newVBoxIngreso= new VBox(); 
+						newVBoxIngreso.label = "INFORME DE AVALÚO COMERCIAL";
+						newVBoxIngreso.alpha=100; 
+						newVBoxIngreso.percentWidth =100;
+						newVBoxIngreso.percentHeight=100;
+						newVBoxIngreso.addChild(mlIngreso);
+						newVBoxIngreso.validateNow(); 
+						newVBoxIngreso.validateDisplayList(); 
+						tn.addChild(newVBoxIngreso); 
+					}else{
+						if(newVBoxConsulta==null){
+							newVBoxConsulta= new VBox();
+							newVBoxConsulta.label = "INFORME DE AVALÚO COMERCIAL";
+							newVBoxConsulta.alpha=100; 
+							newVBoxConsulta.percentWidth =100;
+							newVBoxConsulta.percentHeight=100;
+							newVBoxConsulta.addChild(mlConsulta);
+							newVBoxConsulta.validateNow();
+							newVBoxConsulta.validateDisplayList(); 
+							tn.addChild(newVBoxConsulta);
+						}else{
+							try{
+								newVBoxIngreso.validateNow();
+								newVBoxIngreso.validateDisplayList();
+								tn.getChildIndex(newVBoxIngreso);  
+								try{
+									newVBoxConsulta.validateNow();
+									newVBoxConsulta.validateDisplayList();
+									tn.getChildIndex(newVBoxConsulta);  
+								}catch(e:Error){
+									tn.addChild(newVBoxConsulta);
+								}
+							}catch(e:Error){
+								tn.addChild(newVBoxIngreso);
+							}
+						}
+					}
+				}else {
+					var newVBox:VBox = new VBox(); 
+					var newLabel:spark.components.Label = new spark.components.Label;
+					var ml:CustomModuleLoader = new CustomModuleLoader(); 
+					var randomnumber=Math.floor(Math.random()*1000);
+					//03-01-2011 Se adiciona para resolver problemas con acceso a pantallas con Datamanagment
+					ml.applicationDomain=ApplicationDomain.currentDomain;
+					//Se agrega para mantener un numero aleatorio para evitar el cache
+					ml.url = transaccion +".swf?session="+randomnumber;
+					//ml.url = transaccion +".swf";
+					ml.addEventListener(ModuleEvent.READY, modEventHandler); 
+					newVBox.label = titulo;
+					newVBox.alpha=100; 
+					newVBox.percentWidth =100;
+					newVBox.percentHeight=100;
+					ml.alpha=100;
+					ml.percentWidth=100;
+					ml.percentHeight=100;
+					newVBox.addChild(ml); 
+					tn.addChild(newVBox); 
+				}
+				tn.selectedIndex = tn.numChildren - 1; 
+				tn.visible=true;
+				grupoImg.visible=false;
+				try{
+					setearModulo("Ingreso");
+				}catch(e:Error)
+				{
+				}			
+			}
+
+			/**
+			 * reinicializa la barra de herramientas recien carga el modulo
+			 **/
+			public function modEventHandler(e:ModuleEvent):void {
+				setearModulo("Ingreso");
+				init_bar();
+			}			
+			
+			/**
+			 * Verifica si un modulo utiliza la interface IModule, y obtiene sus permisos
+			 * si el modulo ya estaba cargado dentro de las pestañas o los trae de los permisos
+			 * que se almacenaron al hacer click en la opcion de menu dentro de permisosActual
+			 * @see CustomModuleLoader
+			 */
+			protected function setearModulo(textoMod:String):void
+			{
+				var vBoxActual:VBox = null;
+				var ml1:CustomModuleLoader = null;
+				
+				if(tn.selectedIndex>=0)
+				{									
+					vBoxActual = tn.getChildAt(tn.selectedIndex) as VBox;
+					ml1 = vBoxActual.getChildAt(0) as CustomModuleLoader;								
+					var mod:IModule = ml1.child as IModule;
+					if(mod==null && ml1.child!=null)
+					{
+						Alert.show("ERROR: El Modulo"+ml1.child.toString()+"No esta heredando de la interfaz IModule y no se pueden setear sus permisos, la aplicacion se cerrara");
+						getDomMenuByCedulaResult_faultHandler(null);
+					}	
+					
+					if(mod!=null)
+					{	
+						mod.setTexto(textoMod);
+												
+						if(mod.getPermisos()==null)
+						{							
+							mod.setPermisos(permisosActual);
+						}						
+						else
+						{							
+							this.permisosActual = mod.getPermisos();
+						}
+								
+					}
+				}
+			}			
+			
+			/**
+			 * Obtiene el objeto qe representa el Modulo
+			 * dentro de la pestaña actual seleccionada
+			 * @see CustomModuleLoader
+			 */
+			protected function getModuloActual():CustomModuleLoader
+			{
+				var vBoxActual:VBox = null;
+				var ml1:CustomModuleLoader = null;
+							
+				vBoxActual = tn.getChildAt(tn.selectedIndex) as VBox;
+				ml1 = vBoxActual.getChildAt(0) as CustomModuleLoader;								
+				return ml1;
+				
+			}			
+			
+			/**
+			 * Funcionalidades default de la barra de Herramientas (Adicionar)
+			 * estas son implementadas en cada modulo
+			 * @see modulos.IModule
+			 **/			
+			protected function button2_clickHandler(event:MouseEvent):void
+			{
+				var mod:IModule = getModuloActual().child as IModule;
+				if(mod!=null)
+				{	
+					mod.setTexto("Adiciona");
+					mod.adicionar();
+				}	
+			}
+
+			/**
+			 * Funcionalidades default de la barra de Herramientas (Editar)
+			 * estas son implementadas en cada modulo
+			 * @see modulos.IModule
+			 **/			
+			protected function button3_clickHandler(event:MouseEvent):void
+			{
+				var mod:IModule = getModuloActual().child as IModule;
+				if(mod!=null)
+				{	
+					mod.setTexto("Edita");
+					mod.editar();
+				}			 				
+			}
+
+			/**
+			 * Funcionalidades default de la barra de Herramientas (Eliminar)
+			 * estas son implementadas en cada modulo
+			 * @see modulos.IModule
+			 **/			
+			protected function button4_clickHandler(event:MouseEvent):void
+			{
+				var mod:IModule = getModuloActual().child as IModule;
+				if(mod!=null)
+				{	
+					mod.setTexto("Elimina");
+					mod.eliminar();
+				}
+			}
+
+			/**
+			 * Funcionalidades default de la barra de Herramientas (Consultar)
+			 * estas son implementadas en cada modulo
+			 * @see modulos.IModule
+			 **/			
+			protected function button5_clickHandler(event:MouseEvent):void
+			{
+				var mod:IModule = getModuloActual().child as IModule;
+				if(mod!=null)
+				{	
+					mod.setTexto("Consultar");
+					mod.consultar();
+				}
+			}
+
+			/**
+			 * Funcionalidades default de la barra de Herramientas (Imprimir)
+			 * estas son implementadas en cada modulo
+			 * @see modulos.IModule
+			 **/			
+			protected function button6_clickHandler(event:MouseEvent):void
+			{
+				var mod:IModule = getModuloActual().child as IModule;
+				if(mod!=null)
+				{	
+					mod.setTexto("Imprime");
+					mod.imprimir();
+				}
+			}
+
+			/**
+			 * Funcionalidades default de la barra de Herramientas (Ejecutar)
+			 * estas son implementadas en cada modulo
+			 * @see modulos.IModule
+			 **/			
+			protected function button7_clickHandler(event:MouseEvent):void
+			{
+				var mod:IModule = getModuloActual().child as IModule;
+				if(mod!=null)
+				{	
+					mod.setTexto("Ejecuta");
+					mod.ejecutar();
+				} 
+			}
+			
+			[Bindable]
+			var Adiciona:mx.controls.Button=new mx.controls.Button();
+			
+			[Bindable]
+			public var imgCls:Class;
+
+			[Bindable]
+			public var myCopyright:String;
+			
+			[Bindable]
+			public var myBackground1:String;
+			/**
+			* se ejecuta apenas carga la aplicacion, cargando los recursos como el log, el banner
+			 * el copyright e inicializando la barra de opciones 
+			* la interfaz del aplicativo
+			*/
+			// import com.sociodox.theminer.*;
+			import mx.core.UIComponent;
+			protected function application1_applicationCompleteHandler(event:FlexEvent):void
+			{	
+				//this.addChild(new TheMiner());
+
+				
+				//flash.system.Security.allowDomain("*");
+				
+				var sprite:Sprite = new Sprite();
+				var ui:UIComponent = new UIComponent();
+				//ui.addChild(new TheMiner());
+				//this.addElement(ui);
+				
+				myBanner = FlexGlobals.topLevelApplication.parameters.banner;
+				myBackground1 = FlexGlobals.topLevelApplication.parameters.background;
+				myCopyright=FlexGlobals.topLevelApplication.parameters.copyright; 
+				//banner.load(myBanner);			
+				//background.load(myBackground1);				
+				init_bar();
+			}
+			
+			/**
+			 * Retorna el usuario actual del sistema
+			 * Utilizado por los modulos para acceder al usuario de la 
+			 * Aplicacion 
+			 * @see IMenuprincipal
+			 */
+			public function getUsuarioActual():Usuario {
+				return myUsuario;  
+			}     
+			
+			public function getModeFunction():String{
+				return modeFunction; 
+			}
+			/**
+			 * Configura la barra de opciones
+			 * les asigna a los botones la funcionalidad por defecto.
+			 * Si en cuentrra permisos (Cuando se carga un Modulo o se cambia entre modulos)
+			 * los carga en la barra; si no carga la barra con los permisos por default (vacio)
+			 */
+			protected function init_bar():void
+			{
+
+				botones.Adiciona.addEventListener(MouseEvent.CLICK,button2_clickHandler);
+				botones.Consulta.addEventListener(MouseEvent.CLICK,button5_clickHandler);
+				botones.Imprime.addEventListener(MouseEvent.CLICK,button6_clickHandler);
+				botones.Ejecuta.addEventListener(MouseEvent.CLICK,button7_clickHandler);
+				botones.Edita.addEventListener(MouseEvent.CLICK,button3_clickHandler);
+				botones.Elimina.addEventListener(MouseEvent.CLICK,button4_clickHandler);				
+							
+				if(permisosActual!=null)
+				{	 
+					botones.Adiciona.visible=permisosActual.Adiciona;				
+					botones.Adiciona.includeInLayout=permisosActual.Adiciona;
+					botones.Consulta.visible=permisosActual.Consulta;
+					botones.Consulta.includeInLayout=permisosActual.Consulta;
+					botones.Imprime.visible=permisosActual.Imprime;
+					botones.Imprime.includeInLayout=permisosActual.Imprime;
+					botones.Ejecuta.visible=permisosActual.Ejecuta;				
+					botones.Ejecuta.includeInLayout=permisosActual.Ejecuta;
+					botones.Edita.visible=permisosActual.Edita;
+					botones.Edita.includeInLayout=permisosActual.Edita;
+					botones.Elimina.visible=permisosActual.Elimina;
+					botones.Elimina.includeInLayout=permisosActual.Elimina;
+				}
+				else{
+					botones.Adiciona.visible=false;
+					botones.Adiciona.includeInLayout=false;
+					botones.Consulta.visible=false;
+					botones.Consulta.includeInLayout=false;
+					botones.Imprime.visible=false;
+					botones.Imprime.includeInLayout=false;
+					botones.Ejecuta.visible=false;
+					botones.Ejecuta.includeInLayout=false;
+					botones.Edita.visible=false;
+					botones.Edita.includeInLayout=false;
+					botones.Elimina.visible=false;
+					botones.Elimina.includeInLayout=false;
+				}
+				
+			}
+
+			/**
+ 			 * Se dispara cuando se cambia entre pestañas para obtener los permisos de cada pestaña 
+			 */
+			protected function tn_changeHandler(event:IndexChangedEvent):void
+			{
+				 setearModulo("Ingreso");
+				 init_bar();
+			}
+			
+			
+            var cerrar:Boolean=false;
+			var indiceCerr:int=0;
+			/**
+			 * Se dispara al cerrar una pestaña para:
+			 * Mostrar/Ocultar la imagen de fondo y volver a setear los permisos de la pestaña que queda 
+			 */
+			
+			 
+			protected function tn_childRemoveHandler(event:ChildExistenceChangedEvent):void
+			{
+				trace("Memory size: " + System.totalMemory / 1024 ); 
+				
+				var vBoxActual:VBox = null;
+				var ml1:CustomModuleLoader = null;
+				
+				vBoxActual = event.relatedObject as VBox;
+				ml1 = vBoxActual.getChildAt(0) as CustomModuleLoader;								
+				
+				var mod:IModule = ml1.child as IModule;
+				if(mod!=null)
+				{	
+					mod.setTexto("Consultar");
+					mod.eliminar();
+				}
+				
+				/** var vBoxActual:VBox = null;
+				var ml1:CustomModuleLoader = null;
+				
+				vBoxActual = event.relatedObject as VBox;
+				ml1 = vBoxActual.getChildAt(0) as CustomModuleLoader;								
+				
+				var ldr:Loader = new Loader();
+				var url:String = ml1.url ;
+				
+				ml1.removeAllElements(); 
+				ml1.removeAllChildren(); 
+				ml1 = null ; 
+				vBoxActual.removeAllElements(); 
+				vBoxActual.removeAllChildren();
+				vBoxActual = null ; 
+				
+				var urlReq:URLRequest = new URLRequest(url);
+				ldr.load(urlReq);
+				ldr.unloadAndStop(true); 
+				ldr.unload();
+				urlReq = null; 
+				ldr = null ; ***/  
+				
+				System.gc();
+				
+				tn.validateSize(true); 
+				tn.validateNow(); 
+								
+				//validar permisos si es cierre
+				//19 Abr se coloca de nuevo
+				//permisosActual=null;
+				if(tn.numChildren<=1)
+				{	
+					permisosActual=null;
+					init_bar();
+					tn.visible=false;
+					grupoImg.visible=true;
+				}
+				else{
+					//19 Abr se coloca de nuevo
+					setearModulo("Ingreso");
+				}
+				trace("Memory size: " + System.totalMemory / 1024 ); 
+				//19 Abr se coloca de nuevo
+				init_bar();
+				cerrar=true;
+			}
+
+			/**
+			* Si se desea salir mediante javascript y no por NavigatetoURL de flex
+			* @deprecated  
+			*/
+			protected function button1_clickHandler(event:MouseEvent):void
+			{
+				salirJS();
+			}			
+			
+			/**
+			* Para saber si debe mostrar la imgen de fondo
+			* @deprecated
+			*/
+			public function visibleTab():Boolean
+			{
+				if(tn.numChildren<=0){
+					return false;
+				}else {
+					return true;
+				}
+			}
+
+			 /**
+			 * Metodo asincrono que se dispara cuando termina de consultar las alertas para 
+			 * el aplicativo; si se encuentran alertas activas, las muestra en pantalla
+			 */
+			protected function retornaAlarmaResult_resultHandler(event:ResultEvent):void
+			{ alarma = retornaAlarmaResult.lastResult as String;
+		 	  if(alarma!=null && alarma != '')
+			  { Alert.show(alarma);
+			  }
+			}
+
+			/**
+			 * Pruebas impresion reportes
+			 * @deprecated 
+			 */
+			protected function linkbutton1_clickHandler(event:MouseEvent):void
+			{
+				var request:URLRequest = new URLRequest("ReportServlet");
+				request.method = "POST";
+				navigateToURL(request,"_blank");
+			}
+
+			/**
+			* se dispara al terminar de pintar el panel de la aplicacion
+			*/
+			protected function panel_creationCompleteHandler(event:FlexEvent):void
+			{
+
+			}
+
+			/**
+			 * Se dispara al hacer click en cualquier parte del aplicativo
+			 * este metodo recarga los permisos de una pestaña.
+			 * Si se cierra una pestaña y fue la de lado derecho de otra
+			 * entonces no son recargados los permisos; esto por que el componente
+			 * de las pestañas no activa el evento {@link #tn_changeHandler(event)}
+			 * @see aurora.controls.viewContainer.*
+			 * XXX: Activar automaticamente
+			 */
+			protected function tn_clickHandler(event:MouseEvent):void
+			{
+				if(cerrar)
+				{
+					var vBoxActual:VBox = null;
+					var ml1:CustomModuleLoader = null;
+					
+					if(tn.selectedIndex>=0)
+					{									
+						vBoxActual = tn.getChildAt(tn.selectedIndex) as VBox;
+						ml1 = vBoxActual.getChildAt(0) as CustomModuleLoader;								
+						var mod:IModule = ml1.child as IModule;
+						if(mod==null && ml1.child!=null)
+						{
+							Alert.show("ERROR: El Modulo"+ml1.child.toString()+"No esta heredando de la interfaz IModule y no se pueden setear sus permisos, la aplicacion se cerrara");
+							getDomMenuByCedulaResult_faultHandler(null);
+						}	
+						
+						if(mod!=null)
+						{	
+							
+							if(mod.getPermisos()!=permisosActual)
+							{							
+							 this.permisosActual = mod.getPermisos();
+							 init_bar();
+							}							
+						}
+					}
+				cerrar=false;	
+				}
+				
+			}
+
+			/**
+			 * llama al evento {@link #tn_clickHandler(event)}
+			 * para refrescar los permisos
+			 * @deprecated
+			 */
+			protected function tn_evento(event:Event):void
+			{
+				tn_clickHandler(null);
+			}
+
+		]]>
+	</fx:Script>
+	<!--- 
+	Estilos personalizados para el menu
+	-->
+	<fx:Style>
+		/**
+		*	Estilos personalizados para el menu
+		*/
+		@namespace mx "library://ns.adobe.com/flex/mx";
+		global
+		{		
+			focus-color: #FFDF3C;
+			selection-color: #006926;
+			roll-over-color: #FFDF3C;
+						
+			font-family: Tahoma;
+			/*font-family: Arial;*/
+			/*font-size: 13px;*/
+			font-size: 12px;
+			/*font-size: 11px;*/
+
+		}						
+	</fx:Style>
+	
+	<!--- 
+	Servicios y Responders
+	-->
+	
+	<fx:Declarations>
+		<services:MenuService id="menuService" fault="genericfaultHandler(event)" showBusyCursor="true"/>	
+		<s:CallResponder id="getDomResult" result="getDomResult_resultHandler(event)"/>		
+		<s:CallResponder id="getDomMenuByCedulaResult" result="getDomMenuByCedulaResult_resultHandler(event)" fault="getDomMenuByCedulaResult_faultHandler(event)" />
+		<s:CallResponder id="findUsuarioByCedulaResult" result="findUsuarioByCedulaResult_resultHandler(event)"/>
+		<services:UsuarioService id="usuarioService" fault="genericfaultHandler(event)" showBusyCursor="true"/>
+		<s:CallResponder id="retornaAlarmaResult" result="retornaAlarmaResult_resultHandler(event)" fault="genericfaultHandler(event)"/>
+		<services:AlarmaService id="alarmaService" fault="genericfaultHandler(event)" showBusyCursor="true"/>
+		<s:CallResponder id="getMensajeTransaccionResult" result="getMensajeTransaccionResult_resultHandler(event)"/>
+		<s:CallResponder id="getMensajeTransaccionResult2"  result="getMensajeTransaccionResult2_resultHandler(event)" />
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<!--- 
+	Interfaz grafica del menu
+	-->
+	
+	<mx:HDividedBox  left="10" top="10" right="10" bottom="10" cornerRadius="10">
+		<!--colocar maxWidth="340" ?-->
+		<mx:VDividedBox maxWidth="636" width="340" height="100%"   verticalScrollPolicy="off" horizontalScrollPolicy="off"   backgroundColor="#FFFFFF" backgroundAlpha="1.0" cornerRadius="10"> 
+			<mx:Canvas width="100%" height="100%" horizontalScrollPolicy="off" verticalScrollPolicy="off" borderStyle="none">
+				<mx:Panel cornerRadius="10" paddingLeft="0" paddingTop="0" paddingRight="0" paddingBottom="0" layout="absolute" left="2" right="2" bottom="2" top="2" id="panel"   color="#000000"   creationComplete="panel_creationCompleteHandler(event)">
+	<mx:Tree id="arbolMenu" 
+							 creationComplete="tree_creationCompleteHandler(event)"
+							 dataProvider="{myXml.Modulo}"
+							 labelField="@label" 
+							 change="changeEvt(event);"
+							 horizontalScrollPolicy="on"
+							 paddingRight="2" paddingBottom="2"  right="12" top="30" bottom="30" left="12" borderStyle="solid"></mx:Tree>
+	<mx:Label x="10" text="Version: 16-Sep-2016 - 10:00" width="185" bottom="10"/>
+				</mx:Panel>
+			</mx:Canvas>			
+		</mx:VDividedBox>
+		
+		<mx:VDividedBox width="75%" height="100%"
+						borderStyle="none" backgroundColor="#FFFFFF"   backgroundAlpha="1.0" cornerRadius="10" >		
+			 
+			<mx:Canvas width="100%" height="100%" horizontalScrollPolicy="off" verticalScrollPolicy="off" borderStyle="none">
+			<!--
+				<mx:Panel id="Aplicacion" cornerRadius="10" paddingLeft="0" paddingTop="0" paddingRight="0" paddingBottom="0" title=" " layout="absolute" left="2" right="2" bottom="2" top="2"
+						   	titleIcon="@Embed('assets/cabezoteizqu.png')"
+						    alpha="1.0" backgroundColor="#FFFFFF"  color="#000000" >	
+			-->
+					<s:Group  top="0" left="0" right="0" width="100%" height="70">
+						
+						<mx:Image top="0" scaleContent="false"
+								   maintainAspectRatio="true"
+								   maintainProjectionCenter="true" includeInLayout="true"  smoothBitmapContent="true"
+								   left="0" id="bannerizq" source="assets/cabezoteizqu.png"/>
+						
+						
+						<mx:Image top="0" scaleContent="true"
+								   maintainAspectRatio="false"
+								   maintainProjectionCenter="false" includeInLayout="true"  smoothBitmapContent="true"
+								   id="bannercentr" source="assets/cabezotecentral.png" right="26" left="263"/>
+						
+						<mx:Image top="0" scaleContent="false"
+								   maintainAspectRatio="true"
+								   maintainProjectionCenter="true" includeInLayout="true"  smoothBitmapContent="true"
+								   id="bannerderec" source="assets/cabezotederech.png" right="15"/>
+						
+					</s:Group>					
+					<barra:botones 
+						verticalScrollPolicy="off"
+						horizontalScrollPolicy="off"
+						id="botones" right="439" top="70" left="12" height="20">						
+					</barra:botones>
+					<!--<mx:Image source="assets/familia.jpg" top="147" left="2" maintainProjectionCenter="true" bottom="35" right="16"/>-->
+					
+					<mx:Button  
+						icon="@Embed(source='assets/icons/salir.gif')"
+						label="Cerrar Sesion"
+						toolTip="Cerrar Sesion"
+						click="button1_clickHandler(event)" right="10" top="70" height="20"/>
+						
+					<s:Group
+						top="141" right="15" left="1" id="grupoImg" bottom="34" horizontalCenter="-7" verticalCenter="53">
+						<mx:Image  
+							maintainAspectRatio="true"
+							scaleContent="false"
+							source="@Embed(source='assets/flash/cabezote-2.swf')"
+							id="background"
+							 maintainProjectionCenter="true" includeInLayout="true"  smoothBitmapContent="true" bottom="20" top="0" horizontalCenter="0" verticalCenter="-10" left="10" right="10"/>
+					</s:Group>
+
+					<viewContainer:ViewNavigator id="tn"  top="100" width="100%"
+						change="tn_changeHandler(event)" visible="{visibleTab()}"
+						childRemove="tn_childRemoveHandler(event)"  bottom="34"		
+						click="tn_clickHandler(event)"
+			 			borderStyle="solid"
+					    backgroundAlpha="0.0" >														
+					</viewContainer:ViewNavigator>
+
+					<s:Label text="{myCopyright}" bottom="15" right="10" width="531"/>
+					<s:Label text="Bienvenido {myUsuario.nombreEmpleado}" left="231" right="125" top="70" height="20" verticalAlign="middle"/>
+					<mx:Image height="20" source="assets/icons/usuario.gif" right="317" top="70" left="211"/>
+					<mx:Image scaleContent="false"
+							  maintainAspectRatio="true"
+							  maintainProjectionCenter="true" includeInLayout="true"  smoothBitmapContent="true"
+							  id="bannerizq0" source="assets/bg-pata-mini-height.png" bottom="2" left="0"/>
+					<mx:Image scaleContent="true"
+							  maintainAspectRatio="false"
+							  maintainProjectionCenter="false" includeInLayout="true"  smoothBitmapContent="true"
+							  id="bannerizq1" source="assets/bg-pata-mini-height-spacer.png" bottom="2" left="597" right="0"/>
+					<mx:Image scaleContent="false"
+							  maintainAspectRatio="true"
+							  maintainProjectionCenter="true" includeInLayout="true"  smoothBitmapContent="true"
+							  id="bannerizq2" source="assets/bg-pata-mini-height-spacer.png" bottom="2" right="0"/>
+					<!--<mx:LinkButton label="GenerarPDF (Pruebas)" bottom="5" right="10" click="linkbutton1_clickHandler(event)"/>-->
+				<!--
+				</mx:Panel>	
+				-->
+			</mx:Canvas>
+
+		</mx:VDividedBox>
+
+	</mx:HDividedBox>
+
+</s:Application>

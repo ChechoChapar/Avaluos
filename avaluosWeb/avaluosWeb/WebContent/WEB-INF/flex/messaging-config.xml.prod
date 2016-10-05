@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<service id="message-service" 
+    class="flex.messaging.services.MessageService">
+
+    <adapters>
+        <adapter-definition id="actionscript" class="flex.messaging.services.messaging.adapters.ActionScriptAdapter" default="true" />
+        <!-- <adapter-definition id="jms" class="flex.messaging.services.messaging.adapters.JMSAdapter"/> -->
+		<!-- 03 Nov 2011 Canal de Streaming para recibir el estado del cargue -->
+		<adapter-definition id="MensajeCargueDataPushAdapter" class="com.segurosbolivar.avaluos.util.EnviaMensajeCargue"/>		
+    </adapters>
+
+<!-- 03 Nov 2011 Canal de Streaming para recibir el estado del cargue -->
+
+	<destination id="MensajeCargueDataPush">  
+	  <channels>
+	            <channel ref="my-secure-streaming-amf"/>
+	        </channels>       
+	  <adapter ref="MensajeCargueDataPushAdapter"/>
+    </destination>
+
+    <default-channels>
+        <!--<channel ref="my-polling-amf"/>-->
+        <channel ref="my-secure-polling-amf"/>
+    </default-channels>
+
+</service>

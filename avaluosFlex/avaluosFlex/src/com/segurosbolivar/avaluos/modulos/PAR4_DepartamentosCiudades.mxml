@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--- 
+Modulo para la parametrización de Departamentos
+@implements modulos.IModule
+@see mx.modules.Module
+-->
+<mx:Module xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		   xmlns:s="library://ns.adobe.com/flex/spark" 
+		   xmlns:mx="library://ns.adobe.com/flex/mx" layout="absolute" width="400" height="300" xmlns:services="services.*" 
+		   xmlns:componentes="com.segurosbolivar.avaluos.componentes.*"
+		   implements="modulos.IModule"
+ 		   initialize="module1_initializeHandler(event)"
+		   >
+	<fx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			import mx.events.CloseEvent;
+			import mx.events.FlexEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			import permisos.Permiso;
+			
+			import valueObjects.Departamento;
+			import valueObjects.Usuario;
+			
+			[Bindable]
+			public var myUsuario:Usuario;
+			
+			[Bindable]
+			public var mensaje:String = new String();
+			
+			[Bindable]
+			var myListaPermisos:Permiso;
+			
+			[Bindable]
+		    public var depto:Departamento = new Departamento();
+			
+			public function setTexto(t:String):void
+			{
+			}
+			
+			public function setPermisos(listaPermisos:Permiso):void
+			{
+				myListaPermisos = listaPermisos;
+			}	
+			
+			public function getPermisos():Permiso
+			{
+				return myListaPermisos;
+			}
+			
+			public function ejecutar():void
+			{ 	  
+			}
+			
+			/**
+			 * Permite llamar la ventana de adición de un nuevo departamento
+			 **/ 
+			public function adicionar():void
+			{ pantallaDepto = PopUpManager.createPopUp(DisplayObject(systemManager),WndNuevoDepartamento, true, null, moduleFactory) as WndNuevoDepartamento;
+			  pantallaDepto.title ="Departamentos de Colombia";
+			  pantallaDepto.addEventListener(CloseEvent.CLOSE, closeMeDepto, false, 0, true);
+			} 
+
+			/**
+			 * Cierra la ventana de los departamentos
+			 **/ 
+			private function closeMeDepto(e:CloseEvent):void {
+				PopUpManager.removePopUp(pantallaDepto);
+				pantallaDepto.removeEventListener(CloseEvent.CLOSE, closeMeDepto);
+			}	
+			
+			public function consultar():void
+			{ 
+			}
+			
+			public function imprimir():void
+			{
+			}
+			
+			/**
+			 * Permite editar los datos de un departamento
+			 **/ 
+			public function editar():void
+			{	var dep:Departamento = dataGrid.selectedItem as Departamento;
+				actualizaDepartamentoResult.token = departamentoService.actualizaDepartamento(dep);
+				arrDeptos.refresh();
+				getMensajeTransaccionResult.token = departamentoService.getMensajeTransaccion();
+			}
+			
+			/**
+			 * Permite eliminar un departamento
+			 **/ 
+			public function eliminar():void
+			{ depto = arrDeptos.getItemAt(dataGrid.selectedIndex) as Departamento;
+ 			  borraDepartamentoResult.token = departamentoService.borraDepartamento(depto);
+			  getMensajeTransaccionResult.token = departamentoService.getMensajeTransaccion();			  
+			  arrDeptos.removeItemAt(dataGrid.selectedIndex);
+			  arrDeptos.refresh();
+			}
+			
+			/**
+			 * Consulta el servicio de departamentos
+			 **/ 
+			protected function dataGrid_creationCompleteHandler(event:FlexEvent):void
+			{
+				consultaDepartamentosResult.token = departamentoService.consultaDepartamentos();
+			}
+
+			[Bindable]
+			var ventana:WndCiudadesDepartamento;
+			
+			/**
+			 * Cierra la pantalla de ciudades por departamento
+			 **/ 
+			private function closeMe(e:CloseEvent):void {
+				PopUpManager.removePopUp(pantallaCiudades);
+				pantallaCiudades.removeEventListener(CloseEvent.CLOSE, closeMe);
+			}
+
+			/**
+			 * Obtiene el listado de departamentos
+			 **/ 
+			protected function consultaDepartamentosResult_resultHandler(event:ResultEvent):void
+			{ arrDeptos = consultaDepartamentosResult.lastResult;
+			}
+
+			protected function module1_initializeHandler(event:FlexEvent):void
+			{myUsuario = parentApplication.getUsuarioActual();
+			}
+
+			/**
+			 * Retorna el resultado de la transacción
+			 **/ 
+			protected function getMensajeTransaccionResult_resultHandler(event:ResultEvent):void
+			{ mensaje = getMensajeTransaccionResult.lastResult as String;
+				if(mensaje!=null)
+				{
+					Alert.show(mensaje);
+				}
+			}
+
+			/**
+			 * Permite llamar a la sincronización de códigos Dane de Departamentos
+			 **/ 
+			protected function button1_clickHandler(event:MouseEvent):void
+			{ sincronizaDaneResult.token = departamentoService.sincronizaDane(myUsuario.codigoUsuario);
+			  consultaDepartamentosResult.token = departamentoService.consultaDepartamentos();	
+			}
+
+			/**
+			 * Llama a la ventana de ciudades 
+			 **/ 
+			protected function button3_clickHandler(event:MouseEvent):void
+			{ if(dataGrid.selectedItem != null)
+			  {	 
+			   pantallaCiudades = WndCiudadesDepartamento(PopUpManager.createPopUp(this, WndCiudadesDepartamento, true));
+			   pantallaCiudades.departamento = dataGrid.selectedItem as Departamento;	
+			   pantallaCiudades.addEventListener(CloseEvent.CLOSE, closeMe, false, 0, true);
+			  }
+			  else
+			  { Alert.show("Debe seleccionar un departamento");
+			  }	  
+			}
+
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<s:CallResponder id="consultaDepartamentosResult" result="consultaDepartamentosResult_resultHandler(event)"/>
+		<services:DepartamentoService id="departamentoService" fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)" showBusyCursor="true"/>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<componentes:WndCiudadesDepartamento id="pantallaCiudades" departamento="{dataGrid.selectedItem as Departamento}"/>
+		<componentes:WndNuevaCiudad id="nuevaCiudad"/>
+		<componentes:WndNuevoDepartamento id="pantallaDepto"/>
+		<s:ArrayCollection id="arrDeptos"/>
+		<s:CallResponder id="borraDepartamentoResult"/>
+		<s:CallResponder id="getMensajeTransaccionResult" result="getMensajeTransaccionResult_resultHandler(event)"/>
+		<s:CallResponder id="sincronizaDaneResult"/>
+		<s:CallResponder id="actualizaDepartamentoResult"/>
+	</fx:Declarations>
+	
+	<fx:Style source="assets/css/AvaluosBolivar.css"/>
+	<fx:Style source="assets/css/AvaluosBolivarPanel.css"/>
+
+	<mx:DataGrid x="1" y="-1" width="100%" height="70%" id="dataGrid" creationComplete="dataGrid_creationCompleteHandler(event)" dataProvider="{arrDeptos}" 
+       sortableColumns="false" editable="true">
+		<mx:columns>
+			<mx:DataGridColumn headerText="Departamento" dataField="departamento"/>
+			<mx:DataGridColumn dataField="codAsobancaria" headerText="Código Asobancaria"/>
+			<mx:DataGridColumn headerText="Código Dane" dataField="codDane"/>
+			<mx:DataGridColumn headerText="Código Tronador" dataField="codDivpol"/>
+		</mx:columns>
+	</mx:DataGrid>
+	<s:Button x="83" y="240" label="Sincronizar Departamentos y Ciudades" click="button1_clickHandler(event)" id="button"/>
+	<s:Button x="155" y="215" label="Ver Ciudades" click="button3_clickHandler(event)"/>
+</mx:Module>

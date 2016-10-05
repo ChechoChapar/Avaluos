@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--- 
+Modulo para la consulta y administración de ciudades por Departamento
+@see mx.modules.Module
+-->
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="300" xmlns:services="services.*" xmlns:componentes="com.segurosbolivar.avaluos.componentes.*" xmlns:valueObjects="valueObjects.*"
+>
+	<s:layout>
+		<s:VerticalLayout/>
+	</s:layout>
+	<fx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			import mx.events.CloseEvent;
+			import mx.events.FlexEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			import valueObjects.Ciudad;
+			
+			[Bindable]
+			public var ciu:Ciudad = new Ciudad();
+			
+			public var depto:Departamento = new Departamento();
+			
+			[Bindable]
+			public var mensaje:String = new String();
+			
+			
+			/**
+			 * Retorna los resultados de las ciudades por Departamento
+			 **/
+			protected function dataGrid_creationCompleteHandler(event:FlexEvent):void
+			{ consultaDepartamentosResult.token = departamentoService.consultaDepartamentos();
+			  arrCiudades =	departamento.ciudadesDepto;	
+			}
+
+			/**
+			 * Elimina una ciudad
+			 **/
+
+			protected function button1_clickHandler(event:MouseEvent):void
+			{ciu = dataGrid.selectedItem as Ciudad;
+			 borraCiudadResult.token = ciudadService.borraCiudad(ciu);
+			 arrCiudades.removeItemAt(dataGrid.selectedIndex);
+			 arrCiudades.refresh();
+			 getMensajeTransaccionResult.token = ciudadService.getMensajeTransaccion();
+			 consultaDepartamentosResult.token = departamentoService.consultaDepartamentos();
+			}
+
+			/**
+			 * Retorna el mensaje resultado de la transacción
+			 **/
+
+			protected function getMensajeTransaccionResult_resultHandler(event:ResultEvent):void
+			{	mensaje = getMensajeTransaccionResult.lastResult as String;
+				if(mensaje!=null)
+				{
+					Alert.show(mensaje);
+				}
+			}
+
+			/**
+			 * Actualiza la ciudad
+			 **/
+			protected function button2_clickHandler(event:MouseEvent):void
+			{ciu = dataGrid.selectedItem as Ciudad;
+			 actualizaCiudadResult.token = ciudadService.actualizaCiudad(ciu);
+			 arrCiudades.refresh();
+			 getMensajeTransaccionResult.token = ciudadService.getMensajeTransaccion();	
+			}
+			
+			/**
+			 * Cierra la ventana
+			 **/
+
+			private function closeMeCiudad(e:CloseEvent):void {
+				PopUpManager.removePopUp(nuevaCiudad);
+				nuevaCiudad.removeEventListener(CloseEvent.CLOSE, closeMeCiudad);
+				consultaDepartamentosResult.token = departamentoService.consultaDepartamentos();
+				arrCiudades.refresh();
+			}
+            
+			/**
+			 * Permite llamar a la ventana de creación de nuevas ciudades
+			 **/
+			protected function button3_clickHandler(event:MouseEvent):void
+			{ nuevaCiudad = WndNuevaCiudad(PopUpManager.createPopUp(this, WndNuevaCiudad, true));
+			  nuevaCiudad.departamento = departamento as Departamento;	
+			  nuevaCiudad.addEventListener(CloseEvent.CLOSE, closeMeCiudad, false, 0, true);
+			  nuevaCiudad.addEventListener("refrescarDatos",nuevaCiudad_refrescarDatosHandler);			  
+			}
+			
+			/**
+			 * Retorna los resultados de las ciudades por Departamento
+			 **/
+
+			protected function nuevaCiudad_refrescarDatosHandler(event):void
+			{ 
+				consultaDepartamentoIdResult.token = departamentoService.consultaDepartamentoId(departamento.idDepartamento);
+			}			
+
+			/**
+			 * Retorna los resultados de las ciudades por Departamento y puebla el datagrid
+			 **/
+
+			protected function consultaDepartamentoIdResult_resultHandler(event:ResultEvent):void
+			{
+				depto = consultaDepartamentoIdResult.lastResult as Departamento;
+				arrCiudades = depto.ciudadesDepto;
+				dataGrid.dataProvider = arrCiudades;
+			}
+
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<s:CallResponder id="consultaDepartamentosResult"/>
+		<services:DepartamentoService id="departamentoService" fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)" showBusyCursor="true" />
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<valueObjects:Departamento id="departamento"/>
+		<componentes:WndNuevaCiudad id="pantallaCiudades"/>
+		<componentes:WndNuevaCiudad id="nuevaCiudad"/>
+		<s:CallResponder id="borraCiudadResult"/>
+		<services:CiudadService id="ciudadService" fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)" showBusyCursor="true"/>
+		<s:CallResponder id="getMensajeTransaccionResult" result="getMensajeTransaccionResult_resultHandler(event)"/>
+		<s:ArrayCollection id="arrCiudades"/>
+		<s:CallResponder id="actualizaCiudadResult"/>
+		<s:CallResponder id="consultaDepartamentoIdResult" result="consultaDepartamentoIdResult_resultHandler(event)"/>
+	</fx:Declarations>
+	<fx:Style source="assets/css/AvaluosBolivar.css"/>
+	<fx:Style source="assets/css/AvaluosBolivarPanel.css"/>
+	<s:Label text="Ciudades por departamento" fontWeight="bold"/>
+
+	<s:Label id="idDescDepartamentoLabel" text="{departamento.departamento}" visible="true"  verticalAlign="middle"/>
+	<s:VGroup height="80%" width="100%">
+		<mx:DataGrid width="100%" height="100%" id="dataGrid" creationComplete="dataGrid_creationCompleteHandler(event)" dataProvider="{arrCiudades}" editable="true">
+			<mx:columns>
+				<mx:DataGridColumn headerText="Ciudad" dataField="ciudad"/>
+				<mx:DataGridColumn dataField="codAsobancaria" headerText="Código Asobancaria"/>
+				<mx:DataGridColumn headerText="Código Dane" dataField="codDane"/>
+			</mx:columns>
+		</mx:DataGrid>
+	</s:VGroup>
+	<s:HGroup height="20%" width="100%" x="0" y="138" verticalAlign="middle" textAlign="center" fontWeight="bold">
+		<s:Button label="Nueva Ciudad" fontWeight="normal" click="button3_clickHandler(event)"/>
+		<s:Button label="Editar Ciudad" fontWeight="normal" click="button2_clickHandler(event)"/>
+		<s:Button label="Eliminar Ciudad" fontWeight="normal" click="button1_clickHandler(event)"/>
+	</s:HGroup>
+</s:TitleWindow>

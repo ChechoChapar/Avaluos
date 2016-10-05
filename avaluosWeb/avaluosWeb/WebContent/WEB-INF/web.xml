@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
+<web-app>
+
+<!---
+Archivo de configuracion J2EE para la aplicacion
+  -->
+  
+    <display-name>BlazeDS</display-name>
+    <description>BlazeDS Application</description>	
+
+	 <!-- Filtro compresion encabezados Gzip -->
+	 <filter>
+	<filter-name>GZIPFilter</filter-name>
+	<filter-class>nagiworld.net.filters.gzip.GZIPFilter</filter-class>
+	   <init-param>
+            <param-name>debug</param-name>
+            <param-value>debug</param-value>
+       </init-param>
+	</filter> 
+
+
+	  <!--Filtros URL reporte-->
+	  
+	  <filter>
+	    <filter-name>ReportURLEncoder</filter-name>
+	    <filter-class>com.segurosbolivar.avaluos.filter.ReportURLEncoder</filter-class>
+	  </filter>
+
+	  <filter>
+	    <filter-name>ReportURLDecoder</filter-name>
+	    <filter-class>com.segurosbolivar.avaluos.filter.ReportURLDecoder</filter-class>
+	  </filter>	  
+
+	<!-- Filtro Procedatos -->	
+	<filter>
+	    <filter-name>ProcedatosURLDecoder</filter-name>
+	    <filter-class>com.segurosbolivar.avaluos.filter.ProcedatosURLDecoder</filter-class>
+	</filter>
+	 	
+	<!-- Filtro compresion encabezados Gzip -->
+	<filter-mapping>
+	<filter-name>GZIPFilter</filter-name>
+	<url-pattern>*.swf</url-pattern>
+	</filter-mapping>
+	
+	
+	<filter-mapping>
+	<filter-name>GZIPFilter</filter-name>
+	<!--<url-pattern>/messagebroker/amf</url-pattern>-->
+	<url-pattern>/messagebroker/amfsecure</url-pattern>
+	</filter-mapping>
+		
+	 	
+	  <filter-mapping>
+	    <filter-name>ReportURLEncoder</filter-name>
+	    <url-pattern>/ReporteServlet/*</url-pattern>
+	  </filter-mapping>
+   
+	  <filter-mapping>
+	    <filter-name>ReportURLDecoder</filter-name>
+	    <url-pattern>/ReporteAvaluo/*</url-pattern>
+	  </filter-mapping>
+ 	
+ 	<!-- Filtro Procedatos -->
+    <filter-mapping>
+	    <filter-name>ProcedatosURLDecoder</filter-name>
+	    <url-pattern>/procedatos/*</url-pattern>
+	</filter-mapping>
+ 	
+
+    <!-- Http Flex Session attribute and binding listener support -->
+    <listener>
+        <listener-class>flex.messaging.HttpFlexSession</listener-class>
+    </listener>
+
+    <!-- MessageBroker Servlet -->
+    <servlet>
+        <servlet-name>MessageBrokerServlet</servlet-name>
+        <display-name>MessageBrokerServlet</display-name>
+        <servlet-class>flex.messaging.MessageBrokerServlet</servlet-class>
+        <init-param>
+            <param-name>services.configuration.file</param-name>
+            <param-value>/WEB-INF/flex/services-config.xml</param-value>
+       </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    
+    <servlet>
+        <servlet-name>RDSDispatchServlet</servlet-name>
+		<display-name>RDSDispatchServlet</display-name>
+        <servlet-class>flex.rds.server.servlet.FrontEndServlet</servlet-class>
+		<init-param>
+			<param-name>useAppserverSecurity</param-name>
+			<param-value>false</param-value>
+		</init-param>        
+        <load-on-startup>10</load-on-startup>
+    </servlet>
+
+    <!--Complementos Servlet -->
+    <servlet>
+        <servlet-name>ComplementosServlet</servlet-name>
+        <servlet-class>com.segurosbolivar.avaluos.servlet.ComplementosServlet</servlet-class>
+    </servlet>
+
+    <!--Report Servlet -->
+    <servlet>
+        <servlet-name>ReportServlet</servlet-name>
+        <servlet-class>com.segurosbolivar.avaluos.servlet.ReportServlet</servlet-class>
+    </servlet>
+
+    <!--Reportes Servlet -->
+    <servlet>
+        <servlet-name>ReportesServlet</servlet-name>
+        <servlet-class>com.segurosbolivar.avaluos.servlet.ReportesServlet</servlet-class>
+    </servlet>
+
+    <!--Multi Upload Servlet -->
+    <servlet>
+        <servlet-name>MultiUploadServlet</servlet-name>
+        <servlet-class>com.segurosbolivar.avaluos.servlet.MultiUploadServlet</servlet-class>
+    </servlet>
+
+    <!--Upload Servlet -->
+    <servlet>
+        <servlet-name>UploadServlet</servlet-name>
+        <servlet-class>com.segurosbolivar.avaluos.servlet.UploadServlet</servlet-class>
+    </servlet>
+
+    <!--Upload Servlet de anexos -->
+    <servlet>
+        <servlet-name>UploadAnexosPdfServlet</servlet-name>
+        <servlet-class>com.segurosbolivar.avaluos.servlet.UploadAnexosPdfServlet</servlet-class>
+    </servlet>
+
+
+    <!--Upload Servlet de anexos -->
+    <servlet>
+        <servlet-name>UploadAnexosServlet</servlet-name>
+        <servlet-class>com.segurosbolivar.avaluos.servlet.UploadAnexosServlet</servlet-class>
+    </servlet>
+    
+    <!--Anexos Servlet -->
+    <servlet>
+        <servlet-name>AnexosServlet</servlet-name>
+        <servlet-class>com.segurosbolivar.avaluos.servlet.AnexosServlet</servlet-class>
+    </servlet>
+       
+    <!--Procedatos Servlet -->
+    <servlet>
+        <servlet-name>ProcedatosServlet</servlet-name>
+        <servlet-class>com.segurosbolivar.avaluos.servlet.ProcedatosDownloadServlet</servlet-class>
+    </servlet>
+    
+    <!--Timer Servlet -->
+    <servlet>
+        <servlet-name>TimerServlet</servlet-name>
+        <servlet-class>com.segurosbolivar.avaluos.servlet.TimerServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    
+    <servlet>
+        <servlet-name>PlanoAvaDownServlet</servlet-name>
+        <servlet-class>com.segurosbolivar.avaluos.servlet.PlanoAvaDownServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    
+    <servlet-mapping id="COMPLEMENTOS_SERVLET">
+        <servlet-name>ComplementosServlet</servlet-name>
+        <url-pattern>/ComplementosServlet</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping id="ANEXOS_SERVLET">
+        <servlet-name>AnexosServlet</servlet-name>
+        <url-pattern>/AnexosServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping id="REPORT_SERVLET">
+        <servlet-name>ReportServlet</servlet-name>
+        <url-pattern>/ReportServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping id="REPORTES_SERVLET">
+        <servlet-name>ReportesServlet</servlet-name>
+        <url-pattern>/ReportesServlet</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping id="PROCEDATOS_SERVLET">
+        <servlet-name>ProcedatosServlet</servlet-name>
+        <url-pattern>/ProcedatosServlet</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping id="MULTI_UPLOAD_SERVLET">
+        <servlet-name>MultiUploadServlet</servlet-name>
+        <url-pattern>/MultiUploadServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping id="UPLOAD_SERVLET">
+        <servlet-name>UploadAnexosServlet</servlet-name>
+        <url-pattern>/UploadAnexosServlet</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping id="UPLOAD_SERVLET_ANEXOS_PDF">
+        <servlet-name>UploadAnexosPdfServlet</servlet-name>
+        <url-pattern>/UploadAnexosPdfServlet</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping id="UPLOAD_SERVLET_ANEXOS">
+        <servlet-name>UploadServlet</servlet-name>
+        <url-pattern>/UploadServlet</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping id="TIMER_SERVLET">
+        <servlet-name>TimerServlet</servlet-name>
+        <url-pattern>/TimerServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping id="RDS_DISPATCH_MAPPING">
+        <servlet-name>RDSDispatchServlet</servlet-name>
+        <url-pattern>/CFIDE/main/ide.cfm</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping id="PLANO_AVA_DOWN_SERVLET">
+        <servlet-name>PlanoAvaDownServlet</servlet-name>
+        <url-pattern>/PlanoAvaDownServlet</url-pattern>
+    </servlet-mapping>
+    
+
+    <servlet-mapping>
+        <servlet-name>MessageBrokerServlet</servlet-name>
+        <url-pattern>/messagebroker/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- Tiempo de session 30 minutos -->
+    <session-config>
+      <session-timeout>30</session-timeout> 
+    </session-config>
+
+    <welcome-file-list>
+        <welcome-file>login.html</welcome-file>
+        <welcome-file>login.html</welcome-file>
+    </welcome-file-list>
+
+    <!-- for WebSphere deployment, please uncomment -->
+    <!--
+    <resource-ref>
+        <description>Flex Messaging WorkManager</description>
+        <res-ref-name>wm/MessagingWorkManager</res-ref-name>
+        <res-type>com.ibm.websphere.asynchbeans.WorkManager</res-type>
+        <res-auth>Container</res-auth>
+        <res-sharing-scope>Shareable</res-sharing-scope>
+    </resource-ref>
+    -->
+    
+    
+ 
+</web-app>

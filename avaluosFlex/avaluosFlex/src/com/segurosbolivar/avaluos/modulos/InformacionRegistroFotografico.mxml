@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Module xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		   xmlns:s="library://ns.adobe.com/flex/spark" 
+		   xmlns:mx="library://ns.adobe.com/flex/mx" 
+		   xmlns:valueObjects="valueObjects.*"
+		   xmlns:file="com.segurosbolivar.avaluos.modulos.*"
+		   xmlns:comp="com.segurosbolivar.avaluos.componentes.*"
+		   width="100%" height="100%">
+	
+	<fx:Script>
+		<![CDATA[
+			import com.segurosbolivar.avaluos.componentes.WndAnexosPdf;
+			import com.segurosbolivar.avaluos.modulos.FileDownload;
+			
+			import mx.controls.Alert;
+			import mx.events.CloseEvent;
+			import mx.managers.PopUpManager;
+			
+			import valueObjects.AnexoFotografico;
+			import valueObjects.Usuario;
+			
+			
+			private var existsFachada:Boolean = false;
+			private var existsAnexo:Boolean = false;
+			
+			[Bindable]
+			public var wndowCargueAnx:WndAnexosPdf;
+			[Bindable]
+			private var myUsuario:Usuario;
+			
+			private function startUploadFachada_clickHandler(event:MouseEvent):void
+			{
+				fileUploadFachada.startUploadFachada(avaluo2.idAvaluo, "fachada");
+				existsFachada = true;
+				startImgsAnexo.enabled=true;
+			}
+			
+			private function startUploadDocAnexos_clickHandler(event:MouseEvent):void
+			{
+				fileUploadDocAnexos.startUploadAnexos(avaluo2.idAvaluo,"anexos");
+				existsAnexo = true;
+			}
+			
+			private function startDownload_clickHandler(event:MouseEvent):void
+			{
+				var fileDownload:FileDownload ; 
+				var nombreDescarga:String ; 
+				if(existsFachada){
+					fileDownload = new FileDownload();
+					fileDownload.init(downloadProgress,null);
+					nombreDescarga = avaluo2.consecutivoBanco+"_fachada.jpg";
+					fileDownload.startFachadaDownload(avaluo2.idAvaluo,"fachada",nombreDescarga);
+					
+					startImgsAnexo.enabled=true;
+					
+				}
+					
+				else if((avaluo2.anexosFotograficos != null) && (avaluo2.anexosFotograficos.length >0))
+				{
+					var anexoTmp:AnexoFotografico = avaluo2.anexosFotograficos.getItemAt(0) as AnexoFotografico;
+					if((anexoTmp.archivoFoto != null) && (anexoTmp.archivoFoto.contenidoArchivo.length > 0))
+					{
+						fileDownload = new FileDownload();
+						fileDownload.init(downloadProgress,null);
+						nombreDescarga= avaluo2.consecutivoBanco+"_fachada.jpg";
+						fileDownload.startFachadaDownload(avaluo2.idAvaluo,"fachada",nombreDescarga);
+						existsFachada = true;
+						startImgsAnexo.enabled=true;
+					}					
+					else {
+						existsFachada = false;
+						startImgsAnexo.enabled=false;
+					}
+				}
+				else{
+					existsFachada = false;
+					startImgsAnexo.enabled=false;
+				}
+				
+				if(!existsFachada){
+					Alert.show("No hay archivos cargados.\n\nRecuerde cargar la imagen de la fachada en formato jpg","INFO", null, null, null, null, Alert.OK);
+					startImgsAnexo.enabled=false;
+				}
+			}
+			
+			
+			private function startDownloadDocAnexos_clickHandler(event:MouseEvent):void
+			{
+				var fileDownload:FileDownload ; 
+				var nombreDescarga:String ; 
+				if(existsAnexo){
+					fileDownload = new FileDownload();
+					fileDownload.init(downloadProgressDocAnexos,null);
+					nombreDescarga = avaluo2.consecutivoBanco+"_fotos.pdf";
+					fileDownload.startFachadaDownload(avaluo2.idAvaluo,"anexos", nombreDescarga);
+				}
+				else if((avaluo2.anexosFotograficos != null) && (avaluo2.anexosFotograficos.length >0))
+				{	
+					var anexoTmp:AnexoFotografico = avaluo2.anexosFotograficos.getItemAt(0) as AnexoFotografico;
+					if((anexoTmp.archivoPdf != null) && (anexoTmp.archivoPdf.contenidoArchivo.length > 0)){
+						fileDownload = new FileDownload();
+						fileDownload.init(downloadProgressDocAnexos,null);
+						nombreDescarga = avaluo2.consecutivoBanco+"_fotos.pdf";
+						fileDownload.startFachadaDownload(avaluo2.idAvaluo,"anexos", nombreDescarga);
+						existsAnexo = true;
+					}
+					else {
+						existsAnexo = false;
+					}
+				}
+				else {
+					existsAnexo = false;
+				}
+				
+				if(!existsAnexo){
+					Alert.show("No hay archivos cargados.\n\nRecuerde cargar el anexo forgráfico en formato Pdf","INFO", null, null, null, null, Alert.OK);
+				}
+			}
+			
+			private function startImgsAnexo_clickHandler(event:MouseEvent):void
+			{
+				wndowCargueAnx = WndAnexosPdf(PopUpManager.createPopUp(this, WndAnexosPdf, true));
+				wndowCargueAnx.codigoUsuario=avaluo2.usuarioCreacion;
+				wndowCargueAnx.idAvaluo=avaluo2.idAvaluo;
+				wndowCargueAnx.addEventListener(CloseEvent.CLOSE, closeMeWndAnexos, false, 0, true);
+			}
+			
+			private function closeMeWndAnexos(e:CloseEvent):void {
+				PopUpManager.removePopUp(wndowCargueAnx);
+				wndowCargueAnx.removeEventListener(CloseEvent.CLOSE, closeMeWndAnexos);
+			}
+			
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<valueObjects:Avaluo id="avaluo2"></valueObjects:Avaluo>
+		
+	</fx:Declarations>
+	<s:Group>
+		<s:layout>
+			<s:VerticalLayout/>
+		</s:layout>
+		
+	<mx:VBox width="100%"  horizontalAlign="center" x="0" y="14" height="100%">
+		<mx:HBox width="80%" paddingLeft="10" paddingRight="10" paddingTop="10" paddingBottom="10">
+			<mx:Panel id="pnlUpload" title="Cargar Fachada" paddingTop="10" fontWeight="normal" paddingBottom="10" paddingLeft="10" paddingRight="10" height="146" width="100%" dropShadowVisible="false" x="50">
+				<file:FileUploadAnexos id="fileUploadFachada" creationComplete="fileUploadFachada.init(uploadProgress, null,null);"/>
+				<mx:ProgressBar id="uploadProgress" label="" mode="manual" />
+				<mx:ControlBar horizontalAlign="right">
+					<s:Button id="startUploadFachada" label="Cargar" click="startUploadFachada_clickHandler(event)" enabled="true" tabIndex="299"/>
+				</mx:ControlBar>
+			</mx:Panel>
+			<mx:Panel id="pnlDownload" title="Descargar Fachada" paddingTop="10" fontWeight="normal" paddingBottom="10" paddingLeft="10" paddingRight="10" height="146" width="100%" dropShadowVisible="false">
+				<mx:ProgressBar id="downloadProgress" label="" mode="manual" />
+				<mx:ControlBar horizontalAlign="right">
+					<s:Button id="startDownload" label="Descargar" click="startDownload_clickHandler(event)"  tabIndex="302"/>
+				</mx:ControlBar>
+			</mx:Panel>
+		</mx:HBox>	
+		<mx:HBox width="80%" paddingLeft="10" paddingRight="10" paddingTop="10" paddingBottom="10">
+			<mx:Panel id="pnlUploadDocAnexo" title="Cargar Anexo Fotográfico" fontWeight="normal" paddingTop="10" paddingBottom="10" paddingLeft="10" paddingRight="10" height="146" width="100%" dropShadowVisible="false">
+				
+				<file:FileUploadAnexos id="fileUploadDocAnexos" creationComplete="fileUploadDocAnexos.init(uploadProgressDocAnexos, null,null);"/>
+				
+				<mx:ProgressBar id="uploadProgressDocAnexos" label="" mode="manual" />
+				<mx:ControlBar horizontalAlign="right">
+					<s:Button id="startImgsAnexo" label="Imágenes Individuales" click="startImgsAnexo_clickHandler(event)" enabled="{existsFachada || ((avaluo2.anexosFotograficos != null))}" tabIndex="300"/>
+					<s:Button id="startUploadDocAnexos" label="Cargar" click="startUploadDocAnexos_clickHandler(event)" enabled="true" tabIndex="301"/>
+				</mx:ControlBar>
+			</mx:Panel>
+			<mx:Panel id="pnlDownloadAnexo" title="Descargar Anexo Fotográfico" fontWeight="normal" paddingTop="10" paddingBottom="10" paddingLeft="10" paddingRight="10" height="146" width="100%" dropShadowVisible="false">
+				<mx:ProgressBar id="downloadProgressDocAnexos" label="" mode="manual" />
+				<mx:ControlBar horizontalAlign="right">
+					<s:Button id="startDownloadDocAnexos" label="Descargar" click="startDownloadDocAnexos_clickHandler(event)"  tabIndex="303"/>
+				</mx:ControlBar>
+			</mx:Panel>
+		</mx:HBox>		
+	</mx:VBox>
+</s:Group>
+
+</mx:Module>

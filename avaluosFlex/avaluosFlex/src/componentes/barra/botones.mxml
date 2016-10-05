@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--- 
+Componente para mostrar en la plantilla de seguridad la lista de opciones
+@see mx.containers.Canvas
+-->
+<mx:Canvas autoLayout="true" xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="430" height="32" updateComplete="canvas1_updateCompleteHandler(event)">
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+
+			protected function canvas1_updateCompleteHandler(event:FlexEvent):void
+			{
+				// TODO Auto-generated method stub
+				this.updateDisplayList(1000,1000); 
+				this.validateNow(); 
+				this.initialize(); 
+				this.autoLayout = true ; 
+				
+				
+			}
+
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+     
+	<s:Group width="425" height="100%" autoLayout="true" breakOpportunity="auto" buttonMode="true" includeInLayout="true" justificationRule="auto" justificationStyle="auto" kerning="auto" maintainProjectionCenter="true">
+		<s:layout>
+			<s:HorizontalLayout clipAndEnableScrolling="false" gap="0"/>
+		</s:layout>
+			<mx:Button				
+				skin="@Embed(source='assets/icons/nuevo.gif')"
+				toolTip="Adiciona"
+				id="Adiciona" includeInLayout="true" width="17" height="17"/> 
+		
+		<!--- 
+		Lista de Botones disponibles
+		-->
+		<mx:Spacer height="14" width="9"/>
+		<mx:Button 
+				   skin="@Embed(source='assets/icons/consulta.gif')"
+				   toolTip="Consulta"
+				   id="Consulta"
+				   includeInLayout="true"     width="17" height="17"/>
+		<mx:Spacer height="14" width="9"/>
+		<mx:Button toolTip="Imprime" id="Imprime" 
+				  skin="@Embed(source='assets/icons/imprimir.gif')"
+				   includeInLayout="true"    width="17" height="17"/>
+		<mx:Spacer height="14" width="9"/>
+		<mx:Button toolTip="Edita" id="Edita"
+					skin="@Embed(source='assets/icons/guardar.gif')"
+				 includeInLayout="true" width="17" height="17"/>
+		<mx:Spacer height="14" width="9"/>
+		<mx:Button toolTip="Elimina" id="Elimina"  
+				   skin="@Embed(source='assets/icons/eliminar.gif')"
+				   includeInLayout="true" width="17" height="17"/>
+		<mx:Spacer height="14" width="9"/>
+		<mx:Button  visible="true" id="Ejecuta" 
+					skin="@Embed(source='assets/icons/ejecutar.gif')"
+					toolTip="Validar Campos"
+					includeInLayout="true"     width="17" height="17"/>
+		<mx:Spacer height="14" width="0"/>
+		
+		
+	</s:Group>
+</mx:Canvas>
+
+	

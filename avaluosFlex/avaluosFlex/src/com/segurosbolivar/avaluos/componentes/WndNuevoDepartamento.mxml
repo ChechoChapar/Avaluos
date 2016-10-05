@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--- 
+Modulo para el ingreso de departamentos
+@see mx.modules.Module
+-->
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="318" xmlns:services="services.*" 
+			   xmlns:valueObjects="valueObjects.*"
+			   xmlns:componentes="com.segurosbolivar.avaluos.componentes.*"			   
+			   implements="modulos.IModule"
+			   initialize="titlewindow1_initializeHandler(event)"
+>
+	<fx:Script>
+		<![CDATA[
+			import mx.controls.Alert;
+			import mx.events.FlexEvent;
+			
+			import permisos.Permiso;
+			
+			import valueObjects.Usuario;
+			
+			[Bindable]
+			public var myUsuario:Usuario;
+			
+			[Bindable]
+			var myListaPermisos:Permiso;
+			
+			public function setTexto(t:String):void
+			{
+			}
+			
+			public function setPermisos(listaPermisos:Permiso):void
+			{
+				myListaPermisos = listaPermisos;
+			}	
+			
+			public function getPermisos():Permiso
+			{
+				return myListaPermisos;
+			}
+			
+			public function ejecutar():void
+			{ 	  
+			}
+			
+			public function adicionar():void
+			{
+			} 
+
+			public function consultar():void
+			{ 
+			}
+			
+			public function imprimir():void
+			{
+			}
+			
+			public function editar():void
+			{	
+			}
+			
+			public function eliminar():void
+			{ 
+			}
+			
+			
+			/**
+			 * Envía parametros y el objeto Departamento
+			 **/ 
+			protected function button_clickHandler(event:MouseEvent):void
+			{   var fechaActual:Date = new Date();
+				departamento.codAsobancaria = codAsobancariaTextInput.text;
+				departamento.codDivpol = codDivpolTextInput.text;
+				departamento.codDane = codDaneTextInput.text;
+				departamento.departamento = departamentoTextInput.text;
+				departamento.usuarioCreacion = myUsuario.codigoUsuario;;
+				departamento.fechaCreacion = fechaActual;
+				departamento.usuarioTransaccion = myUsuario.codigoUsuario;;
+				departamento.fechaTransaccion = fechaActual;
+				insertaDepartamentoResult.token = departamentoService.insertaDepartamento(departamento);
+			}
+
+
+			protected function titlewindow1_initializeHandler(event:FlexEvent):void
+			{myUsuario = parentApplication.getUsuarioActual();
+			}
+
+
+			protected function codAsobancariaTextInput_keyDownHandler(event:KeyboardEvent):void
+			{ codAsobancariaTextInput.restrict = "0-9";
+			}
+
+
+			protected function codDivpolTextInput_keyDownHandler(event:KeyboardEvent):void
+			{ codDivpolTextInput.restrict = "0-9";
+			}
+
+
+			protected function codDaneTextInput_keyDownHandler(event:KeyboardEvent):void
+			{ codDaneTextInput.restrict = "0-9";
+			}
+
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<valueObjects:Departamento id="departamento"/>
+		<s:CallResponder id="insertaDepartamentoResult"/>
+		<services:DepartamentoService id="departamentoService" fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)" showBusyCursor="true"/>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Style source="assets/css/AvaluosBolivar.css"/>
+	<fx:Style source="assets/css/AvaluosBolivarPanel.css"/>
+
+	<mx:Form defaultButton="{button}" width="375">
+		<mx:FormItem label="Nuevo Departamento  " fontWeight="bold" width="196">
+		</mx:FormItem>
+		<mx:FormItem label="Código Asobancaria">
+			<s:TextInput id="codAsobancariaTextInput" text="{departamento.codAsobancaria}" keyDown="codAsobancariaTextInput_keyDownHandler(event)" restrict="0-9"/>
+		</mx:FormItem>
+		<mx:FormItem label="Código Tronador">
+			<s:TextInput id="codDivpolTextInput" text="{departamento.codDivpol}" keyDown="codDivpolTextInput_keyDownHandler(event)" restrict="0-9"/>
+		</mx:FormItem>
+		<mx:FormItem label="Código Dane">
+			<s:TextInput id="codDaneTextInput" text="{departamento.codDane}" keyDown="codDaneTextInput_keyDownHandler(event)" restrict="0-9"/>
+		</mx:FormItem>
+		<mx:FormItem label="Departamento">
+			<s:TextInput id="departamentoTextInput" text="{departamento.departamento}"/>
+		</mx:FormItem>
+		<mx:FormItem label="Usuario Creación">
+			<s:Label id="usuarioCreacionLabel" text="{departamento.usuarioCreacion}"/>
+		</mx:FormItem>
+		<mx:FormItem label="Fecha Creación">
+			<s:Label id="fechaCreacionLabel" text="{departamento.fechaCreacion}"/>
+		</mx:FormItem>
+		<mx:FormItem label="Usuario Transacción">
+			<s:Label id="usuarioTransaccionLabel" text="{departamento.usuarioTransaccion}"/>
+		</mx:FormItem>
+		<mx:FormItem label="Fecha Transacción">
+			<s:Label id="fechaTransaccionLabel" text="{departamento.fechaTransaccion}"/>
+		</mx:FormItem>
+	</mx:Form>
+	<s:Button id="button" label="Guardar Departamento" click="button_clickHandler(event)" x="126" y="263"/>
+</s:TitleWindow>

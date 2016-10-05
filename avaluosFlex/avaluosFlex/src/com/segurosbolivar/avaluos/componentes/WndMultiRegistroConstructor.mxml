@@ -1,0 +1,1673 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" width="1000" height="600" creationComplete="init()" xmlns:services="services.*" 
+			   xmlns:valueObjects="valueObjects.*"
+			   close="title_close();"
+			   >
+	<fx:Declarations>
+		<!--
+		<s:CallResponder id="getValoresDominioResult"/>
+		-->
+		
+		<!--
+		<services:DominiosAuxDao id="dominiosAuxDao" fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)" showBusyCursor="true"/>
+		<s:CallResponder id="consultaDepartamentosResult"/>
+		<services:DepartamentoService id="departamentoService" fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)" showBusyCursor="true"/>
+		<s:CallResponder id="getAvaluosPorIdResult"/>
+		-->
+		
+		<services:AvaluosService id="avaluosService" fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)" showBusyCursor="true"/>
+		
+		<valueObjects:Avaluo id="avaluo"/>
+		<s:CallResponder id="copiarAvaluosConstructorResult" result="copiarAvaluosConstructorResult_resultHandler(event)" fault="copiarAvaluosConstructorResult_faultHandler(event)"/>
+		
+		<s:CallResponder id="convierteDireccionDaneResult" result="convierteDireccionDaneResult_resultHandler(event)"/>
+		<services:TercerosWebService id="tercerosWebService" fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)" showBusyCursor="true"/>
+		
+		<!--
+		<s:CallResponder id="getValoresDominioResult"/>
+		<s:CallResponder id="getValoresDominioProcedatosResult" result="getValoresDominioProcedatosResult_resultHandler(event)"/>
+		<s:CallResponder id="getValoresDominioResult2" result="getValoresDominioResult2_resultHandler(event)"/>
+		<services:DominiosService id="dominiosService" fault="Alert.show(event.fault.faultString + '\n' + event.fault.faultDetail)" showBusyCursor="true"/>
+		-->
+		
+		
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	
+	<fx:Script>
+		<![CDATA[
+			import com.adobe.viewsource.ViewSource;
+			
+			import flexunit.utils.ArrayList;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.controls.TextInput;
+			import mx.events.CloseEvent;
+			import mx.events.CollectionEvent;
+			import mx.events.CollectionEventKind;
+			import mx.events.DataGridEvent;
+			import mx.events.FlexEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			import spark.events.IndexChangeEvent;
+			
+			import valueObjects.Archivo;
+			import valueObjects.Avaluo;
+			import valueObjects.Dominios;
+			import valueObjects.DominiosAux;
+			import valueObjects.InformacionInmueble;
+			
+			[Bindable]
+			private var tasks:ArrayCollection;
+			
+			public var calls:ArrayCollection=new ArrayCollection();
+			
+			//public var calls:CallResponder[];
+			
+			import mx.utils.StringUtil;
+			
+			//Esta funcion retorna el indice en un arreglo que cumpla con la condicion de busqueda recibida en el parametro filter, usa la funcion As filter() 
+			public static function indexOfCall(source:ArrayCollection, filter:Function, startPos:int = 0):int {
+				var len:int = source.length;
+				for (var i:int = startPos; i < len; i++) 
+					if (filter(source[i],i,source)) return i;
+				return -1;
+			}
+			
+			
+			protected function callResult_resultHandler(event:ResultEvent):void
+			{
+				
+				//var i:int = indexOfCall(calls, function (val:*,...rest):Boolean { return val.token.message.messageId == event.token.message.messageId });
+				var i:int = indexOfCall(calls, function (val:*,...rest):Boolean { return val.token == event.token });
+				
+				if(i>-1)
+				{	
+					var call0:Object = calls.getItemAt(i);
+					var call1:CallResponder = call0 as CallResponder;					
+					//var j:int = indexOfCall(tasks, function (val:*,...rest):Boolean { return val.Token.message.messageId == event.token.message.messageId });									
+					var j:int = indexOfCall(tasks, function (val:*,...rest):Boolean { return val.Token == event.token });
+					if(j>-1)
+					{
+						var avaTmp1:Avaluo = tasks.getItemAt(j) as Avaluo;
+						
+						if(call1.lastResult != null && call1.lastResult != "" && StringUtil.trim(call1.lastResult) != "" )
+						{	
+							//tasks.removeEventListener(CollectionEvent.COLLECTION_CHANGE,collectionEventHandler);
+							
+							try{
+								avaTmp1.direccionInmueble = call1.lastResult;
+								avaTmp1.ws=true;
+								tasks.setItemAt(avaTmp1,j);
+							}
+							catch(e:Error)
+							{
+								trace(e);
+							}							
+							
+							//tasks.addEventListener(CollectionEvent.COLLECTION_CHANGE,collectionEventHandler);
+						}
+						else if(call1.lastResult == " ")
+						{
+							avaTmp1.direccionInmueble = "";
+							tasks.setItemAt(avaTmp1,j);
+						}
+						tasks.refresh();
+						/*						
+						grid.validateNow();
+						grid.invalidateDisplayList();
+						*/
+						grid.dataProvider.refresh();
+						
+					}
+				}	
+//				
+//				/*
+//				
+//				include "../../Mindview/includes/show.as"
+//				import com.mindviewinc.test.Person
+//					var people:Array = Person.createArray(100)
+//				t.show(people.filter(function(elem:*, index:int, x:Array):Boolean {
+//					return elem.last == "Miller"
+//				}).length)
+//				
+//					
+//				include "../../Mindview/includes/show.as"
+//				import com.mindviewinc.test.Person
+//					var people:Array = Person.createArray(7)
+//				people.map(function(elem:*, index:int, x:Array):String {
+//					return String(elem.last).toUpperCase()
+//				}).show()
+//				people.show()
+//				
+//				*/
+//				
+//				
+//				
+//				var cont:int=0;
+//				for each(var call0:Object in calls)
+//				{
+//					var call1:CallResponder = call0 as CallResponder;
+//					if(call1.token==event.token)
+//					{
+//						var avaTmp1:Avaluo = tasks.getItemAt(cont) as Avaluo;
+//						if(call1.lastResult != null && call1.lastResult != "" && StringUtil.trim(call1.lastResult) != "" )
+//						{	
+//							//tasks.removeEventListener(CollectionEvent.COLLECTION_CHANGE,collectionEventHandler);
+//							
+//							try{
+//								avaTmp1.direccionInmueble = call1.lastResult;
+//								tasks.setItemAt(avaTmp1,cont);
+//							}
+//							catch(e:Error)
+//							{
+//								trace(e);
+//							}							
+//							
+//							//tasks.addEventListener(CollectionEvent.COLLECTION_CHANGE,collectionEventHandler);
+//						}
+//						else if(call1.lastResult == " ")
+//						{
+//							avaTmp1.direccionInmueble = "";
+//							tasks.setItemAt(avaTmp1,cont);
+//						}	
+//						
+//					}
+//					cont++;	
+//				}
+//				grid.validateNow();
+			}
+			
+			protected function fault_faultHandler(event:FaultEvent):void
+			{
+				var error = event.fault.toString();
+				Alert.show("Existen errores, por favor inténtelo de nuevo "+error);
+				//call.addEventListener(FaultEvent.FAULT,fault_faultHandler);
+			}
+			
+			/*
+			public function collectionEventHandler(event:CollectionEvent):void {
+			switch(event.kind) {
+			case CollectionEventKind.ADD:
+			//addLog("Item "+ event.location + " added");
+			var call:CallResponder = new CallResponder();						
+			call.addEventListener(ResultEvent.RESULT,callResult_resultHandler);
+			call.addEventListener(FaultEvent.FAULT,fault_faultHandler);
+			call.token = tercerosWebService.convierteDireccionDane(tasks.getItemAt(event.location).direccionInmueble);												
+			calls.addItemAt(call,event.location);
+			break;
+			case CollectionEventKind.REMOVE:
+			//addLog("Item "+ event.location + " removed");
+			calls.removeItemAt(event.location);
+			break;
+			case CollectionEventKind.REPLACE:
+			//addLog("Item "+ event.location + " Replaced");
+			var call:CallResponder = new CallResponder();
+			call.addEventListener(ResultEvent.RESULT,callResult_resultHandler);
+			call.addEventListener(FaultEvent.FAULT,fault_faultHandler);
+			call.token = tercerosWebService.convierteDireccionDane(tasks.getItemAt(event.location).direccionInmueble);						
+			calls.setItemAt(null,event.location);
+			break;
+			case CollectionEventKind.UPDATE:
+			//addLog("Item updated");
+			//public var calls:CallResponder[];
+			var call:CallResponder = new CallResponder();
+			call.addEventListener(ResultEvent.RESULT,callResult_resultHandler);
+			call.addEventListener(FaultEvent.FAULT,fault_faultHandler);
+			call.token = tercerosWebService.convierteDireccionDane(tasks.getItemAt(event.location).direccionInmueble);						
+			calls.setItemAt(null,event.location);
+			break;
+			}
+			}
+			*/
+			
+			[Bindable]	
+			public var avaluo2:Avaluo;
+			
+			
+			private static const ADD_TASK:String = "Click para agregar Avaluo";
+			
+			private function init():void
+			{
+				/*var srcUrl:String = Application.application.parameters.srcUrl;
+				if(srcUrl) {
+				ViewSource.addMenuItem(this, srcUrl);
+				}*/
+				
+				tasks = new ArrayCollection();
+				/*tasks.addItem(new Task("Write Tutorial", 4, "today"));
+				tasks.addItem(new Task("Make Breakfast", 1, "tomorrow"));*/
+				
+				tasks.addItem({nombreSolicitante: ADD_TASK});				
+				//tasks.addEventListener(CollectionEvent.COLLECTION_CHANGE,collectionEventHandler);
+				
+				
+				//consultaDepartamentosResult.token = departamentoService.consultaDepartamentos();
+				//getAvaluosPorIdResult.token = avaluosService.getAvaluosPorId(/*Enter value(s) for */ arg0);
+				//Alert("El avaluo recibido es"+avaluo.consecutivoBanco as String);
+				
+				/*
+				var dominio:DominiosAux = new DominiosAux();
+				dominio.rvDomain = "TIPOIDENTIFICACION";
+				
+				getValoresDominioResult.token = dominiosAuxDao.getValoresDominioProcedatos(dominio);
+				
+				//getValoresDominioResult.token = dominiosAuxDao.getValoresDominio(dominio);
+				
+				
+				//getValoresDominioProcedatosResult.token = dominiosAuxDao.getValoresDominioProcedatos(
+				//Enter value(s) for 
+				arg0);
+				var dominioA:Dominios = new Dominios();
+				dominioA.rvDomain = "TIPOIDENTIFICACION";
+				getValoresDominioResult2.token = dominiosService.getValoresDominio(dominioA);
+				*/
+			}
+			
+			private function checkEdit(e:DataGridEvent):void
+			{
+				// Do not allow editing of Add Task row except for 
+				// "Click to Add" column
+				if(e.rowIndex == tasks.length - 1 && e.columnIndex != 0)
+					e.preventDefault();
+			}
+			
+			private function editEnd(e:DataGridEvent):void
+			{
+				// Adding a new task
+				if(e.rowIndex == tasks.length - 1)
+				{
+					//var txtIn:TextInput =
+					//var txtIn:mx.controls.TextInput =			
+					//new mx.controls.TextInput(e.currentTarget.itemEditorInstance);
+					var txtIn:/*spark.components.*/TextInput =			
+						/*spark.components.*/TextInput(e.currentTarget.itemEditorInstance);			
+					var dt:Object = e.itemRenderer.data;
+					
+					// Add new task
+					if(txtIn.text != ADD_TASK)
+					{
+						
+						var tmpAva:Avaluo=new Avaluo();
+						//tmpAva=avaluo;
+						
+						/*for(var id:String in avaluo) {
+						var value:Object = avaluo[id];
+						tmpAva[id]=value;
+						//trace(id + " = " + value);
+						}
+						*/
+						copyObject(avaluo,tmpAva);
+						
+						tmpAva.nombreSolicitante=txtIn.text;						
+						
+						tmpAva.tipoDocumento="";
+						tmpAva.idTipoIdentificacion="";
+						tmpAva.numeroIdentificacion="";	
+						
+						tmpAva.nombreSolicitante="";
+
+						tmpAva.matricula1="";
+						tmpAva.matricula2="";
+						tmpAva.matriculaGj1="";
+						tmpAva.matriculaGj2="";
+						tmpAva.matriculaDep1="";
+												
+
+						/*
+						tasks.addItemAt(
+							//new Task(txtIn.text, 0, ""), e.rowIndex
+							tmpAva, e.rowIndex
+							//new valueObjects.Avaluo(
+							
+							
+						);
+						
+						var call:CallResponder = new CallResponder();
+						call.addEventListener(ResultEvent.RESULT,callResult_resultHandler);
+						call.addEventListener(FaultEvent.FAULT,fault_faultHandler);
+						
+						call.token = tercerosWebService.convierteDireccionDane(tasks.getItemAt(e.rowIndex).direccionInmueble);
+						*/
+						var call:CallResponder = new CallResponder();
+						call.addEventListener(ResultEvent.RESULT,callResult_resultHandler);
+						call.addEventListener(FaultEvent.FAULT,fault_faultHandler);
+						
+						call.token = tercerosWebService.convierteDireccionDane(tmpAva.direccionInmueble);
+						tmpAva.Token = call.token;//cloneToken(call.token);						
+						tmpAva.direccionInmuebleOld = clone(tmpAva.direccionInmueble);
+						
+						tasks.addItemAt(
+							//new Task(txtIn.text, 0, ""), e.rowIndex
+							tmpAva, e.rowIndex
+							//new valueObjects.Avaluo(
+							
+							
+						);
+						
+						
+						//call.token = tercerosWebService.convierteDireccionDane(dir.text);
+						
+//						if(calls!=null)
+//						{
+//							try{
+//								if(calls.length<=e.rowIndex)
+//								{	
+//									//calls.addItemAt(clone(call),e.rowIndex);
+//									//calls.addItemAt(call,e.rowIndex);
+//									//calls.addItem(call);
+//									calls[e.rowIndex]=call;
+//								}
+//								else
+//								{
+//									//calls.setItemAt(clone(call),e.rowIndex);
+//									//calls.setItemAt(call,e.rowIndex);
+//									//calls(e.rowIndex)=call;
+//									calls[e.rowIndex]=call;
+//								}
+//							}
+//							catch(e:Error)
+//							{
+//								trace(e);
+//							}	
+//					    }
+						if(calls!=null)
+						{
+							try{
+								//if(calls.length<=cont+1)
+								if(calls.length==0)
+								{	
+									//calls.addItemAt(call,cont+1);
+									//calls.addItemAt(clone(call),cont);
+									//calls.addItemAt(call,cont);
+									
+									//calls[cont]=call;
+									calls.addItem(call);
+								}
+								else
+								{
+									//calls.setItemAt(call,cont+1);
+									//calls.setItemAt(clone(call),cont);
+									//calls.setItemAt(call,cont);
+									if(calls.length<e.rowIndex)
+									{											
+										//calls[cont]=call;
+										calls.addItem(call);
+										
+									}
+									else
+									{
+										calls[e.rowIndex]=call;
+									}
+								}
+							}
+							catch(e:Error)
+							{
+								trace(e);
+							}	
+						}
+						
+						
+					}
+					
+					// Destroy item editor
+					grid.destroyItemEditor();
+					
+					// Stop default behavior 
+					e.preventDefault();
+				}
+				else
+				{
+					if(e.columnIndex==3)
+					{   						
+													
+							var call:CallResponder = new CallResponder();
+							call.addEventListener(ResultEvent.RESULT,callResult_resultHandler);
+							call.addEventListener(FaultEvent.FAULT,fault_faultHandler);
+							tasks.refresh();
+							var dg:mx.controls.DataGrid = e.currentTarget as mx.controls.DataGrid;
+							//e.target. .Token = call.token; 
+							
+							var dir:TextInput = TextInput(e.currentTarget.itemEditorInstance);
+							
+							if(dir.text!=tasks.getItemAt(e.rowIndex).direccionInmueble)
+							{								
+								if(dir.text!=tasks.getItemAt(e.rowIndex).direccionInmuebleOld || tasks.getItemAt(e.rowIndex).ws==false)							
+								{
+									
+									//call.token = tercerosWebService.convierteDireccionDane(tasks.getItemAt(e.rowIndex).direccionInmueble);								
+									call.token = tercerosWebService.convierteDireccionDane(dir.text);
+									tasks.getItemAt(e.rowIndex).direccionInmuebleOld=clone(dir.text);
+									tasks.getItemAt(e.rowIndex).Token=call.token;//cloneToken(call.token);
+									
+									if(calls!=null)
+									{
+										try{
+											if(calls.length<=e.rowIndex)
+											{	
+												//calls.addItemAt(clone(call),e.rowIndex);
+												//calls.addItemAt(call,e.rowIndex);
+												calls.addItem(call);
+											}
+											else
+											{
+												//calls.setItemAt(clone(call),e.rowIndex);
+												//calls.setItemAt(call,e.rowIndex);
+												//calls(e.rowIndex)=call;
+												calls[e.rowIndex]=call;
+											}
+										}
+										catch(e:Error)
+										{
+											trace(e);
+										}	
+									}
+								}
+							}	
+						}	
+						//grid.selectedITem
+						//tipoDocumento/idTipoIdentificacion
+						//cbxTiposDoc
+						//idTipoDocs
+						/*
+						try
+						{	
+						grid.editedItemRenderer.data.idTipoIdentificacion  = myEditor(grid.itemEditorInstance).idTipoDocs.text;
+						grid.editedItemRenderer.data.tipoDocumento         = myEditor(grid.itemEditorInstance).cbxTiposDoc.selectedItem;
+						grid.destroyItemEditor();
+						grid.dataProvider.itemUpdated(grid.editedItemRenderer);
+						}
+						catch(Error)
+						{
+						
+						}	
+						*/
+					  }
+					  var indice:int = grid.selectedIndex;
+					
+			}
+			
+			/**/
+			/**
+			 * copies a source object to a destination object
+			 * @param sourceObject the source object
+			 * @param destinationObject the destination object
+			 *
+			 */
+			/*public*/ /*static*/ function copyObject(sourceObject:Object, destinationObject:Object):void
+			{
+				// check if the objects are not null
+				if((sourceObject) && (destinationObject)) {
+					try
+					{
+						//retrive information about the source object via XML
+						var sourceInfo:XML = describeType(sourceObject);
+						var objectProperty:XML;
+						var propertyName:String;
+						
+						// loop through the properties
+						for each(objectProperty in sourceInfo.variable)
+						{
+							propertyName = objectProperty.@name;
+							if(sourceObject[objectProperty.@name] != null)
+							{
+								if(destinationObject.hasOwnProperty(objectProperty.@name)) {
+									destinationObject[objectProperty.@name] = sourceObject[objectProperty.@name];
+								}
+							}
+						}
+						//loop through the accessors
+						for each(objectProperty in sourceInfo.accessor) {
+							if(objectProperty.@access == "readwrite") {
+								propertyName = objectProperty.@name;
+								if(sourceObject[objectProperty.@name] != null)
+								{
+									if(destinationObject.hasOwnProperty(objectProperty.@name)) {
+										destinationObject[objectProperty.@name] = sourceObject[objectProperty.@name];
+									}
+								}
+							}
+						}
+					}
+					catch (err:*) {
+						;
+					}
+				}
+			}
+			
+			/*public*/ /*static*/ 
+			
+			function copyDisplayObjectData(sourceObject:Object, destinationObject:Object,allowedProperties:String):void
+			{
+				if((sourceObject) && (destinationObject)) {
+					try
+					{
+						var sourceInfo:XML = describeType(sourceObject);
+						var objectProperty:XML;
+						var propertyName:String;
+						
+						for each(objectProperty in sourceInfo.variable)
+						{
+							propertyName = objectProperty.@name;
+							if(allowedProperties.indexOf(propertyName) > -1)
+							{
+								if(sourceObject[objectProperty.@name] != null)
+								{
+									if(destinationObject.hasOwnProperty(objectProperty.@name)) {
+										destinationObject[objectProperty.@name] = sourceObject[objectProperty.@name];
+									}
+								}
+								
+							}
+						}
+						
+						for each(objectProperty in sourceInfo.accessor) {
+							if(objectProperty.@access == "readwrite") {
+								propertyName = objectProperty.@name;
+								if(allowedProperties.indexOf(propertyName) > -1)
+								{
+									if(sourceObject[objectProperty.@name] != null)
+									{
+										if(destinationObject.hasOwnProperty(objectProperty.@name)) {
+											destinationObject[objectProperty.@name] = sourceObject[objectProperty.@name];
+										}
+									}
+								}
+							}
+						}
+					}
+					catch (err:*) {
+						;
+					}
+				}
+			}
+			
+			
+			/**/
+			
+			/*
+			protected function comboBox_creationCompleteHandler(event:FlexEvent):void
+			{
+			var dominio:DominiosAux = new DominiosAux();
+			dominio.rvDomain = "TIPOIDENTIFICACION";
+			getValoresDominioResult.token = dominiosAuxDao.getValoresDominioProcedatos(dominio);
+			}
+			
+			*/
+			
+			
+			//getValoresDominioResult.token = dominiosAuxDao.getValoresDominio(/*Enter value(s) for */ arg0);
+			/*
+			var restrict_:String ="^|<>&'";
+			*/
+			
+			/**
+			 * Convierte a español los rótulos de un componente calendar.
+			 * @parama dt Componente calendar.
+			 * */
+			
+			/*
+			private function dateChooser_init(dt:mx.controls.DateField):void {
+			dt.dayNames=['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'];
+			dt.monthNames=[	'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+			'Julio', 'Agosto', 'Septiembre', 'Octubre',
+			'Noviembre', 'Diciembre'];
+			dt.firstDayOfWeek = 1;
+			dt.formatString = "DD/MM/YYYY";
+			}
+			*/
+			
+			/**
+			 * Permite  llenar el combo de departamentos en información básica
+			 * */
+			/*
+			protected function cbxDepartamento_creationCompleteHandler(event:FlexEvent):void
+			{
+			consultaDepartamentosResult.token = departamentoService.consultaDepartamentos();	
+			}
+			*/
+			
+			/**
+			 * Permite llenar el combo de ciudades del encabezado con base en el departamento seleccionado [ok]
+			 * */
+			/*
+			protected function comboBox_changeHandler(event:IndexChangeEvent):void
+			{
+			//selectCiudadbasico = cbxDepartamento.selectedItem.ciudadesDepto;				
+			////alvCiudad.list = cbxDepartamento.selectedItem.ciudadesDepto;
+			//cbxCiudadEncabezado.enabled = true;
+			//cbxCiudadEncabezado.invalidateDisplayList();
+			//cbxCiudadEncabezado.selectedIndex = -1;
+			}
+			*/
+			
+			/*
+			[Bindable]
+			public var selectCiudadbasico:ArrayCollection = new ArrayCollection() ;
+			
+			
+			var TmpmatriculaInmobiliariaPpal1:String;
+			var TmpmatriculaInmobiliariaPpal2:String;
+			
+			*/
+			
+			public function linkbutton2_clickHandler(event:MouseEvent):void
+			{
+				
+				//event.currentTarget
+				
+				if(grid.selectedIndex<tasks.length-1)
+				{	
+					Alert.show("Esta seguro de quitar este avaluo de la lista?", "Confirmar Quitar",  Alert.YES | Alert.NO, null,confirmDeleteHandler, null, Alert.NO);	
+				}
+				/*
+				logsGeneraArchivo = dtgLogsArchivo.selectedItem as LogsGeneraArchivo;
+				
+				var ventanaErr:WndErrValidacionAvaluo = new WndErrValidacionAvaluo();
+				ventanaErr.setTextoErrValidacionAvaluo(logsGeneraArchivo.descripcionError);
+				
+				ventanaErr.showCloseButton = true;
+				PopUpManager.addPopUp(ventanaErr,this,true);
+				PopUpManager.centerPopUp(ventanaErr); 
+				*/
+			}
+			
+			
+			
+			private function confirmDeleteHandler(e:CloseEvent):void {
+				if (e.detail == Alert.YES) {
+					// delete logic //
+					tasks.removeItemAt(grid.selectedIndex);					
+					
+					if(calls!=null)
+						if(calls.length>grid.selectedIndex)
+						{	
+							try{
+								calls.removeItemAt(grid.selectedIndex);
+							}
+							catch(e:Error)
+							{
+								trace(e);
+							}	
+						}					
+				}
+			}
+			
+			/*
+			[Bindable]
+			public var selectTipoId:ArrayCollection = new ArrayCollection() ;
+			*/		
+			
+			/*		
+			protected function getValoresDominioResult_resultHandler(event:ResultEvent):void
+			{
+			null;
+			//selectTipoId = getValoresDominioResult.lastResult;
+			getValoresDominioResult.lastResult;
+			}
+			*/
+			
+			public function title_close():void{
+				
+				if(tasks.length > 1)
+				{	
+					Alert.show("Esta seguro de salir, recuerde ejecutar el proceso o perdera los registros diligenciados", "Confirmar Salida",  Alert.YES | Alert.NO, null,confirmExitHandler, null, Alert.NO);	
+				}
+				else
+				{
+					closePopUp();
+				}
+				//PopUpManager.removePopUp(this);
+			}
+			
+			private function confirmExitHandler(e:CloseEvent):void {
+				if (e.detail == Alert.YES) {
+					/*
+					tasks=null;
+					PopUpManager.removePopUp(this);
+					*/
+					closePopUp();
+				}
+			}
+			
+			private function closePopUp()
+			{			
+				tasks=null;
+				PopUpManager.removePopUp(this);
+			}	
+			
+			/*
+			protected function getValoresDominioProcedatosResult_resultHandler(event:ResultEvent):void
+			{
+			getValoresDominioProcedatosResult.lastResult;
+			null;
+			}
+			
+			
+			protected function getValoresDominioResult2_resultHandler(event:ResultEvent):void
+			{
+			getValoresDominioResult2.lastResult;
+			null;
+			}
+			
+			public function getItemIndex(target:String, fields:ArrayCollection,propiedad:String ):int { 
+			for(var x:int=0; x<fields.length; x++) { 
+			if(fields[x][propiedad] == target) 
+			{ return x; 
+			} 
+			} 
+			return -1; 
+			}
+			//(avaluo.objCiudad.departamento.codAsobancaria,selectDepartamento,'codAsobancaria')
+			*/
+			import mx.utils.ObjectUtil;
+			protected function button1_clickHandler(event:MouseEvent):void
+			{
+				var finalizado:Boolean=true;				
+				var tasks_copy:ArrayCollection = new ArrayCollection( ObjectUtil.copy( tasks.source ) as Array );
+				tasks_copy.removeAll();
+				
+				if(tasks.length>1)
+				{	
+					tasks.removeItemAt(tasks.length-1);
+										
+					/*
+					for ( var x:int = 0; x < ac.length; ++x )
+					{
+					
+					trace(ac.getItemAt(x).property);
+					}
+					*/
+															
+					var x:int = 0; 					
+					var avaTmpObj=null;
+					var tmpInm:InformacionInmueble =null;
+									
+					for( x = 0; x < tasks.length; ++x )//(var avaObj:Object in tasks)
+					{
+												
+						//var avaTmpObj=avaObj as Avaluo;
+						//var avaTmpObj=tasks.getItemIndex(x);
+						
+						////var avaTmpObj=tasks.getItemIndex(x) as Avaluo;
+						
+						/*var*/ avaTmpObj=tasks.getItemAt(x) as Avaluo;
+
+						//BORRAR//
+						
+						/*
+						var call:CallResponder = new CallResponder();
+						call.addEventListener(ResultEvent.RESULT,callResult_resultHandler);
+						call.addEventListener(FaultEvent.FAULT,fault_faultHandler);
+						//call.token = tercerosWebService.convierteDireccionDane(tasks.getItemAt(cont).direccionInmueble);
+						call.token = tercerosWebService.convierteDireccionDane(avaTmpObj.direccionInmueble);
+						
+						if(calls!=null)
+						{
+						try{
+						if(calls.length<=x+1)
+						{	
+						//calls.addItemAt(call,cont+1);
+						calls.addItemAt(call,x);
+						}
+						else
+						{
+						//calls.setItemAt(call,cont+1);
+						calls.setItemAt(call,x);
+						}
+						}
+						catch(e:Error)
+						{
+						trace(e);
+						}	
+						}
+						*/
+						
+						//BORRAR//
+						
+						
+						
+						
+						if(validatePastedInfo(avaTmpObj)==false)
+						{
+							Alert.show("Reg: "+ (x+1) +". CC: "+ avaTmpObj.numeroIdentificacion +".Uno de los campos requeridos (Nombre, Tipo Identificacion, Numero Identificacion, Direccion Inmueble, Matricula1) viene vacio o excede la longitud, favor validar");
+							finalizado=false;
+						}	
+						
+
+						try
+						{
+							//avaTmpObj.matriculaInmobiliariaPpal1 = avaTmpObj.matricula1.concat(avaTmpObj.matricula2);
+						}
+						catch(e:Error)
+						{
+							trace(e);
+						}	
+						avaTmpObj.fechaAvaluo=new Date();
+						
+						if(avaTmpObj.informacionInmueble!=null)
+							if(avaTmpObj.informacionInmueble.length>0)
+							{
+								/*var tmpInm:InformacionInmueble*/tmpInm = avaTmpObj.informacionInmueble.getItemAt(0) as InformacionInmueble;
+								
+								if(tmpInm!=null)
+								{	
+									
+								}
+								else
+								{
+									tmpInm = new InformacionInmueble();
+								}
+								tmpInm.matriculaInmobiliariaPpal1=avaTmpObj.matricula1;
+								tmpInm.matriculaInmobiliariaPpal2=avaTmpObj.matricula2;
+								tmpInm.matriculaInmobiliariaGaraje1=avaTmpObj.matriculaGj1;
+								tmpInm.matriculaInmobiliariaGaraje2=avaTmpObj.matriculaGj2;
+								tmpInm.matriculaInmobiliariaDeposito1=avaTmpObj.matriculaDep1;
+								
+								/*
+								//avaTmpObj.informacionInmueble.setItemAt(0,tmpInm);
+								//avaTmpObj.informacionInmueble
+								avaTmpObj.informacionInmueble.removeItemAt(0);
+								avaTmpObj.informacionInmueble.addItem(tmpInm);
+								*/
+							}	
+						
+						avaTmpObj.informacionInmueble.getItemAt(0).matriculaInmobiliariaPpal1=avaTmpObj.matricula1;
+						avaTmpObj.informacionInmueble.getItemAt(0).matriculaInmobiliariaPpal2=avaTmpObj.matricula2;
+						avaTmpObj.informacionInmueble.getItemAt(0).matriculaInmobiliariaGaraje1=avaTmpObj.matriculaGj1;
+						avaTmpObj.informacionInmueble.getItemAt(0).matriculaInmobiliariaGaraje2=avaTmpObj.matriculaGj2;
+						avaTmpObj.informacionInmueble.getItemAt(0).matriculaInmobiliariaDeposito1=avaTmpObj.matriculaDep1;
+						avaTmpObj.informacionInmueble=clone(avaTmpObj.informacionInmueble);
+						//tasks.setItemAt(avaTmpObj,x); 
+						tasks_copy.addItem(avaTmpObj);
+					}
+					tasks=tasks_copy;	
+					//avaTmpObj.setFechaCreacion(new Date());
+					if(finalizado)
+						copiarAvaluosConstructorResult.token = avaluosService.copiarAvaluosConstructor(tasks);
+					
+					tasks.addItem({nombreSolicitante: ADD_TASK});
+				}  
+			}
+			import flash.utils.ByteArray; 
+			
+			function clone(source:Object):* 
+			{ 
+				var myBA:ByteArray = new ByteArray(); 
+				myBA.writeObject(source); 
+				myBA.position = 0; 
+				return(myBA.readObject()); 
+			}
+			function cloneToken(source:mx.rpc.AsyncToken):* 
+			{ 
+				var myBA:ByteArray = new ByteArray(); 
+				myBA.writeObject(source); 
+				myBA.position = 0; 
+				return(myBA.readObject()); 
+			}
+			protected function button111_clickHandler(event:MouseEvent):void
+			{
+				
+				var tasks_copy:ArrayCollection = new ArrayCollection( ObjectUtil.copy( tasks.source ) as Array );
+				tasks_copy.removeAll();
+				
+				if(tasks.length>1)
+				{	
+					tasks.removeItemAt(tasks.length-1);
+					
+						
+					/*
+					for ( var x:int = 0; x < ac.length; ++x )
+					{
+					
+					trace(ac.getItemAt(x).property);
+					}
+					*/	
+					var x:int = 0; 
+					
+					var avaTmpObj=null;
+					var tmpInm:InformacionInmueble =null;
+					
+					for( x = 0; x < tasks.length; ++x )//(var avaObj:Object in tasks)//(var avaTmpObj:Avaluo in tasks)
+					{
+						
+						/*var*/ avaTmpObj=tasks.getItemAt(x) as Avaluo;
+						
+						//var avaTmpObj=avaObj as Avaluo;
+						
+						if(avaTmpObj!=null)
+						{	
+							//var avaTmpObj=tasks.getItemIndex(x);
+							
+							////var avaTmpObj=tasks.getItemIndex(x) as Avaluo;
+							
+							/*
+							var avaTmpObj=tasks.getItemAt(x) as Avaluo;
+							*/
+							
+							
+							try
+							{
+								//avaTmpObj.matriculaInmobiliariaPpal1 = avaTmpObj.matricula1.concat(avaTmpObj.matricula2);
+							}
+							catch(e:Error)
+							{
+								trace(e);
+							}	
+							avaTmpObj.fechaAvaluo=new Date();
+							
+							if(avaTmpObj.informacionInmueble!=null)
+								if(avaTmpObj.informacionInmueble.length>0)
+								{
+									/*var tmpInm:InformacionInmueble*/tmpInm = avaTmpObj.informacionInmueble.getItemAt(0) as InformacionInmueble;
+									
+									if(tmpInm!=null)
+									{	
+										
+									}
+									else
+									{
+										tmpInm = new InformacionInmueble();
+									}
+																	
+									tmpInm.matriculaInmobiliariaPpal1=avaTmpObj.matricula1;
+									tmpInm.matriculaInmobiliariaPpal2=avaTmpObj.matricula2;
+									tmpInm.matriculaInmobiliariaGaraje1=avaTmpObj.matriculaGj1;
+									tmpInm.matriculaInmobiliariaGaraje2=avaTmpObj.matriculaGj2;
+									tmpInm.matriculaInmobiliariaDeposito1=avaTmpObj.matriculaDep1;
+									
+									//avaTmpObj.informacionInmueble.setItemAt(0,tmpInm);
+									//avaTmpObj.informacionInmueble	
+									
+									try
+									{
+										avaTmpObj.informacionInmueble.removeItemAt(0);
+									}
+									catch(e:Error)
+									{
+										trace(e);
+									}									
+									avaTmpObj.informacionInmueble.addItem(tmpInm);
+								}	
+							
+							avaTmpObj.informacionInmueble.getItemAt(0).matriculaInmobiliariaPpal1=avaTmpObj.matricula1;
+							avaTmpObj.informacionInmueble.getItemAt(0).matriculaInmobiliariaPpal2=avaTmpObj.matricula2;
+							avaTmpObj.informacionInmueble.getItemAt(0).matriculaInmobiliariaGaraje1=avaTmpObj.matriculaGj1;
+							avaTmpObj.informacionInmueble.getItemAt(0).matriculaInmobiliariaGaraje2=avaTmpObj.matriculaGj2;
+							avaTmpObj.informacionInmueble.getItemAt(0).matriculaInmobiliariaDeposito1=avaTmpObj.matriculaDep1;
+							
+							//tasks.setItemAt(avaTmpObj,x); 
+							//tasks.setItemAt(avaTmpObj,x);
+							tasks_copy.addItem(avaTmpObj);
+						}	
+						tasks=tasks_copy;
+					  }
+					//avaTmpObj.setFechaCreacion(new Date());
+					//copiarAvaluosConstructorResult.token = avaluosService.copiarAvaluosConstructor(tasks);					
+					copiarAvaluosConstructorResult.token = avaluosService.copiarAvaluosConstructor(tasks_copy);
+					tasks.addItem({nombreSolicitante: ADD_TASK});
+				}  
+			}
+			
+			
+			protected function copiarAvaluosConstructorResult_resultHandler(event:ResultEvent):void
+			{
+				var result:String;
+				result=copiarAvaluosConstructorResult.lastResult as String;
+				Alert.show(result);
+				if(result.indexOf("Proceso realizado satisfactoriamente :Los avaluos constructor han sido copiados.")>=0)
+				{
+					grid.invalidateDisplayList();
+					tasks.removeAll();
+					tasks.refresh();
+					tasks=new ArrayCollection();
+					grid.invalidateDisplayList();
+					grid.validateNow();
+					init();					
+				}	
+			}
+			
+			
+			protected function copiarAvaluosConstructorResult_faultHandler(event:FaultEvent):void
+			{
+				var error = event.fault.toString();
+				
+				if( error.indexOf("[RPC Fault faultString=") > -1 && error.indexOf("]"))
+				{
+					error=error.substr( error.indexOf("[RPC Fault faultString="));
+					error=error.substr(0, /*error.length - */ error.lastIndexOf("]"));
+				}
+				
+				Alert.show("Existen errores, por favor inténtelo de nuevo "+error);
+			}
+			
+			
+			private function dataGridKeyDownHandler(event:KeyboardEvent):void
+			{
+				if (event.ctrlKey && !grid.getChildByName("clipboardProxy"))
+				{
+					// Add an invisible TextField object to the DataGrid
+					
+					var textField:TextField = new TextField();
+					textField.name = "clipboardProxy";
+					grid.addChild(textField);
+					textField.visible = false;
+					
+					textField.type = TextFieldType.INPUT;
+					textField.multiline = true;
+					
+					// Populate the TextField with selected data in TSV format
+					
+					textField.text = getTextFromItems(grid.selectedItems);
+					textField.setSelection(0, textField.text.length - 1);
+					
+					// Listen for textInput event
+					
+					textField.addEventListener(TextEvent.TEXT_INPUT,
+						clipboardProxyPasteHandler);
+					
+					// Set player-level focus to the TextField
+					
+					systemManager.stage.focus = textField;
+				}
+			}
+			
+			
+			private function dataGridKeyUpHandler(event:KeyboardEvent):void
+			{
+				if (!event.ctrlKey)
+				{
+					var textField:TextField = TextField(grid
+						.getChildByName("clipboardProxy"));
+					if (textField)
+						grid.removeChild(textField);
+				}
+			}
+			
+			private function getTextFromItems(items:Array):String
+			{
+				var columns:Array = grid.columns;
+				var textFromItems:String = "";
+				
+				for each (var it:Object in items)
+				{
+					try
+					{	
+						for each (var c:DataGridColumn in columns)
+						textFromItems += it[c.dataField] + "\t";
+						textFromItems += "\n";
+					}
+					catch(error:Error)
+					{
+						trace(error);
+					}	
+				}
+				
+				return textFromItems;
+			}
+			
+			private function clipboardProxyPasteHandler(event:TextEvent):void
+			{
+				// Extract values from TSV format and populate the DataGrid
+				
+				var items:Array = getItemsFromText(event.text);
+				
+				tasks.removeItemAt((tasks.length)-1);
+				var cont:int=0;
+				var conTrue:int=0;
+				
+				for each (var item:Object in items)
+				{	
+					
+					var tmpAva:Avaluo=new Avaluo();
+					copyObject(avaluo,tmpAva);	
+					
+					tmpAva.nombreSolicitante="";
+					tmpAva.tipoDocumento="";
+					tmpAva.idTipoIdentificacion="";
+					tmpAva.numeroIdentificacion="";
+					tmpAva.matricula1="";
+					tmpAva.matricula2="";
+					tmpAva.matriculaGj1="";
+					tmpAva.matriculaGj2="";
+					tmpAva.matriculaDep1="";
+					
+					
+					if(item["nombreSolicitante"]!=null && item["nombreSolicitante"]!="")tmpAva.nombreSolicitante    = item["nombreSolicitante"];
+					tmpAva.tipoDocumento        = item["tipoDocumento"];
+					tmpAva.idTipoIdentificacion = item["idTipoIdentificacion"];
+					tmpAva.numeroIdentificacion = item["numeroIdentificacion"];
+					
+					if(item["direccionInmueble"]!=null && item["direccionInmueble"]!="")tmpAva.direccionInmueble    = item["direccionInmueble"];
+					if(item["matricula1"]!=null && item["matricula1"]!="")tmpAva.matricula1  = item["matricula1"];
+					if(item["matricula2"]!=null && item["matricula2"]!="")tmpAva.matricula2 = item["matricula2"];
+					
+					if(item["matriculaGj1"]!=null && item["matriculaGj1"]!="")tmpAva.matriculaGj1  = item["matriculaGj1"];
+					if(item["matriculaGj2"]!=null && item["matriculaGj2"]!="")tmpAva.matriculaGj2 = item["matriculaGj2"];
+					
+					if(item["matriculaDep1"]!=null && item["matriculaDep1"]!="")tmpAva.matriculaDep1 = item["matriculaDep1"];
+									
+					//tasks.
+					//if(validatePastedInfo(item as Avaluo))
+					if(validatePastedInfo(tmpAva))
+					{
+						conTrue++;
+						
+						/*
+						var matriculaArray:Array = tmpAva.matriculaInmobiliariaPpal1.split("-");
+						try{
+						tmpAva.matricula1=matriculaArray[0];
+						tmpAva.matricula2=matriculaArray[1];
+						}catch(Error)
+						{
+						
+						}
+						*/
+						
+//						//grid.dataProvider.addItem(item);
+//						grid.dataProvider.addItem(tmpAva);
+//						grid.validateNow();
+//						var call:CallResponder = new CallResponder();
+//						call.addEventListener(ResultEvent.RESULT,callResult_resultHandler);
+//						call.addEventListener(FaultEvent.FAULT,fault_faultHandler);
+//						//call.token = tercerosWebService.convierteDireccionDane(tasks.getItemAt(cont).direccionInmueble);
+//						call.token = tercerosWebService.convierteDireccionDane(tmpAva.direccionInmueble);
+						//grid.dataProvider.addItem(item);
+						var call:CallResponder = new CallResponder();
+						call.addEventListener(ResultEvent.RESULT,callResult_resultHandler);
+						call.addEventListener(FaultEvent.FAULT,fault_faultHandler);
+						//call.token = tercerosWebService.convierteDireccionDane(tasks.getItemAt(cont).direccionInmueble);
+						call.token = tercerosWebService.convierteDireccionDane(tmpAva.direccionInmueble);						
+						tmpAva.Token=call.token;//cloneToken(call.token);
+						
+						grid.dataProvider.addItem(tmpAva);
+						grid.validateNow();
+						
+						
+						
+						if(calls!=null)
+						{
+							try{
+								//if(calls.length<=cont+1)
+								if(calls.length==0)
+								{	
+									//calls.addItemAt(call,cont+1);
+									//calls.addItemAt(clone(call),cont);
+									//calls.addItemAt(call,cont);
+									
+									//calls[cont]=call;
+									calls.addItem(call);
+								}
+								else
+								{
+									//calls.setItemAt(call,cont+1);
+									//calls.setItemAt(clone(call),cont);
+									//calls.setItemAt(call,cont);
+									if(calls.length<conTrue)
+									{											
+										//calls[cont]=call;
+										calls.addItem(call);
+										
+									}
+									else
+									{
+										calls[cont]=call;
+									}
+								}
+							}
+							catch(e:Error)
+							{
+								trace(e);
+							}	
+						}
+					}
+				}
+				tasks.addItem({nombreSolicitante: ADD_TASK});
+				cont++;
+				Alert.show("Registros pegados "+conTrue);
+			}
+			
+			
+			//private function validatePastedInfo(item:Object):Boolean
+			private function validatePastedInfo(item:Avaluo):Boolean
+			{
+				var contTrue:int = 0;
+				var avaluo:Avaluo;
+				try{
+					
+					avaluo = item/* as Avaluo*/;
+					
+					if(avaluo.numeroIdentificacion != null)
+					{
+						if (isNaN(Number(avaluo.numeroIdentificacion))){
+							return false;
+						}
+						else{
+							contTrue++;
+						}
+					}
+					/*
+					else
+					{
+					
+					}
+					*/
+					if(avaluo.tipoDocumento != null)
+					{
+						switch(avaluo.tipoDocumento)
+						{	
+							case "CC":
+								//idTipoDocs.text="21";
+								avaluo.idTipoIdentificacion="21";
+								contTrue++;
+								break;
+							case "CE":
+								avaluo.idTipoIdentificacion="22";
+								contTrue++;
+								break;
+							case "NT":
+								avaluo.idTipoIdentificacion="22";
+								contTrue++;
+								break;
+							default:
+								return false;
+								break;	
+						}
+					}
+					
+					if(avaluo.nombreSolicitante== null || avaluo.nombreSolicitante.length==0 ||avaluo.nombreSolicitante.length>60)
+					{
+						return false;
+					}
+					if(avaluo.numeroIdentificacion== null || avaluo.numeroIdentificacion.length==0 ||avaluo.numeroIdentificacion.length>10)
+					{
+						return false;
+					}
+					if(avaluo.direccionInmueble== null || avaluo.direccionInmueble.length==0 ||avaluo.direccionInmueble.length>100)
+					{
+						return false;
+					}
+					if(avaluo.matriculaInmobiliariaPpal1== null || avaluo.matriculaInmobiliariaPpal1.length==0 ||avaluo.matriculaInmobiliariaPpal1.length>20)
+					{
+						return false;
+					}
+					if(avaluo.matricula1== null || avaluo.matricula1.length==0 ||avaluo.matricula1.length>20)
+					{
+						return false;
+					}
+					if(avaluo.matricula2.length>20)
+					{
+						return false;
+					}
+					if(avaluo.matriculaGj1.length>20)
+					{
+						return false;
+					}
+					if(avaluo.matriculaGj2.length>20)
+					{
+						return false;
+					}
+					if(avaluo.matriculaDep1.length>20)
+					{
+						return false;
+					}
+					/*
+					else
+					{
+					
+					}
+					*/
+				}
+				catch(error:Error)
+				{
+					trace(error);
+				}
+				if(contTrue==2)
+				{	
+					return true;
+				}
+				else{
+					return false;
+				}
+			}	
+			
+			private function getItemsFromText(text:String):Array
+			{	
+				var rows:Array = text.split("\n");
+				if (!rows[rows.length - 1])
+					rows.pop();
+				
+				var columns:Array = grid.columns;
+				columns.pop();
+				columns.pop();
+				var itemsFromText:Array = [];
+				
+				for each (var rw:String in rows)
+				{
+					var fields:Array = rw.split("\t");
+					
+					var n:int = Math.min(columns.length, fields.length);
+					var item:Object = {};
+					for (var i:int = 0; i < n; i++)
+						item[columns[i].dataField] = fields[i];
+					
+					itemsFromText.push(item);
+				}
+				
+				return itemsFromText;				
+			}
+			
+			
+			protected function convierteDireccionDaneResult_resultHandler(event:ResultEvent):void
+			{
+				//tercerosWebService.convierteDireccionDane("").addResponder(
+				// TODO Auto-generated method stub
+				Alert.show("test");
+			}
+			
+			import mx.managers.CursorManager;
+			
+			function enabledButton():Boolean
+			{
+				if(cursorManager.currentCursorID==0)
+				{
+					return true;	
+				}
+				else if(cursorManager.currentCursorID!=0)
+				{
+					return false;
+				}
+				return true;
+			}	
+			
+			/*
+			protected function button1_clickHandler(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+			}
+			*/
+
+		]]>
+	</fx:Script>
+	<s:VGroup x="0" y="0" width="998" height="567">
+		<mx:DataGrid id="grid" width="100%" height="100%" 
+					 dataProvider="{tasks}" 
+					 sortableColumns="false" editable="true"
+					 itemEditBeginning="checkEdit(event)" 
+					 itemEditEnd="editEnd(event)" 
+
+					 keyDown="dataGridKeyDownHandler(event)"
+					 keyUp="dataGridKeyUpHandler(event)"
+					 
+					 >
+			
+			<mx:columns>
+				<mx:DataGridColumn headerText="Nombre Solicitante" 
+								   dataField="nombreSolicitante">
+					<mx:itemEditor>
+						<fx:Component>
+							<mx:TextInput maxChars="60" />
+						</fx:Component>
+					</mx:itemEditor>
+					
+				</mx:DataGridColumn>	
+				
+				<mx:DataGridColumn headerText="Tipo Identificación" 					
+								   dataField="tipoDocumento" editorDataField="selectedItem" >
+					
+					<!--					
+					dataField="tipoDocumento/idTipoIdentificacion" >
+					-->
+					<!--
+					dataField="tipoDocumento" > 
+					-->	
+					<!--
+					<mx:itemRenderer>
+					
+					<fx:Component>
+					
+					<mx:Text selectable="false" width="100%"
+					text="{data.City}, {data.State}" />
+					
+					</fx:Component>
+					
+					</mx:itemRenderer>
+					-->
+					<mx:itemEditor>
+						<fx:Component className="myEditor">
+							<!--
+							<mx:ComboBox labelField="lastName" 
+							dataProvider="{outerDocument.userInfo.lastResult.users.user}"/> 
+							
+							</mx:Component>     
+							-->
+							<!--
+							<mx:VBox>
+							-->
+							<!--
+							<mx:ComboBox id="cbxTiposDoc" change="combobox1_changeHandler(event)" >
+							-->
+							<mx:ComboBox change="combobox1_changeHandler(event)" restrict="null" >
+								<fx:Script>
+									<![CDATA[
+										import mx.events.ListEvent;
+										
+										protected function combobox1_changeHandler(event:ListEvent):void
+										{
+											var tipoDoc:String = event.currentTarget.selectedItem as String;
+											switch(tipoDoc)
+											{
+												case "CC":
+													//idTipoDocs.text="21";
+													outerDocument.grid.editedItemRenderer.data.idTipoIdentificacion="21";
+													break;
+												case "CE":
+													outerDocument.grid.editedItemRenderer.data.idTipoIdentificacion="22";
+													break;
+												case "NT":
+													outerDocument.grid.editedItemRenderer.data.idTipoIdentificacion="23";
+													break;
+												default:														
+													break;													
+											}	
+											
+										}
+										
+									]]>
+								</fx:Script>
+								<mx:dataProvider>
+									<fx:String>CC</fx:String>
+									<fx:String>NT</fx:String>
+									<fx:String>CE</fx:String>
+								</mx:dataProvider>
+							</mx:ComboBox>
+							<!--
+							<mx:TextInput visible="true" id="idTipoDocs" width="130" text="{data.City}" />
+							</mx:VBox>
+							-->		
+						</fx:Component>
+					</mx:itemEditor>
+					
+					
+				</mx:DataGridColumn>
+				
+				<mx:DataGridColumn headerText="Número Identificación" 
+								   dataField="numeroIdentificacion"  >
+					
+					<mx:itemEditor>
+						<fx:Component>
+							<mx:TextInput maxChars="10" />
+						</fx:Component>
+					</mx:itemEditor>
+					
+				</mx:DataGridColumn>	
+				
+				<mx:DataGridColumn headerText="Direccion Inmueble" 
+								   dataField="direccionInmueble" >
+					<!--
+					<mx:itemEditor>
+						<fx:Component>
+							<mx:TextInput maxChars="100"  />
+						</fx:Component>
+					</mx:itemEditor>
+					-->
+				</mx:DataGridColumn>
+				
+				<mx:DataGridColumn headerText="Matricula 1" 
+								   dataField="matricula1">
+					<mx:itemEditor>
+						<fx:Component>
+							<mx:TextInput maxChars="20"  />
+						</fx:Component>
+					</mx:itemEditor>
+					
+				</mx:DataGridColumn>	
+				
+				<mx:DataGridColumn headerText="Matricula 2" 
+								   dataField="matricula2" >
+					
+					<!--dataField="matricula1">-->
+					<mx:itemEditor>
+						<fx:Component>
+							<mx:TextInput maxChars="20" />
+						</fx:Component>
+					</mx:itemEditor>
+										
+				</mx:DataGridColumn>	
+				
+				<mx:DataGridColumn headerText="Matricula Garaje 1" 
+								   dataField="matriculaGj1" >
+					
+					<!--dataField="matricula1">-->
+					<mx:itemEditor>
+						<fx:Component>
+							<mx:TextInput maxChars="20" />
+						</fx:Component>
+					</mx:itemEditor>
+
+					
+				</mx:DataGridColumn>	
+				
+				<mx:DataGridColumn headerText="Matricula Garaje 2" 
+								   dataField="matriculaGj2" >
+					
+					<!--dataField="matricula1">-->
+					<mx:itemEditor>
+						<fx:Component>
+							<mx:TextInput maxChars="20" />
+						</fx:Component>
+					</mx:itemEditor>
+
+					
+				</mx:DataGridColumn>	
+				
+				
+				<mx:DataGridColumn headerText="Matricula Deposito 1" 
+								   dataField="matriculaDep1" >
+					
+					<!--dataField="matricula1">-->
+					<mx:itemEditor>
+						<fx:Component>
+							<mx:TextInput maxChars="20"/>
+						</fx:Component>
+					</mx:itemEditor>
+				
+				</mx:DataGridColumn>	
+				
+				<!--
+				<mx:DataGridColumn headerText="Área (m2)" />
+				-->
+				
+				<mx:DataGridColumn headerText="Remover" editable="false" >
+					<mx:itemRenderer>
+						<fx:Component>
+							<mx:LinkButton label="Remover" click="outerDocument.linkbutton2_clickHandler(event)" />
+						</fx:Component>						
+					</mx:itemRenderer>		
+				</mx:DataGridColumn>
+				
+				
+				<!--<mx:Form id="formEncabezado"  x="188" y="35" width="430" height="338">-->
+				<!--
+				<mx:Form   x="188" y="35" width="430" height="338">
+				<mx:FormItem label="Nombre Solicitante">
+				<s:TextInput id="nombreSolicitanteTextInput"  width="256" restrict="{restrict_}" maxChars="30"/>
+				</mx:FormItem>
+				<mx:FormItem label="Tipo Identificación">
+				<s:ComboBox id="cbxTipoIdentificacionEncabezado" creationComplete="comboBox_creationCompleteHandler(event)" labelField="rvMeaning" selectedItem="{getValoresDominioResult.lastResult[1]}" width="70">
+				<s:AsyncListView list="{getValoresDominioResult.lastResult}"/>
+				</s:ComboBox>
+				</mx:FormItem>
+				<mx:FormItem label="Número Identificación">
+				<s:TextInput id="numeroIdentificacionTextInput2"  width="256" restrict ="0-9" maxChars="10"/>
+				</mx:FormItem>
+				<mx:FormItem label="Fecha Avaluo">
+				<mx:DateField id="fechaAvaluoDateField"  formatString="DD/MM/YYYY" creationComplete="dateChooser_init(fechaAvaluoDateField)" yearNavigationEnabled="true"/>
+				</mx:FormItem>
+				<mx:FormItem label="Departamento">						
+				<s:ComboBox id="cbxDepartamento" creationComplete="cbxDepartamento_creationCompleteHandler(event)" labelField="departamento" change="comboBox_changeHandler(event)" 
+				>
+				<s:AsyncListView list="{consultaDepartamentosResult.lastResult}"/>
+				</s:ComboBox>
+				</mx:FormItem>
+				<mx:FormItem label="Ciudad">
+				<s:ComboBox id="cbxCiudadEncabezado" labelField="ciudad" enabled="false"
+				
+				dataProvider="{selectCiudadbasico}" 
+				>
+				</s:ComboBox>
+				</mx:FormItem>
+				<mx:FormItem label="Barrio">
+				<s:TextInput id="barrioTextInput"  width="256" restrict="{restrict_}" maxChars="30"/>
+				</mx:FormItem>
+				<mx:FormItem label="Dirección Inmueble">
+				<s:TextInput id="direccionInmuebleTextInput2"  width="256" restrict="{restrict_}" maxChars="100"/>
+				</mx:FormItem>
+				<mx:FormItem label="Matrícula Inmobiliaria" direction="horizontal">
+				<s:TextInput id="matriculaInmobiliariaPpal1TextInput2" text="{TmpmatriculaInmobiliariaPpal1}" width="40" maxChars="4" restrict="0-9,a-z,A-Z"/>						
+				<s:Label text="_"/>
+				<s:TextInput id="txtMatriculaInmobiliariaPpal2Encab" text="{TmpmatriculaInmobiliariaPpal2}" maxChars="9" restrict="0-9,a-z,A-Z" width="100"/>						
+				</mx:FormItem>
+				
+				<mx:FormItem label="Tipo Avaluo">
+				<s:ComboBox id="cbxTipoInforme" width="251"  selectedIndex="1">
+				<mx:ArrayList>
+				<fx:String>Individual</fx:String>
+				<fx:String>Constructor</fx:String>
+				</mx:ArrayList>
+				</s:ComboBox>
+				</mx:FormItem>
+				
+				</mx:Form>
+				
+				</fx:Component>
+				
+				
+				</mx:itemEditor>
+				-->
+				
+				
+				<mx:DataGridColumn visible="false" headerText="Id Tipo Identificación" 
+								   dataField="idTipoIdentificacion" >
+					
+					
+				</mx:DataGridColumn>	
+				
+				<mx:DataGridColumn visible="false" headerText="Matricula" 
+								   dataField="matriculaInmobiliariaPpal1" >
+					
+				</mx:DataGridColumn>	
+				
+			</mx:columns>
+		</mx:DataGrid>
+		<s:Button label="Ejecutar Proceso de Creacion Masiva Avaluo Constructor" width="984" enabled="true" click="button1_clickHandler(event)" id="button"/>	
+	</s:VGroup>
+	
+	
+</s:TitleWindow>
