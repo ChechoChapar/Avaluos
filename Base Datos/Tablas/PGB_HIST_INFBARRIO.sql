@@ -1,0 +1,138 @@
+CREATE TABLE PGB_HIST_INFBARRIO
+(
+  ID_HIST_INFBARRIO    NUMBER(10),
+  ID_INFBARRIO         NUMBER,
+  ID_AVALUO            NUMBER,
+  C_ESTRATO            NUMBER,
+  C_LEGALIDAD          NUMBER,
+  C_TOPOGRAFIA         NUMBER,
+  C_TRANSPORTE         NUMBER,
+  K_ACUEDUCTOSECTOR    NUMBER(3),
+  K_ACUEDUCTOPREDIO    NUMBER(3),
+  K_ALCANTAPREDIO      NUMBER(3),
+  K_ALCANTASECTOR      NUMBER(3),
+  K_ELECTRICAPREDIO    NUMBER(3),
+  K_ELECTRICASECTOR    NUMBER(3),
+  K_GASSECTOR          NUMBER(3),
+  K_GASPREDIO          NUMBER(3),
+  K_TELSECTOR          NUMBER(3),
+  K_TELPREDIO          NUMBER(3),
+  K_INDUSTRIA          NUMBER(3),
+  K_VIVIENDA           NUMBER(3),
+  K_COMERCIO           NUMBER(3),
+  K_OTROSUSOS          NUMBER(3),
+  T_OTROSUSOS          VARCHAR2(30 BYTE),
+  C_ESTVIAACCESO       NUMBER,
+  C_PAVIMENTADA        NUMBER,
+  C_SARDENELES         NUMBER,
+  C_ANDENES            NUMBER,
+  K_PARQUES            NUMBER(3),
+  K_ARBORIZACION       NUMBER(3),
+  K_PARADERO           NUMBER(3),
+  K_ALAMEDAS           NUMBER(3),
+  K_ALUMBRADO          NUMBER(3),
+  K_ZONASVERDES        NUMBER(3),
+  K_CICLORUTAS         NUMBER(3),
+  T_PERSPECTIVAS       VARCHAR2(500 BYTE),
+  A_EDIIGUALES         NUMBER(5),
+  USUARIO_CREACION     VARCHAR2(15 BYTE),
+  FECHA_CREACION       DATE,
+  USUARIO_TRANSACCION  VARCHAR2(15 BYTE),
+  FECHA_TRANSACCION    DATE
+)
+LOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

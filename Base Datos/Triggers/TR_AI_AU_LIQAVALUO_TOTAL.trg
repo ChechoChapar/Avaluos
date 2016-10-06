@@ -1,0 +1,74 @@
+CREATE OR REPLACE TRIGGER TR_AI_AU_LIQAVALUO_TOTAL
+AFTER INSERT  OR UPDATE ON PGB_LIQAVALUO_TOTAL
+   for each row
+DECLARE
+	registros_upd NUMBER:=0;
+  BEGIN
+
+    IF  UPDATING THEN
+
+         UPDATE PGB_HIST_LIQAVALUO_TOTAL
+         SET
+
+            --ID_HIST_LIQAVALUO_TOTAL =:NEW.ID_HIST_LIQAVALUO_TOTAL,
+            --ID_LIQAVALUO_TOTAL 	  =:NEW.ID_LIQAVALUO_TOTAL,
+            --ID_AVALUO 		  =:NEW.ID_AVALUO,
+            N_VALUVRDIA 		  =:NEW.N_VALUVRDIA,
+            N_TOTALAVALUO 	  =:NEW.N_TOTALAVALUO,
+            N_AVALUOUVR 		  =:NEW.N_AVALUOUVR,
+            N_VALORASEGURABLE 	  =:NEW.N_VALORASEGURABLE,
+            R_CALIFICACION 	  =:NEW.R_CALIFICACION,
+            USUARIO_CREACION 	  =:NEW.USUARIO_CREACION,
+            FECHA_CREACION 	  =:NEW.FECHA_CREACION,
+            USUARIO_TRANSACCION 	  =:NEW.USUARIO_TRANSACCION,
+            FECHA_TRANSACCION	  =:NEW.FECHA_TRANSACCION
+
+
+       WHERE  ID_LIQAVALUO_TOTAL=:OLD.ID_LIQAVALUO_TOTAL AND ID_AVALUO =:OLD.ID_AVALUO;
+         registros_upd:= sql%rowcount;
+	END IF;
+
+     IF INSERTING OR registros_upd=0 THEN
+
+          INSERT INTO PGB_HIST_LIQAVALUO_TOTAL
+           (
+            ID_HIST_LIQAVALUO_TOTAL,
+            ID_LIQAVALUO_TOTAL,
+            ID_AVALUO,
+            N_VALUVRDIA,
+            N_TOTALAVALUO,
+            N_AVALUOUVR,
+            N_VALORASEGURABLE,
+            R_CALIFICACION,
+            USUARIO_CREACION,
+            FECHA_CREACION,
+            USUARIO_TRANSACCION,
+            FECHA_TRANSACCION
+           )VALUES
+           (
+              SEQ_PGB_HIST_LIQAVALUO_TOTAL.NEXTVAL,
+              --:NEW.ID_HIST_LIQAVALUO_TOTAL,
+              :NEW.ID_LIQAVALUO_TOTAL,
+              :NEW.ID_AVALUO,
+              :NEW.N_VALUVRDIA,
+              :NEW.N_TOTALAVALUO,
+              :NEW.N_AVALUOUVR,
+              :NEW.N_VALORASEGURABLE,
+              :NEW.R_CALIFICACION,
+              :NEW.USUARIO_CREACION,
+              :NEW.FECHA_CREACION,
+              :NEW.USUARIO_TRANSACCION,
+              :NEW.FECHA_TRANSACCION
+           );
+
+
+
+    END IF;
+
+  EXCEPTION
+
+  WHEN OTHERS THEN
+       NULL;
+
+END TR_AI_AU_PGB_LIQAVALUO_TOTAL;
+/

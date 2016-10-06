@@ -1,0 +1,78 @@
+CREATE OR REPLACE TRIGGER TR_AID_AVALUO
+  after delete on pgb_avaluos
+  for each row
+-- Trigger que inserta en histórico de avalúos después de eliminar un avalúo
+declare
+
+begin
+   INSERT INTO PGB_HIST_AVALUOS
+   (  SECUENCIA_HISTORICO,
+      ID_AVALUO,
+      N_CONSECUTIVOBANCO,
+      C_IDTIPOIDENTIFICACION,
+      N_IDENTIFICACION,
+      A_TIPODOCUMENTO,
+      T_NOMBRESOLICITANTE,
+      A_SOLTEL,
+      A_SOLCEL,
+      A_SOLCORREO,
+      F_FECHAAVALUO,
+      T_SECTOR,
+      C_IDDEPARTAMENTO,
+      C_IDCIUDAD,
+      A_CODDANE_DEPTO,
+      A_CODDANE_CIUDAD,
+      T_DIRINMUEBLE,
+      T_NOMBCONJEDIF,
+      T_BARRIO,
+      A_NOMBANCO,
+      A_CODBANCO,
+      C_IDMETODOLOGIA,
+      C_IDOBJETOAVALUO,
+      T_JUSTIFICACION,
+      A_UBICGPS,
+      A_TIPO_INFORME,
+      A_ESTADOAVALUO,
+      T_USUARIO,
+      FECHA_CREACION,
+      USUARIO_TRANSACCION,
+      FECHA_TRANSACCION
+   )VALUES
+   (  SEQ_PGB_HIST_AVALUOS.NEXTVAL,
+     :OLD.ID_AVALUO,
+     :OLD.N_CONSECUTIVOBANCO,
+     :OLD.C_IDTIPOIDENTIFICACION,
+     :OLD.N_IDENTIFICACION,
+     :OLD.A_TIPODOCUMENTO,
+     :OLD.T_NOMBRESOLICITANTE,
+     :OLD.A_SOLTEL,
+     :OLD.A_SOLCEL,
+     :OLD.A_SOLCORREO,
+     :OLD.F_FECHAAVALUO,
+     :OLD.T_SECTOR,
+     :OLD.C_IDDEPARTAMENTO,
+     :OLD.C_IDCIUDAD,
+     :OLD.A_CODDANE_DEPTO,
+     :OLD.A_CODDANE_CIUDAD,
+     :OLD.T_DIRINMUEBLE,
+     :OLD.T_NOMBCONJEDIF,
+     :OLD.T_BARRIO,
+     :OLD.A_NOMBANCO,
+     :OLD.A_CODBANCO,
+     :OLD.C_IDMETODOLOGIA,
+     :OLD.C_IDOBJETOAVALUO,
+     :OLD.T_JUSTIFICACION,
+     :OLD.A_UBICGPS,
+     :OLD.A_TIPO_INFORME,
+     :OLD.A_ESTADOAVALUO,
+     :OLD.T_USUARIO,
+     :OLD.FECHA_CREACION,
+     :OLD.USUARIO_TRANSACCION,
+     :OLD.FECHA_TRANSACCION
+   );
+exception when others then
+   raise_application_error(-20158,'Error ingresando/borrando a histórico de avalúos '||sqlerrm);
+end TR_AID_AVALUO;
+/
+
+

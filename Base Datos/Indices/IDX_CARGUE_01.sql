@@ -1,0 +1,2 @@
+-- Create/Recreate indexes 
+create index IDX_CARGUE_01 on PGB_CARGUE_TMP (ESTADO_CARGUE, TIPO_CARGUE, NUMERO_REF_CARGUE);

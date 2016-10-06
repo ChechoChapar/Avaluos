@@ -1,0 +1,10 @@
+
+
+ --
+ -- Updating data of table AVALUOS.PARAMETROS_INSERCION
+ --
+ UPDATE AVALUOS.PARAMETROS_INSERCION SET VALOR = '(SELECT /*+ PARALLEL(PGB_CARGUE_TMP, 2) */ DISTINCT pgb_cargue_tmp.tipo_proyecto FROM pgb_cargue_tmp WHERE pgb_cargue_tmp.numero_ref_cargue=:REFERENCIA_CARGUE)', VALOR_ES_QUERY = 'S' WHERE NOMBRE_TABLA = 'PGB_AVALUOS' AND NOMBRE_CAMPO = 'A_TIPO_INFORME';
+ /
+ 
+COMMIT;
+ 

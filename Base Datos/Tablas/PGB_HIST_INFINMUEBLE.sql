@@ -1,0 +1,298 @@
+CREATE TABLE PGB_HIST_INFINMUEBLE
+(
+  ID_HIST_INFINMUEBLE  NUMBER(10),
+  ID_INFINMUEBLE       NUMBER,
+  ID_AVALUO            NUMBER,
+  C_TIPOVIVIENDA       NUMBER(3),
+  IDCATEGORIA          NUMBER(3),
+  C_UBICACION2         NUMBER(3),
+  T_CHIP               VARCHAR2(20 BYTE),
+  C_USOINMUEBLE        NUMBER(3),
+  T_OTROUSOINM         VARCHAR2(30 BYTE),
+  C_CLASEINMUEBLE      NUMBER(3),
+  T_OTROCLASE          VARCHAR2(30 BYTE),
+  T_MINMBPPAL1         VARCHAR2(20 BYTE),
+  T_MINMBPPAL2         VARCHAR2(20 BYTE),
+  T_MINMOBGJ1          VARCHAR2(20 BYTE),
+  T_MINMOBGJ2          VARCHAR2(20 BYTE),
+  T_MINMOBGJ3          VARCHAR2(20 BYTE),
+  T_MINMOBGJ4          VARCHAR2(20 BYTE),
+  T_MINMOBGJ5          VARCHAR2(20 BYTE),
+  T_MINMOBDP1          VARCHAR2(20 BYTE),
+  T_MINMOBDP2          VARCHAR2(20 BYTE),
+  T_NUMESCRITURA       VARCHAR2(5 BYTE),
+  T_NOTARIA            VARCHAR2(5 BYTE),
+  F_FECHAESCRITURA     DATE,
+  C_DEPTOESCRITURA     NUMBER(13),
+  C_CIUDADESCRITURA    NUMBER(13),
+  C_UBICACION3         NUMBER(3),
+  USUARIO_CREACION     VARCHAR2(15 BYTE),
+  FECHA_CREACION       DATE,
+  USUARIO_TRANSACCION  VARCHAR2(15 BYTE),
+  FECHA_TRANSACCION    DATE,
+  A_EDICONSTUSO        NUMBER(3)
+)
+LOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
