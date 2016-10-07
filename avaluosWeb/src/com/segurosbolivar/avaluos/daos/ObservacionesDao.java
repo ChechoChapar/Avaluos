@@ -66,7 +66,11 @@ public class ObservacionesDao extends JpaDao<Observaciones> {
 	try {
 	    objeto.setFechaTransaccion(Calendar.getInstance().getTime());
 	    log.log(Level.INFO, "");
-	    merge(objeto);
+	    if(objeto.getIdObservacion() == null){
+	    	persist((Observaciones)objeto); 
+	    }else{
+	    	merge((Observaciones)objeto);
+	    }
 	}
 	catch (Exception e) {
 	    log.log(Level.SEVERE, "[ERROR]", e);

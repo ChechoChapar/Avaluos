@@ -270,7 +270,53 @@ package com.segurosbolivar.avaluos.modulos
 			return arrayDtoValida; 
 		}
 		
+		public static function getAvaluoBasicoPath():String{
+			var randomnumber:Number=Math.floor(Math.random()*1000);
+			var ruta:String = "com/segurosbolivar/avaluos/modulos/InformacionBasicaModule.swf?session="+randomnumber;
+			return ruta ; 
+		}
 		
+		public static function getAvaluoBarrioPath():String{ 
+			var randomnumber:Number=Math.floor(Math.random()*1000);
+			var ruta:String = "com/segurosbolivar/avaluos/modulos/InformacionBarrioModule.swf?session="+randomnumber;
+			return ruta ; 
+		}
+		
+		public static function getAvaluoInmueblePath():String{ 
+			var randomnumber:Number=Math.floor(Math.random()*1000);
+			var ruta:String = "com/segurosbolivar/avaluos/modulos/InformacionInmuebleModule.swf?session="+randomnumber;
+			return ruta ; 
+		}
+		
+		public static function getAvaluoConstruccionPath():String{
+			var randomnumber:Number=Math.floor(Math.random()*1000);
+			var ruta:String = "com/segurosbolivar/avaluos/modulos/InformacionConstruccionModule.swf?session="+randomnumber; 
+			return ruta ; 
+		}
+		
+		public static function getAvaluoOfertaPath():String{ 
+			var randomnumber:Number=Math.floor(Math.random()*1000);
+			var ruta:String = "com/segurosbolivar/avaluos/modulos/InformacionOfertaDemandaModule.swf?session="+randomnumber;
+			return ruta ; 
+		}
+		
+		public static function getAvaluoLiquidacionPath():String{ 
+			var randomnumber:Number=Math.floor(Math.random()*1000);
+			var ruta:String = "com/segurosbolivar/avaluos/modulos/InformacionLiquidacionModule.swf?session="+randomnumber;
+			return ruta ; 
+		}
+		
+		public static function getAvaluoObservacionPath():String{ 
+			var randomnumber:Number=Math.floor(Math.random()*1000);
+			var ruta:String = "com/segurosbolivar/avaluos/modulos/InformacionObsevacionModule.swf?session="+randomnumber;
+			return ruta ; 
+		}
+		
+		public static function getAvaluotRegistroPath():String{ 
+			var randomnumber:Number=Math.floor(Math.random()*1000);
+			var ruta:String = "com/segurosbolivar/avaluos/modulos/InformacionRegistroFotografico.swf?session="+randomnumber;
+			return ruta ; 
+		}
 		
  
 	}

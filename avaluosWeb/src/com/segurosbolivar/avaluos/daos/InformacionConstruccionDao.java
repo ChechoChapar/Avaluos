@@ -10,6 +10,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
 
 import com.segurosbolivar.avaluos.constantes.ConstantesAvaluos;
+import com.segurosbolivar.avaluos.entities.InformacionBarrio;
 import com.segurosbolivar.avaluos.entities.InformacionConstruccion;
 import com.segurosbolivar.avaluos.util.Util;
 
@@ -66,7 +67,12 @@ public class InformacionConstruccionDao extends JpaDao<InformacionConstruccion>{
 	try {
 	    objeto.setFechaTransaccion(Calendar.getInstance().getTime());
 	    log.log(Level.INFO, "");
-	    merge(objeto);
+	    if(objeto.getIdInformacionConstruccion() == null){
+	    	persist((InformacionConstruccion)objeto); 
+	    }else{
+	    	merge(objeto);
+	    }
+	    
 	    //entityManager.flush();
 	}
 	catch (Exception e) {

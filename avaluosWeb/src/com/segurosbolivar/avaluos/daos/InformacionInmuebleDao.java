@@ -70,7 +70,12 @@ public class InformacionInmuebleDao extends JpaDao<InformacionInmueble> {
 	try {
 	    objeto.setFechaTransaccion(Calendar.getInstance().getTime());
 	    log.log(Level.INFO, "");
-	    merge(objeto);
+	    if(objeto.getIdInfinmueble() == null){
+	    	persist((InformacionInmueble)objeto); 
+	    }else{
+	    	merge((InformacionInmueble)objeto);	    	
+	    }
+	    
 	}
 	catch (Exception e) {
 	    log.log(Level.SEVERE, "[ERROR]", e);

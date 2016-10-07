@@ -68,10 +68,19 @@ public class LiquidacionAvaluoTotalDao extends JpaDao<LiquidacionAvaluoTotal> {
 	    avaluo.setFechaTransaccion(Calendar.getInstance().getTime());
 	    avaluo.setUsuarioTransaccion(objeto.getUsuarioTransaccion());
 	    
+	    
+	   
+	    
 	    objeto.setFechaTransaccion(Calendar.getInstance().getTime());
 	    entityManager.getTransaction().begin();
 	    entityManager.merge(avaluo);
-	    entityManager.merge(objeto);
+	    
+	    if(objeto.getIdLiqavaluoTotal() == null){
+	    	entityManager.persist((LiquidacionAvaluoTotal)objeto); 
+	    }else{
+	    	entityManager.merge((LiquidacionAvaluoTotal)objeto);
+	    }
+	    
 	    entityManager.getTransaction().commit();
 	}
 	catch (Exception e) {
@@ -103,9 +112,9 @@ public class LiquidacionAvaluoTotalDao extends JpaDao<LiquidacionAvaluoTotal> {
     	
 	BigDecimal res = null;
 	StringBuffer sql = new StringBuffer("SELECT tc1 valor_uvr FROM a1000500");
-	sql.append(" WHERE cod_mon = 7 AND fecha_tipo_cambio = '");
+	sql.append(" WHERE cod_mon = 7 AND fecha_tipo_cambio = to_date('");
 	sql.append(fecha);
-	sql.append("'");
+	sql.append("', 'dd/mm/rrrr')");
 	List resList = entityManager.createNativeQuery(sql.toString()).getResultList();
 	if((resList != null) && (!resList.isEmpty())){
 	    BigDecimal resTmp = (BigDecimal) resList.get(0);

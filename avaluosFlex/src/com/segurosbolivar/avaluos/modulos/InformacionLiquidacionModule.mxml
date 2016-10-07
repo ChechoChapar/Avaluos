@@ -2,8 +2,10 @@
 <mx:Module  xmlns:fx="http://ns.adobe.com/mxml/2009" 
 			xmlns:s="library://ns.adobe.com/flex/spark" 
 			xmlns:mx="library://ns.adobe.com/flex/mx"
-			xmlns:comp="com.segurosbolivar.avaluos.componentes.*"		 
-			width="100%" height="100%" xmlns:valueObjects="valueObjects.*">
+			xmlns:comp="com.segurosbolivar.avaluos.componentes.*"
+			xmlns:services="services.*"
+			updateComplete="module1_updateCompleteHandler(event)"
+			xmlns:valueObjects="valueObjects.*" >
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 	</fx:Declarations>
@@ -17,38 +19,22 @@
 			import mx.formatters.CurrencyFormatter;
 			import mx.rpc.events.FaultEvent;
 			import mx.rpc.events.ResultEvent;
+			import mx.utils.StringUtil;
 			
 			import spark.events.IndexChangeEvent;
 			
 			import valueObjects.Avaluo;
 			import valueObjects.CampoRequeridoDTO;
 			import valueObjects.Dominios;
+			import valueObjects.LiquidacionAvaluo;
+			import valueObjects.LiquidacionAvaluoTotal;
 			import valueObjects.Usuario;
 			
-			[Bindable]
-			public static var selectdescliq0:ArrayCollection = new ArrayCollection();
+			
 			
 			[Bindable]
 			public static var selectcalificacion:ArrayCollection = new ArrayCollection();
-			
-			
-			protected function cbxPorpiedadHorizontal_focusOutHandler(event:FocusEvent):void
-			{
-				// guardarPropiedadHorizontal = true; 
-				cbxPorpiedadHorizontal_changeHandler(null);				 
-			}
-			
-			protected function cbxPorpiedadHorizontal_changeHandler(event:IndexChangeEvent):void
-			{
-				//Se recalcula el total del avalúo del tab de liquidación Mantis 37845
-				/** var selectedItem:Dominios = cbxPorpiedadHorizontal.selectedItem as Dominios;
-				 if((selectedItem != null) && (selectedItem.rvLowValue == '1')){
-				 getValoresDominioResult28.token = parentDocument.dominiosAuxDao.getValoresDescLiquidacion("DESCLIQUIDACION","1");
-				 }else{
-				 getValoresDominioResult28.token = parentDocument.dominiosAuxDao.getValoresDescLiquidacion("DESCLIQUIDACION","2");
-				 } */ 
-			}
-			
+						
 			protected function areaLiquidacionTextInput0_focusOutHandler(event:FocusEvent):void
 			{
 				if (areaLiquidacionTextInput0.text == null || areaLiquidacionTextInput0.text.length < 1)
@@ -423,7 +409,14 @@
 			
 			protected function valorUvrDiaTextInput_clickHandler(event:MouseEvent):void
 			{
-				var fecha:String = parentDocument.fechaAvaluoDateField2.text;
+				var fecha:String = "" ;
+				var dateAvaluo:Date = parentDocument.avaluo.fechaAvaluo ; 
+				
+				if(dateAvaluo == null || StringUtil.trim(dateAvaluo.toString()).length == 0){
+					dateAvaluo = new Date(); 
+				}
+				
+				fecha = ""+ (dateAvaluo.date<10?"0":"") + dateAvaluo.date + "/" +((dateAvaluo.month+1)<10?"0":"") + (dateAvaluo.month+1) + "/" +  dateAvaluo.fullYear;
 				getUvrDia(fecha);
 			}
 			
@@ -434,57 +427,60 @@
 			
 			protected function getUvrDiaResult_resultHandler(event:ResultEvent):void
 			{
-				liquidacionAvaluoTotalVO.valorUvrDia = getUvrDiaResult.lastResult;
-				var uvrDiaNumer:Number = new Number(liquidacionAvaluoTotalVO.valorUvrDia);
-				if(liquidacionAvaluoTotalVO.totalAvaluo != null && (uvrDiaNumer > 0 )){
-					var totalAvaluoNumber:Number = new Number(liquidacionAvaluoTotalVO.totalAvaluo);
-					var uvrDiaNumber:Number = new Number(liquidacionAvaluoTotalVO.valorUvrDia);
-					var avaluoUvr:Number = Math.round((totalAvaluoNumber / uvrDiaNumber)*10000)/10000;
-					liquidacionAvaluoTotalVO.avaluoUvr = new String(avaluoUvr);
+				parentDocument.liquidacionAvaluoTotalVO.valorUvrDia = getUvrDiaResult.lastResult;
+				
+				if(parentDocument.liquidacionAvaluoTotalVO.valorUvrDia == null ||
+					StringUtil.trim(parentDocument.liquidacionAvaluoTotalVO.valorUvrDia).length==0 || 
+					parentDocument.liquidacionAvaluoTotalVO.valorUvrDia == 0){
+					imprimirEstadoProceso("Por favor verifique la tarifa de la UVR para la fecha del avaluo");
+					return ; 
 				}
-			}
-			
-			protected function getValoresDominioResult28_resultHandler(event:ResultEvent):void
-			{
-				selectdescliq0 = getValoresDominioResult28.lastResult;
+				
+				var uvrDiaNumer:Number = new Number(parentDocument.liquidacionAvaluoTotalVO.valorUvrDia);
+				if(parentDocument.liquidacionAvaluoTotalVO.totalAvaluo != null && (uvrDiaNumer > 0 )){
+					var totalAvaluoNumber:Number = new Number(parentDocument.liquidacionAvaluoTotalVO.totalAvaluo);
+					var uvrDiaNumber:Number = new Number(parentDocument.liquidacionAvaluoTotalVO.valorUvrDia);
+					var avaluoUvr:Number = Math.round((totalAvaluoNumber / uvrDiaNumber)*10000)/10000;
+					parentDocument.liquidacionAvaluoTotalVO.avaluoUvr = new String(avaluoUvr);
+				}
 			}
 			
 			public function guardarTotalLiquidacion(avaluo:Avaluo, myUsuario:Usuario):LiquidacionAvaluoTotal{
 				try{ 
-					liquidacionAvaluoTotalVO.avaluo = avaluo ; 
+					parentDocument.liquidacionAvaluoTotalVO.avaluo = avaluo ; 
 					
 					if(avaluo.liquidacionTotal != null && avaluo.liquidacionTotal.length > 0){
 						var lTotal:LiquidacionAvaluoTotal = avaluo.liquidacionTotal.getItemAt(0) as LiquidacionAvaluoTotal ; 
 						if(lTotal != null){
-							liquidacionAvaluoTotalVO.idLiqavaluoTotal = lTotal.idLiqavaluoTotal ; 
-							liquidacionAvaluoTotalVO.fechaCreacion = lTotal.fechaCreacion ; 
-							liquidacionAvaluoTotalVO.usuarioCreacion = lTotal.usuarioCreacion ;
+							parentDocument.liquidacionAvaluoTotalVO.idLiqavaluoTotal = lTotal.idLiqavaluoTotal ; 
+							parentDocument.liquidacionAvaluoTotalVO.fechaCreacion = lTotal.fechaCreacion ; 
+							parentDocument.liquidacionAvaluoTotalVO.usuarioCreacion = lTotal.usuarioCreacion ;
 						}					
 					}
 					
 					if(cbxCalificacion.selectedIndex > -1) {
-						liquidacionAvaluoTotalVO.calificacion = cbxCalificacion.selectedItem.rvLowValue;
+						parentDocument.liquidacionAvaluoTotalVO.calificacion = cbxCalificacion.selectedItem.rvLowValue;
 					}
 					if((totalAvaluoTextInput.text != null) && (totalAvaluoTextInput.text.length > 0)) {
-						liquidacionAvaluoTotalVO.totalAvaluo = totalAvaluoTextInput.text;
+						parentDocument.liquidacionAvaluoTotalVO.totalAvaluo = totalAvaluoTextInput.text;
 					}
 					if((valorUvrDiaTextInput.text != null) && (valorUvrDiaTextInput.text.length > 0)) {
-						liquidacionAvaluoTotalVO.valorUvrDia = valorUvrDiaTextInput.text;
+						parentDocument.liquidacionAvaluoTotalVO.valorUvrDia = valorUvrDiaTextInput.text;
 					}
 					if((avaluoUvrTextInput.text != null) && (avaluoUvrTextInput.text.length > 0)) {
-						liquidacionAvaluoTotalVO.avaluoUvr = avaluoUvrTextInput.text;
+						parentDocument.liquidacionAvaluoTotalVO.avaluoUvr = avaluoUvrTextInput.text;
 					}
 					if((valorAsegurableTextInput.text != null) && (valorAsegurableTextInput.text.length > 0)) {
-						liquidacionAvaluoTotalVO.valorAsegurable = valorAsegurableTextInput.text;
+						parentDocument.liquidacionAvaluoTotalVO.valorAsegurable = valorAsegurableTextInput.text;
 					}
-					liquidacionAvaluoTotalVO.usuarioCreacion = myUsuario.codigoUsuario;
-					liquidacionAvaluoTotalVO.usuarioTransaccion = myUsuario.codigoUsuario;
+					parentDocument.liquidacionAvaluoTotalVO.usuarioCreacion = myUsuario.codigoUsuario;
+					parentDocument.liquidacionAvaluoTotalVO.usuarioTransaccion = myUsuario.codigoUsuario;
 				}catch(error:Error){
 					error.getStackTrace(); 
 					trace(error.message); 
 					parentDocument.imprimirEstadoProceso(error.message);
 				}
-				return liquidacionAvaluoTotalVO ; 
+				return parentDocument.liquidacionAvaluoTotalVO ; 
 			}
 			
 			public function guardarLiquidacion(avaluo:Avaluo, myUsuario:Usuario):ArrayCollection{
@@ -495,292 +491,292 @@
 					
 					//11 Jul 2013 Mantis 13739 Comentario 0061577 1. Dejar los campos obligatorios resaltados (coloreados) independiente que el contenido haya sido diligenciado o no.
 					
-					liquidacionAvaluoVO0.avaluo = avaluo;
-					liquidacionAvaluoVO1.avaluo = avaluo;
-					liquidacionAvaluoVO2.avaluo = avaluo;
-					liquidacionAvaluoVO3.avaluo = avaluo;
-					liquidacionAvaluoVO4.avaluo = avaluo;
-					liquidacionAvaluoVO5.avaluo = avaluo;
-					liquidacionAvaluoVO6.avaluo = avaluo;
-					liquidacionAvaluoVO7.avaluo = avaluo;
-					liquidacionAvaluoVO8.avaluo = avaluo;
-					liquidacionAvaluoVO9.avaluo = avaluo;
+					parentDocument.liquidacionAvaluoVO0.avaluo = avaluo;
+					parentDocument.liquidacionAvaluoVO1.avaluo = avaluo;
+					parentDocument.liquidacionAvaluoVO2.avaluo = avaluo;
+					parentDocument.liquidacionAvaluoVO3.avaluo = avaluo;
+					parentDocument.liquidacionAvaluoVO4.avaluo = avaluo;
+					parentDocument.liquidacionAvaluoVO5.avaluo = avaluo;
+					parentDocument.liquidacionAvaluoVO6.avaluo = avaluo;
+					parentDocument.liquidacionAvaluoVO7.avaluo = avaluo;
+					parentDocument.liquidacionAvaluoVO8.avaluo = avaluo;
+					parentDocument.liquidacionAvaluoVO9.avaluo = avaluo;
 					
 					liquidacion = avaluo.liquidacionAvaluos ; 
 					if(liquidacion != null){						 
 						for each (var myLiquidacion:LiquidacionAvaluo in liquidacion){
 							if(myLiquidacion.consecutivo == "1"){
-								liquidacionAvaluoVO0.idLiqavaluo = myLiquidacion.idLiqavaluo ;
-								liquidacionAvaluoVO0.fechaCreacion = myLiquidacion.fechaCreacion ; 
-								liquidacionAvaluoVO0.usuarioCreacion = myLiquidacion.usuarioCreacion ; 
+								parentDocument.liquidacionAvaluoVO0.idLiqavaluo = myLiquidacion.idLiqavaluo ;
+								parentDocument.liquidacionAvaluoVO0.fechaCreacion = myLiquidacion.fechaCreacion ; 
+								parentDocument.liquidacionAvaluoVO0.usuarioCreacion = myLiquidacion.usuarioCreacion ; 
 							}
 							if(myLiquidacion.consecutivo == "2"){
-								liquidacionAvaluoVO1.idLiqavaluo = myLiquidacion.idLiqavaluo;
-								liquidacionAvaluoVO1.fechaCreacion = myLiquidacion.fechaCreacion ; 
-								liquidacionAvaluoVO1.usuarioCreacion = myLiquidacion.usuarioCreacion ;
+								parentDocument.liquidacionAvaluoVO1.idLiqavaluo = myLiquidacion.idLiqavaluo;
+								parentDocument.liquidacionAvaluoVO1.fechaCreacion = myLiquidacion.fechaCreacion ; 
+								parentDocument.liquidacionAvaluoVO1.usuarioCreacion = myLiquidacion.usuarioCreacion ;
 							}
 							if(myLiquidacion.consecutivo == "3"){
-								liquidacionAvaluoVO2.idLiqavaluo = myLiquidacion.idLiqavaluo;
-								liquidacionAvaluoVO2.fechaCreacion = myLiquidacion.fechaCreacion ; 
-								liquidacionAvaluoVO2.usuarioCreacion = myLiquidacion.usuarioCreacion ;
+								parentDocument.liquidacionAvaluoVO2.idLiqavaluo = myLiquidacion.idLiqavaluo;
+								parentDocument.liquidacionAvaluoVO2.fechaCreacion = myLiquidacion.fechaCreacion ; 
+								parentDocument.liquidacionAvaluoVO2.usuarioCreacion = myLiquidacion.usuarioCreacion ;
 							}
 							if(myLiquidacion.consecutivo == "4"){
-								liquidacionAvaluoVO3.idLiqavaluo = myLiquidacion.idLiqavaluo;
-								liquidacionAvaluoVO3.fechaCreacion = myLiquidacion.fechaCreacion ; 
-								liquidacionAvaluoVO3.usuarioCreacion = myLiquidacion.usuarioCreacion ;
+								parentDocument.liquidacionAvaluoVO3.idLiqavaluo = myLiquidacion.idLiqavaluo;
+								parentDocument.liquidacionAvaluoVO3.fechaCreacion = myLiquidacion.fechaCreacion ; 
+								parentDocument.liquidacionAvaluoVO3.usuarioCreacion = myLiquidacion.usuarioCreacion ;
 							}
 							if(myLiquidacion.consecutivo == "5"){
-								liquidacionAvaluoVO4.idLiqavaluo = myLiquidacion.idLiqavaluo;
-								liquidacionAvaluoVO4.fechaCreacion = myLiquidacion.fechaCreacion ; 
-								liquidacionAvaluoVO4.usuarioCreacion = myLiquidacion.usuarioCreacion ;
+								parentDocument.liquidacionAvaluoVO4.idLiqavaluo = myLiquidacion.idLiqavaluo;
+								parentDocument.liquidacionAvaluoVO4.fechaCreacion = myLiquidacion.fechaCreacion ; 
+								parentDocument.liquidacionAvaluoVO4.usuarioCreacion = myLiquidacion.usuarioCreacion ;
 							}
 							if(myLiquidacion.consecutivo == "6"){
-								liquidacionAvaluoVO5.idLiqavaluo = myLiquidacion.idLiqavaluo;
-								liquidacionAvaluoVO5.fechaCreacion = myLiquidacion.fechaCreacion ; 
-								liquidacionAvaluoVO5.usuarioCreacion = myLiquidacion.usuarioCreacion ;
+								parentDocument.liquidacionAvaluoVO5.idLiqavaluo = myLiquidacion.idLiqavaluo;
+								parentDocument.liquidacionAvaluoVO5.fechaCreacion = myLiquidacion.fechaCreacion ; 
+								parentDocument.liquidacionAvaluoVO5.usuarioCreacion = myLiquidacion.usuarioCreacion ;
 							}
 							if(myLiquidacion.consecutivo == "7"){
-								liquidacionAvaluoVO6.idLiqavaluo = myLiquidacion.idLiqavaluo ;
-								liquidacionAvaluoVO6.fechaCreacion = myLiquidacion.fechaCreacion ; 
-								liquidacionAvaluoVO6.usuarioCreacion = myLiquidacion.usuarioCreacion ;
+								parentDocument.liquidacionAvaluoVO6.idLiqavaluo = myLiquidacion.idLiqavaluo ;
+								parentDocument.liquidacionAvaluoVO6.fechaCreacion = myLiquidacion.fechaCreacion ; 
+								parentDocument.liquidacionAvaluoVO6.usuarioCreacion = myLiquidacion.usuarioCreacion ;
 							}
 							if(myLiquidacion.consecutivo == "8"){
-								liquidacionAvaluoVO7.idLiqavaluo = myLiquidacion.idLiqavaluo ;
-								liquidacionAvaluoVO7.fechaCreacion = myLiquidacion.fechaCreacion ; 
-								liquidacionAvaluoVO7.usuarioCreacion = myLiquidacion.usuarioCreacion ;
+								parentDocument.liquidacionAvaluoVO7.idLiqavaluo = myLiquidacion.idLiqavaluo ;
+								parentDocument.liquidacionAvaluoVO7.fechaCreacion = myLiquidacion.fechaCreacion ; 
+								parentDocument.liquidacionAvaluoVO7.usuarioCreacion = myLiquidacion.usuarioCreacion ;
 							}
 							if(myLiquidacion.consecutivo == "9"){
-								liquidacionAvaluoVO8.idLiqavaluo = myLiquidacion.idLiqavaluo ;
-								liquidacionAvaluoVO8.fechaCreacion = myLiquidacion.fechaCreacion ; 
-								liquidacionAvaluoVO8.usuarioCreacion = myLiquidacion.usuarioCreacion ;
+								parentDocument.liquidacionAvaluoVO8.idLiqavaluo = myLiquidacion.idLiqavaluo ;
+								parentDocument.liquidacionAvaluoVO8.fechaCreacion = myLiquidacion.fechaCreacion ; 
+								parentDocument.liquidacionAvaluoVO8.usuarioCreacion = myLiquidacion.usuarioCreacion ;
 							}
 							if(myLiquidacion.consecutivo == "10"){
-								liquidacionAvaluoVO9.idLiqavaluo = myLiquidacion.idLiqavaluo ;
-								liquidacionAvaluoVO9.fechaCreacion = myLiquidacion.fechaCreacion ; 
-								liquidacionAvaluoVO9.usuarioCreacion = myLiquidacion.usuarioCreacion ;
+								parentDocument.liquidacionAvaluoVO9.idLiqavaluo = myLiquidacion.idLiqavaluo ;
+								parentDocument.liquidacionAvaluoVO9.fechaCreacion = myLiquidacion.fechaCreacion ; 
+								parentDocument.liquidacionAvaluoVO9.usuarioCreacion = myLiquidacion.usuarioCreacion ;
 							}
 						}
 					}					
 					
 					if((cbxDescLiq0 != null) && (cbxDescLiq0.selectedIndex >=0)){
-						liquidacionAvaluoVO0.descripcionLiquidacion = cbxDescLiq0.selectedItem.rvLowValue;
+						parentDocument.liquidacionAvaluoVO0.descripcionLiquidacion = cbxDescLiq0.selectedItem.rvLowValue;
 					}
 					else
 					{
 						if(cbxDescLiq0.textInput.text == ""){
-							liquidacionAvaluoVO0.descripcionLiquidacion = null;	
+							parentDocument.liquidacionAvaluoVO0.descripcionLiquidacion = null;	
 						}else { 
-							//	liquidacionAvaluoVO0.descripcionLiquidacion = avaluoTmp.liquidacionAvaluos.getItemAt(0).descripcionLiquidacion;
+							//	parentDocument.liquidacionAvaluoVO0.descripcionLiquidacion = avaluoTmp.liquidacionAvaluos.getItemAt(0).descripcionLiquidacion;
 						}
 					}
-					liquidacionAvaluoVO0.descripcionDependencia = descripcionDependenciaTextInput0.text;
-					liquidacionAvaluoVO0.areaLiquidacion = areaLiquidacionTextInput0.text;
-					liquidacionAvaluoVO0.valor = valorTextInput0.text;
-					liquidacionAvaluoVO0.valorTotal = valorTotalTextInput0.text;
-					liquidacionAvaluoVO0.consecutivo = "1";
-					if(liquidacionAvaluoVO0.idLiqavaluo == null){
-						liquidacionAvaluoVO0.usuarioCreacion = myUsuario.codigoUsuario;
+					parentDocument.liquidacionAvaluoVO0.descripcionDependencia = descripcionDependenciaTextInput0.text;
+					parentDocument.liquidacionAvaluoVO0.areaLiquidacion = areaLiquidacionTextInput0.text;
+					parentDocument.liquidacionAvaluoVO0.valor = valorTextInput0.text;
+					parentDocument.liquidacionAvaluoVO0.valorTotal = valorTotalTextInput0.text;
+					parentDocument.liquidacionAvaluoVO0.consecutivo = "1";
+					if(parentDocument.liquidacionAvaluoVO0.idLiqavaluo == null){
+						parentDocument.liquidacionAvaluoVO0.usuarioCreacion = myUsuario.codigoUsuario;
 					}
-					liquidacionAvaluoVO0.usuarioTransaccion = myUsuario.codigoUsuario;				
-					liquidacionList.addItem(liquidacionAvaluoVO0);
+					parentDocument.liquidacionAvaluoVO0.usuarioTransaccion = myUsuario.codigoUsuario;				
+					liquidacionList.addItem(parentDocument.liquidacionAvaluoVO0);
 					
 					if((cbxDescLiq1 != null) && (cbxDescLiq1.selectedIndex >=0)){
-						liquidacionAvaluoVO1.descripcionLiquidacion = cbxDescLiq1.selectedItem.rvLowValue;
+						parentDocument.liquidacionAvaluoVO1.descripcionLiquidacion = cbxDescLiq1.selectedItem.rvLowValue;
 					}
 					else
 					{
 						if(cbxDescLiq1.textInput.text == ""){
-							liquidacionAvaluoVO1.descripcionLiquidacion = null;	
+							parentDocument.liquidacionAvaluoVO1.descripcionLiquidacion = null;	
 						}else { 
-							//	liquidacionAvaluoVO1.descripcionLiquidacion = avaluoTmp.liquidacionAvaluos.getItemAt(1).descripcionLiquidacion; 
+							//	parentDocument.liquidacionAvaluoVO1.descripcionLiquidacion = avaluoTmp.liquidacionAvaluos.getItemAt(1).descripcionLiquidacion; 
 						}
 					}
-					liquidacionAvaluoVO1.descripcionDependencia = descripcionDependenciaTextInput1.text;
-					liquidacionAvaluoVO1.areaLiquidacion = areaLiquidacionTextInput1.text;
-					liquidacionAvaluoVO1.valor = valorTextInput1.text;
-					liquidacionAvaluoVO1.valorTotal = valorTotalTextInput1.text;
-					liquidacionAvaluoVO1.consecutivo = "2";
-					if(liquidacionAvaluoVO1.idLiqavaluo == null){
-						liquidacionAvaluoVO1.usuarioCreacion = myUsuario.codigoUsuario;
+					parentDocument.liquidacionAvaluoVO1.descripcionDependencia = descripcionDependenciaTextInput1.text;
+					parentDocument.liquidacionAvaluoVO1.areaLiquidacion = areaLiquidacionTextInput1.text;
+					parentDocument.liquidacionAvaluoVO1.valor = valorTextInput1.text;
+					parentDocument.liquidacionAvaluoVO1.valorTotal = valorTotalTextInput1.text;
+					parentDocument.liquidacionAvaluoVO1.consecutivo = "2";
+					if(parentDocument.liquidacionAvaluoVO1.idLiqavaluo == null){
+						parentDocument.liquidacionAvaluoVO1.usuarioCreacion = myUsuario.codigoUsuario;
 					}
-					liquidacionAvaluoVO1.usuarioTransaccion = myUsuario.codigoUsuario;
-					liquidacionList.addItem(liquidacionAvaluoVO1);
+					parentDocument.liquidacionAvaluoVO1.usuarioTransaccion = myUsuario.codigoUsuario;
+					liquidacionList.addItem(parentDocument.liquidacionAvaluoVO1);
 					
 					if((cbxDescLiq2 != null) && (cbxDescLiq2.selectedIndex >=0)){
-						liquidacionAvaluoVO2.descripcionLiquidacion = cbxDescLiq2.selectedItem.rvLowValue;
+						parentDocument.liquidacionAvaluoVO2.descripcionLiquidacion = cbxDescLiq2.selectedItem.rvLowValue;
 					}
 					else
 					{
 						if(cbxDescLiq2.textInput.text == ""){
-							liquidacionAvaluoVO2.descripcionLiquidacion = null;	
+							parentDocument.liquidacionAvaluoVO2.descripcionLiquidacion = null;	
 						}else { 
-							//	liquidacionAvaluoVO2.descripcionLiquidacion = avaluoTmp.liquidacionAvaluos.getItemAt(2).descripcionLiquidacion; 
+							//	parentDocument.liquidacionAvaluoVO2.descripcionLiquidacion = avaluoTmp.liquidacionAvaluos.getItemAt(2).descripcionLiquidacion; 
 						}
 					}
-					liquidacionAvaluoVO2.descripcionDependencia = descripcionDependenciaTextInput2.text;
-					liquidacionAvaluoVO2.areaLiquidacion = areaLiquidacionTextInput2.text;
-					liquidacionAvaluoVO2.valor = valorTextInput2.text;
-					liquidacionAvaluoVO2.valorTotal = valorTotalTextInput2.text;
-					liquidacionAvaluoVO2.consecutivo = "3";
-					if(liquidacionAvaluoVO2.idLiqavaluo == null){
-						liquidacionAvaluoVO2.usuarioCreacion = myUsuario.codigoUsuario;
+					parentDocument.liquidacionAvaluoVO2.descripcionDependencia = descripcionDependenciaTextInput2.text;
+					parentDocument.liquidacionAvaluoVO2.areaLiquidacion = areaLiquidacionTextInput2.text;
+					parentDocument.liquidacionAvaluoVO2.valor = valorTextInput2.text;
+					parentDocument.liquidacionAvaluoVO2.valorTotal = valorTotalTextInput2.text;
+					parentDocument.liquidacionAvaluoVO2.consecutivo = "3";
+					if(parentDocument.liquidacionAvaluoVO2.idLiqavaluo == null){
+						parentDocument.liquidacionAvaluoVO2.usuarioCreacion = myUsuario.codigoUsuario;
 					}
-					liquidacionAvaluoVO2.usuarioTransaccion = myUsuario.codigoUsuario;
-					liquidacionList.addItem(liquidacionAvaluoVO2);
+					parentDocument.liquidacionAvaluoVO2.usuarioTransaccion = myUsuario.codigoUsuario;
+					liquidacionList.addItem(parentDocument.liquidacionAvaluoVO2);
 					
 					if((cbxDescLiq3 != null) && (cbxDescLiq3.selectedIndex >=0)){
-						liquidacionAvaluoVO3.descripcionLiquidacion = cbxDescLiq3.selectedItem.rvLowValue;
+						parentDocument.liquidacionAvaluoVO3.descripcionLiquidacion = cbxDescLiq3.selectedItem.rvLowValue;
 					}
 					else
 					{
 						if(cbxDescLiq3.textInput.text == ""){
-							liquidacionAvaluoVO3.descripcionLiquidacion = null;	
+							parentDocument.liquidacionAvaluoVO3.descripcionLiquidacion = null;	
 						}else { 
-							//	liquidacionAvaluoVO3.descripcionLiquidacion = avaluoTmp.liquidacionAvaluos.getItemAt(3).descripcionLiquidacion; 
+							//	parentDocument.liquidacionAvaluoVO3.descripcionLiquidacion = avaluoTmp.liquidacionAvaluos.getItemAt(3).descripcionLiquidacion; 
 						} 
 					}
-					liquidacionAvaluoVO3.descripcionDependencia = descripcionDependenciaTextInput3.text;
-					liquidacionAvaluoVO3.areaLiquidacion = areaLiquidacionTextInput3.text;
-					liquidacionAvaluoVO3.valor = valorTextInput3.text;
-					liquidacionAvaluoVO3.valorTotal = valorTotalTextInput3.text;
-					liquidacionAvaluoVO3.consecutivo = "4";
-					if(liquidacionAvaluoVO3.idLiqavaluo == null){
-						liquidacionAvaluoVO3.usuarioCreacion = myUsuario.codigoUsuario;
+					parentDocument.liquidacionAvaluoVO3.descripcionDependencia = descripcionDependenciaTextInput3.text;
+					parentDocument.liquidacionAvaluoVO3.areaLiquidacion = areaLiquidacionTextInput3.text;
+					parentDocument.liquidacionAvaluoVO3.valor = valorTextInput3.text;
+					parentDocument.liquidacionAvaluoVO3.valorTotal = valorTotalTextInput3.text;
+					parentDocument.liquidacionAvaluoVO3.consecutivo = "4";
+					if(parentDocument.liquidacionAvaluoVO3.idLiqavaluo == null){
+						parentDocument.liquidacionAvaluoVO3.usuarioCreacion = myUsuario.codigoUsuario;
 					}
-					liquidacionAvaluoVO3.usuarioTransaccion = myUsuario.codigoUsuario;
-					liquidacionList.addItem(liquidacionAvaluoVO3);
+					parentDocument.liquidacionAvaluoVO3.usuarioTransaccion = myUsuario.codigoUsuario;
+					liquidacionList.addItem(parentDocument.liquidacionAvaluoVO3);
 					
 					if((cbxDescLiq4 != null) && (cbxDescLiq4.selectedIndex >=0)){
-						liquidacionAvaluoVO4.descripcionLiquidacion = cbxDescLiq4.selectedItem.rvLowValue;
+						parentDocument.liquidacionAvaluoVO4.descripcionLiquidacion = cbxDescLiq4.selectedItem.rvLowValue;
 					}
 					else
 					{
 						if(cbxDescLiq4.textInput.text == ""){
-							liquidacionAvaluoVO4.descripcionLiquidacion = null;	
+							parentDocument.liquidacionAvaluoVO4.descripcionLiquidacion = null;	
 						}else { 
-							//	liquidacionAvaluoVO4.descripcionLiquidacion = avaluoTmp.liquidacionAvaluos.getItemAt(4).descripcionLiquidacion; 
+							//	parentDocument.liquidacionAvaluoVO4.descripcionLiquidacion = avaluoTmp.liquidacionAvaluos.getItemAt(4).descripcionLiquidacion; 
 						}
 					}
-					liquidacionAvaluoVO4.descripcionDependencia = descripcionDependenciaTextInput4.text;
-					liquidacionAvaluoVO4.areaLiquidacion = areaLiquidacionTextInput4.text;
-					liquidacionAvaluoVO4.valor = valorTextInput4.text;
-					liquidacionAvaluoVO4.valorTotal = valorTotalTextInput4.text;
-					liquidacionAvaluoVO4.consecutivo = "5";
-					if(liquidacionAvaluoVO4.idLiqavaluo == null){
-						liquidacionAvaluoVO4.usuarioCreacion = myUsuario.codigoUsuario;
+					parentDocument.liquidacionAvaluoVO4.descripcionDependencia = descripcionDependenciaTextInput4.text;
+					parentDocument.liquidacionAvaluoVO4.areaLiquidacion = areaLiquidacionTextInput4.text;
+					parentDocument.liquidacionAvaluoVO4.valor = valorTextInput4.text;
+					parentDocument.liquidacionAvaluoVO4.valorTotal = valorTotalTextInput4.text;
+					parentDocument.liquidacionAvaluoVO4.consecutivo = "5";
+					if(parentDocument.liquidacionAvaluoVO4.idLiqavaluo == null){
+						parentDocument.liquidacionAvaluoVO4.usuarioCreacion = myUsuario.codigoUsuario;
 					}
-					liquidacionAvaluoVO4.usuarioTransaccion = myUsuario.codigoUsuario;
-					liquidacionList.addItem(liquidacionAvaluoVO4);
+					parentDocument.liquidacionAvaluoVO4.usuarioTransaccion = myUsuario.codigoUsuario;
+					liquidacionList.addItem(parentDocument.liquidacionAvaluoVO4);
 					
 					if((cbxDescLiq5 != null) && (cbxDescLiq5.selectedIndex >=0)){
-						liquidacionAvaluoVO5.descripcionLiquidacion = cbxDescLiq5.selectedItem.rvLowValue;
+						parentDocument.liquidacionAvaluoVO5.descripcionLiquidacion = cbxDescLiq5.selectedItem.rvLowValue;
 					}
 					else
 					{
 						if(cbxDescLiq5.textInput.text == ""){
-							liquidacionAvaluoVO5.descripcionLiquidacion = null;	
+							parentDocument.liquidacionAvaluoVO5.descripcionLiquidacion = null;	
 						}else { 
-							//	liquidacionAvaluoVO5.descripcionLiquidacion = avaluoTmp.liquidacionAvaluos.getItemAt(5).descripcionLiquidacion; 
+							//	parentDocument.liquidacionAvaluoVO5.descripcionLiquidacion = avaluoTmp.liquidacionAvaluos.getItemAt(5).descripcionLiquidacion; 
 						}
 					}
-					liquidacionAvaluoVO5.descripcionDependencia = descripcionDependenciaTextInput5.text;
-					liquidacionAvaluoVO5.areaLiquidacion = areaLiquidacionTextInput5.text;
-					liquidacionAvaluoVO5.valor = valorTextInput5.text;
-					liquidacionAvaluoVO5.valorTotal = valorTotalTextInput5.text;
-					liquidacionAvaluoVO5.consecutivo = "6";
-					if(liquidacionAvaluoVO5.idLiqavaluo == null){
-						liquidacionAvaluoVO5.usuarioCreacion = myUsuario.codigoUsuario;
+					parentDocument.liquidacionAvaluoVO5.descripcionDependencia = descripcionDependenciaTextInput5.text;
+					parentDocument.liquidacionAvaluoVO5.areaLiquidacion = areaLiquidacionTextInput5.text;
+					parentDocument.liquidacionAvaluoVO5.valor = valorTextInput5.text;
+					parentDocument.liquidacionAvaluoVO5.valorTotal = valorTotalTextInput5.text;
+					parentDocument.liquidacionAvaluoVO5.consecutivo = "6";
+					if(parentDocument.liquidacionAvaluoVO5.idLiqavaluo == null){
+						parentDocument.liquidacionAvaluoVO5.usuarioCreacion = myUsuario.codigoUsuario;
 					}
-					liquidacionAvaluoVO5.usuarioTransaccion = myUsuario.codigoUsuario;
-					liquidacionList.addItem(liquidacionAvaluoVO5);
+					parentDocument.liquidacionAvaluoVO5.usuarioTransaccion = myUsuario.codigoUsuario;
+					liquidacionList.addItem(parentDocument.liquidacionAvaluoVO5);
 					
 					if((cbxDescLiq6 != null) && (cbxDescLiq6.selectedIndex >=0)){
-						liquidacionAvaluoVO6.descripcionLiquidacion = cbxDescLiq6.selectedItem.rvLowValue;
+						parentDocument.liquidacionAvaluoVO6.descripcionLiquidacion = cbxDescLiq6.selectedItem.rvLowValue;
 					}
 					else
 					{
 						if(cbxDescLiq6.textInput.text == ""){
-							liquidacionAvaluoVO6.descripcionLiquidacion = null;	
+							parentDocument.liquidacionAvaluoVO6.descripcionLiquidacion = null;	
 						}else { 
-							//	liquidacionAvaluoVO6.descripcionLiquidacion = avaluoTmp.liquidacionAvaluos.getItemAt(6).descripcionLiquidacion; 
+							//	parentDocument.liquidacionAvaluoVO6.descripcionLiquidacion = avaluoTmp.liquidacionAvaluos.getItemAt(6).descripcionLiquidacion; 
 						}
 					}
-					liquidacionAvaluoVO6.descripcionDependencia = descripcionDependenciaTextInput6.text;
-					liquidacionAvaluoVO6.areaLiquidacion = areaLiquidacionTextInput6.text;
-					liquidacionAvaluoVO6.valor = valorTextInput6.text;
-					liquidacionAvaluoVO6.valorTotal = valorTotalTextInput6.text;
-					liquidacionAvaluoVO6.consecutivo = "7";
-					if(liquidacionAvaluoVO6.idLiqavaluo == null){
-						liquidacionAvaluoVO6.usuarioCreacion = myUsuario.codigoUsuario;
+					parentDocument.liquidacionAvaluoVO6.descripcionDependencia = descripcionDependenciaTextInput6.text;
+					parentDocument.liquidacionAvaluoVO6.areaLiquidacion = areaLiquidacionTextInput6.text;
+					parentDocument.liquidacionAvaluoVO6.valor = valorTextInput6.text;
+					parentDocument.liquidacionAvaluoVO6.valorTotal = valorTotalTextInput6.text;
+					parentDocument.liquidacionAvaluoVO6.consecutivo = "7";
+					if(parentDocument.liquidacionAvaluoVO6.idLiqavaluo == null){
+						parentDocument.liquidacionAvaluoVO6.usuarioCreacion = myUsuario.codigoUsuario;
 					}
-					liquidacionAvaluoVO6.usuarioTransaccion = myUsuario.codigoUsuario;
-					liquidacionList.addItem(liquidacionAvaluoVO6);
+					parentDocument.liquidacionAvaluoVO6.usuarioTransaccion = myUsuario.codigoUsuario;
+					liquidacionList.addItem(parentDocument.liquidacionAvaluoVO6);
 					
 					if((cbxDescLiq7 != null) && (cbxDescLiq7.selectedIndex >=0)){
-						liquidacionAvaluoVO7.descripcionLiquidacion = cbxDescLiq7.selectedItem.rvLowValue;
+						parentDocument.liquidacionAvaluoVO7.descripcionLiquidacion = cbxDescLiq7.selectedItem.rvLowValue;
 					}
 					else
 					{
 						if(cbxDescLiq7.textInput.text == ""){
-							liquidacionAvaluoVO7.descripcionLiquidacion = null;	
+							parentDocument.liquidacionAvaluoVO7.descripcionLiquidacion = null;	
 						}else { 
-							//	liquidacionAvaluoVO7.descripcionLiquidacion = avaluoTmp.liquidacionAvaluos.getItemAt(7).descripcionLiquidacion;
+							//	parentDocument.liquidacionAvaluoVO7.descripcionLiquidacion = avaluoTmp.liquidacionAvaluos.getItemAt(7).descripcionLiquidacion;
 						}
 					}
-					liquidacionAvaluoVO7.descripcionDependencia = descripcionDependenciaTextInput7.text;
-					liquidacionAvaluoVO7.areaLiquidacion = areaLiquidacionTextInput7.text;
-					liquidacionAvaluoVO7.valor = valorTextInput7.text;
-					liquidacionAvaluoVO7.valorTotal = valorTotalTextInput7.text;
-					liquidacionAvaluoVO7.consecutivo = "8";
-					if(liquidacionAvaluoVO7.idLiqavaluo == null){
-						liquidacionAvaluoVO7.usuarioCreacion = myUsuario.codigoUsuario;
+					parentDocument.liquidacionAvaluoVO7.descripcionDependencia = descripcionDependenciaTextInput7.text;
+					parentDocument.liquidacionAvaluoVO7.areaLiquidacion = areaLiquidacionTextInput7.text;
+					parentDocument.liquidacionAvaluoVO7.valor = valorTextInput7.text;
+					parentDocument.liquidacionAvaluoVO7.valorTotal = valorTotalTextInput7.text;
+					parentDocument.liquidacionAvaluoVO7.consecutivo = "8";
+					if(parentDocument.liquidacionAvaluoVO7.idLiqavaluo == null){
+						parentDocument.liquidacionAvaluoVO7.usuarioCreacion = myUsuario.codigoUsuario;
 					}
-					liquidacionAvaluoVO7.usuarioTransaccion = myUsuario.codigoUsuario;
-					liquidacionList.addItem(liquidacionAvaluoVO7);
+					parentDocument.liquidacionAvaluoVO7.usuarioTransaccion = myUsuario.codigoUsuario;
+					liquidacionList.addItem(parentDocument.liquidacionAvaluoVO7);
 					
 					if((cbxDescLiq8 != null) && (cbxDescLiq8.selectedIndex >=0)){
-						liquidacionAvaluoVO8.descripcionLiquidacion = cbxDescLiq8.selectedItem.rvLowValue;
+						parentDocument.liquidacionAvaluoVO8.descripcionLiquidacion = cbxDescLiq8.selectedItem.rvLowValue;
 					}
 					else
 					{
 						if(cbxDescLiq8.textInput.text == ""){
-							liquidacionAvaluoVO8.descripcionLiquidacion = null;	
+							parentDocument.liquidacionAvaluoVO8.descripcionLiquidacion = null;	
 						}else { 
-							//	liquidacionAvaluoVO8.descripcionLiquidacion = avaluoTmp.liquidacionAvaluos.getItemAt(8).descripcionLiquidacion; 
+							//	parentDocument.liquidacionAvaluoVO8.descripcionLiquidacion = avaluoTmp.liquidacionAvaluos.getItemAt(8).descripcionLiquidacion; 
 						}
 					}
-					liquidacionAvaluoVO8.descripcionDependencia = descripcionDependenciaTextInput8.text;
-					liquidacionAvaluoVO8.areaLiquidacion = areaLiquidacionTextInput8.text;
-					liquidacionAvaluoVO8.valor = valorTextInput8.text;
-					liquidacionAvaluoVO8.valorTotal = valorTotalTextInput8.text;
-					liquidacionAvaluoVO8.consecutivo = "9";
-					if(liquidacionAvaluoVO8.idLiqavaluo == null){
-						liquidacionAvaluoVO8.usuarioCreacion = myUsuario.codigoUsuario;
+					parentDocument.liquidacionAvaluoVO8.descripcionDependencia = descripcionDependenciaTextInput8.text;
+					parentDocument.liquidacionAvaluoVO8.areaLiquidacion = areaLiquidacionTextInput8.text;
+					parentDocument.liquidacionAvaluoVO8.valor = valorTextInput8.text;
+					parentDocument.liquidacionAvaluoVO8.valorTotal = valorTotalTextInput8.text;
+					parentDocument.liquidacionAvaluoVO8.consecutivo = "9";
+					if(parentDocument.liquidacionAvaluoVO8.idLiqavaluo == null){
+						parentDocument.liquidacionAvaluoVO8.usuarioCreacion = myUsuario.codigoUsuario;
 					}
-					liquidacionAvaluoVO8.usuarioTransaccion = myUsuario.codigoUsuario;
-					liquidacionList.addItem(liquidacionAvaluoVO8);
+					parentDocument.liquidacionAvaluoVO8.usuarioTransaccion = myUsuario.codigoUsuario;
+					liquidacionList.addItem(parentDocument.liquidacionAvaluoVO8);
 					
 					if((cbxDescLiq9 != null) && (cbxDescLiq9.selectedIndex >=0)){
-						liquidacionAvaluoVO9.descripcionLiquidacion = cbxDescLiq9.selectedItem.rvLowValue;
+						parentDocument.liquidacionAvaluoVO9.descripcionLiquidacion = cbxDescLiq9.selectedItem.rvLowValue;
 					}
 					else
 					{
 						if(cbxDescLiq9.textInput.text == ""){
-							liquidacionAvaluoVO9.descripcionLiquidacion = null;	
+							parentDocument.liquidacionAvaluoVO9.descripcionLiquidacion = null;	
 						}else { 
-							//	liquidacionAvaluoVO9.descripcionLiquidacion = avaluoTmp.liquidacionAvaluos.getItemAt(9).descripcionLiquidacion; 
+							//	parentDocument.liquidacionAvaluoVO9.descripcionLiquidacion = avaluoTmp.liquidacionAvaluos.getItemAt(9).descripcionLiquidacion; 
 						}
 					}
-					liquidacionAvaluoVO9.descripcionDependencia = descripcionDependenciaTextInput9.text;
-					liquidacionAvaluoVO9.areaLiquidacion = areaLiquidacionTextInput9.text;
-					liquidacionAvaluoVO9.valor = valorTextInput9.text;
-					liquidacionAvaluoVO9.valorTotal = valorTotalTextInput9.text;
-					liquidacionAvaluoVO9.consecutivo = "10";
-					if(liquidacionAvaluoVO9.idLiqavaluo == null){
-						liquidacionAvaluoVO9.usuarioCreacion = myUsuario.codigoUsuario;
+					parentDocument.liquidacionAvaluoVO9.descripcionDependencia = descripcionDependenciaTextInput9.text;
+					parentDocument.liquidacionAvaluoVO9.areaLiquidacion = areaLiquidacionTextInput9.text;
+					parentDocument.liquidacionAvaluoVO9.valor = valorTextInput9.text;
+					parentDocument.liquidacionAvaluoVO9.valorTotal = valorTotalTextInput9.text;
+					parentDocument.liquidacionAvaluoVO9.consecutivo = "10";
+					if(parentDocument.liquidacionAvaluoVO9.idLiqavaluo == null){
+						parentDocument.liquidacionAvaluoVO9.usuarioCreacion = myUsuario.codigoUsuario;
 					}
-					liquidacionAvaluoVO9.usuarioTransaccion = myUsuario.codigoUsuario;
-					liquidacionList.addItem(liquidacionAvaluoVO9);
+					parentDocument.liquidacionAvaluoVO9.usuarioTransaccion = myUsuario.codigoUsuario;
+					liquidacionList.addItem(parentDocument.liquidacionAvaluoVO9);
 				}catch(error:Error){
 					error.getStackTrace(); 
 					trace(error.message); 
@@ -791,6 +787,7 @@
 			}
 			
 			public function validarCamposVacios():Boolean{
+				ejecutarValidacionCamposObligatorios(0); 
 				return true; 
 			}
 			
@@ -846,79 +843,116 @@
 			protected function getAvaluosPorIdResult_resultHandler(event:ResultEvent):void
 			{
 				//Se instancian nuevamente todos los objetos
-				liquidacionAvaluoVO0 = new LiquidacionAvaluo();
-				liquidacionAvaluoVO1  = new LiquidacionAvaluo();
-				liquidacionAvaluoVO2  = new LiquidacionAvaluo();
-				liquidacionAvaluoVO3  = new LiquidacionAvaluo();
-				liquidacionAvaluoVO4  = new LiquidacionAvaluo();
-				liquidacionAvaluoVO5  = new LiquidacionAvaluo();
-				liquidacionAvaluoVO6  = new LiquidacionAvaluo();
-				liquidacionAvaluoVO7  = new LiquidacionAvaluo();
-				liquidacionAvaluoVO8  = new LiquidacionAvaluo();
-				liquidacionAvaluoVO9  = new LiquidacionAvaluo();
-				liquidacionAvaluoTotalVO  = new LiquidacionAvaluoTotal();
+				parentDocument.avaluo = new Avaluo(); 
+				parentDocument.avaluo = getAvaluosPorIdResult.lastResult as Avaluo;
 				
-				// avaluoVO = getAvaluosPorIdResult.lastResult as Avaluo;
+				if(parentDocument.avaluo != null){ 					
+					if(parentDocument.avaluo.liquidacionAvaluos != null && parentDocument.avaluo.liquidacionAvaluos.length > 0){
+					parentDocument.liquidacionAvaluoVO0 = parentDocument.avaluo.liquidacionAvaluos.getItemAt(0) as LiquidacionAvaluo;
+					}
+					if(parentDocument.avaluo.liquidacionAvaluos != null && parentDocument.avaluo.liquidacionAvaluos.length > 1){
+					parentDocument.liquidacionAvaluoVO1  = parentDocument.avaluo.liquidacionAvaluos.getItemAt(1) as LiquidacionAvaluo;
+					}
+					if(parentDocument.avaluo.liquidacionAvaluos != null && parentDocument.avaluo.liquidacionAvaluos.length > 2){
+					parentDocument.liquidacionAvaluoVO2  = parentDocument.avaluo.liquidacionAvaluos.getItemAt(2) as LiquidacionAvaluo;
+					}
+					if(parentDocument.avaluo.liquidacionAvaluos != null && parentDocument.avaluo.liquidacionAvaluos.length > 3){
+					parentDocument.liquidacionAvaluoVO3  = parentDocument.avaluo.liquidacionAvaluos.getItemAt(3) as LiquidacionAvaluo;
+					}
+					if(parentDocument.avaluo.liquidacionAvaluos != null && parentDocument.avaluo.liquidacionAvaluos.length > 4){
+					parentDocument.liquidacionAvaluoVO4  = parentDocument.avaluo.liquidacionAvaluos.getItemAt(4) as LiquidacionAvaluo;
+					}
+					if(parentDocument.avaluo.liquidacionAvaluos != null && parentDocument.avaluo.liquidacionAvaluos.length > 5){
+					parentDocument.liquidacionAvaluoVO5  = parentDocument.avaluo.liquidacionAvaluos.getItemAt(5) as LiquidacionAvaluo;
+					}
+					if(parentDocument.avaluo.liquidacionAvaluos != null && parentDocument.avaluo.liquidacionAvaluos.length > 6){
+					parentDocument.liquidacionAvaluoVO6  = parentDocument.avaluo.liquidacionAvaluos.getItemAt(6) as LiquidacionAvaluo;
+					}
+					if(parentDocument.avaluo.liquidacionAvaluos != null && parentDocument.avaluo.liquidacionAvaluos.length > 7){
+					parentDocument.liquidacionAvaluoVO7  = parentDocument.avaluo.liquidacionAvaluos.getItemAt(7) as LiquidacionAvaluo;
+					}
+					if(parentDocument.avaluo.liquidacionAvaluos != null && parentDocument.avaluo.liquidacionAvaluos.length > 8){
+					parentDocument.liquidacionAvaluoVO8  = parentDocument.avaluo.liquidacionAvaluos.getItemAt(8) as LiquidacionAvaluo;
+					}
+					if(parentDocument.avaluo.liquidacionAvaluos != null && parentDocument.avaluo.liquidacionAvaluos.length > 9){
+					parentDocument.liquidacionAvaluoVO9  = parentDocument.avaluo.liquidacionAvaluos.getItemAt(9) as LiquidacionAvaluo;
+					}
+					if(parentDocument.avaluo.liquidacionTotal != null && parentDocument.avaluo.liquidacionTotal.length > 0){
+					parentDocument.liquidacionAvaluoTotalVO  = parentDocument.avaluo.liquidacionTotal.getItemAt(0) as LiquidacionAvaluoTotal;
+					}
+					validateNow();
+				}
 				
+			}
+			
+			public function cargarDescripcionLiquidacion():void
+			{
+				if(parentDocument.parentDocument.parentDocument.parentDocument.avaluo != null && 
+					parentDocument.parentDocument.parentDocument.parentDocument.avaluo.informacionConstruccion != null && 
+					parentDocument.parentDocument.parentDocument.parentDocument.avaluo.length > 0){
+					getValoresDominioResult28.token = dominiosAuxDao.getValoresDescLiquidacion("DESCLIQUIDACION",parentDocument.parentDocument.parentDocument.parentDocument.avaluo.informacionConstruccion.getItemAt(0).propiedadHorizontal);
+				}else{
+					getValoresDominioResult28.token = dominiosAuxDao.getValoresDescLiquidacion("DESCLIQUIDACION","2");
+				} 
 			}
 			
 			protected function tn_currentStateChangeHandler(event:FlexEvent):void
 			{
-			
-						/** switch(tn.selectedIndex){
-							
-							
-							case 5: 
-								if(liquidacionPanelVO != null && avaluoVO.liquidacionAvaluos != null && avaluoVO.liquidacionAvaluos.length > 0){
-									liquidacionPanelVO.liquidacionAvaluoVO0 = avaluoVO.liquidacionAvaluos.getItemAt(0) as LiquidacionAvaluo;
-								}
-								if(liquidacionPanelVO != null && avaluoVO.liquidacionAvaluos != null && avaluoVO.liquidacionAvaluos.length > 1){
-									liquidacionPanelVO.liquidacionAvaluoVO1  = avaluoVO.liquidacionAvaluos.getItemAt(1) as LiquidacionAvaluo;
-								}
-								if(liquidacionPanelVO != null && avaluoVO.liquidacionAvaluos != null && avaluoVO.liquidacionAvaluos.length > 2){
-									liquidacionPanelVO.liquidacionAvaluoVO2  = avaluoVO.liquidacionAvaluos.getItemAt(2) as LiquidacionAvaluo;
-								}
-								if(liquidacionPanelVO != null && avaluoVO.liquidacionAvaluos != null && avaluoVO.liquidacionAvaluos.length > 3){
-									liquidacionPanelVO.liquidacionAvaluoVO3  = avaluoVO.liquidacionAvaluos.getItemAt(3) as LiquidacionAvaluo;
-								}
-								if(liquidacionPanelVO != null && avaluoVO.liquidacionAvaluos != null && avaluoVO.liquidacionAvaluos.length > 4){
-									liquidacionPanelVO.liquidacionAvaluoVO4  = avaluoVO.liquidacionAvaluos.getItemAt(4) as LiquidacionAvaluo;
-								}
-								if(liquidacionPanelVO != null && avaluoVO.liquidacionAvaluos != null && avaluoVO.liquidacionAvaluos.length > 5){
-									liquidacionPanelVO.liquidacionAvaluoVO5  = avaluoVO.liquidacionAvaluos.getItemAt(5) as LiquidacionAvaluo;
-								}
-								if(liquidacionPanelVO != null && avaluoVO.liquidacionAvaluos != null && avaluoVO.liquidacionAvaluos.length > 6){
-									liquidacionPanelVO.liquidacionAvaluoVO6  = avaluoVO.liquidacionAvaluos.getItemAt(6) as LiquidacionAvaluo;
-								}
-								if(liquidacionPanelVO != null && avaluoVO.liquidacionAvaluos != null && avaluoVO.liquidacionAvaluos.length > 7){
-									liquidacionPanelVO.liquidacionAvaluoVO7  = avaluoVO.liquidacionAvaluos.getItemAt(7) as LiquidacionAvaluo;
-								}
-								if(liquidacionPanelVO != null && avaluoVO.liquidacionAvaluos != null && avaluoVO.liquidacionAvaluos.length > 8){
-									liquidacionPanelVO.liquidacionAvaluoVO8  = avaluoVO.liquidacionAvaluos.getItemAt(8) as LiquidacionAvaluo;
-								}
-								if(liquidacionPanelVO != null && avaluoVO.liquidacionAvaluos != null && avaluoVO.liquidacionAvaluos.length > 9){
-									liquidacionPanelVO.liquidacionAvaluoVO9  = avaluoVO.liquidacionAvaluos.getItemAt(9) as LiquidacionAvaluo;
-								}
-								if(liquidacionPanelVO != null && avaluoVO.liquidacionTotal != null && avaluoVO.liquidacionTotal.length > 0){
-									liquidacionPanelVO.liquidacionAvaluoTotalVO  = avaluoVO.liquidacionTotal.getItemAt(0) as LiquidacionAvaluoTotal;
-								}
-								break; 
-							
-						}
-					*/ 
+				
+				/** switch(tn.selectedIndex){
+				 
+				 
+				 case 5: 
+				 if(liquidacionPanelVO != null && avaluoVO.liquidacionAvaluos != null && avaluoVO.liquidacionAvaluos.length > 0){
+				 liquidacionPanelVO.parentDocument.liquidacionAvaluoVO0 = avaluoVO.liquidacionAvaluos.getItemAt(0) as LiquidacionAvaluo;
+				 }
+				 if(liquidacionPanelVO != null && avaluoVO.liquidacionAvaluos != null && avaluoVO.liquidacionAvaluos.length > 1){
+				 liquidacionPanelVO.parentDocument.liquidacionAvaluoVO1  = avaluoVO.liquidacionAvaluos.getItemAt(1) as LiquidacionAvaluo;
+				 }
+				 if(liquidacionPanelVO != null && avaluoVO.liquidacionAvaluos != null && avaluoVO.liquidacionAvaluos.length > 2){
+				 liquidacionPanelVO.parentDocument.liquidacionAvaluoVO2  = avaluoVO.liquidacionAvaluos.getItemAt(2) as LiquidacionAvaluo;
+				 }
+				 if(liquidacionPanelVO != null && avaluoVO.liquidacionAvaluos != null && avaluoVO.liquidacionAvaluos.length > 3){
+				 liquidacionPanelVO.parentDocument.liquidacionAvaluoVO3  = avaluoVO.liquidacionAvaluos.getItemAt(3) as LiquidacionAvaluo;
+				 }
+				 if(liquidacionPanelVO != null && avaluoVO.liquidacionAvaluos != null && avaluoVO.liquidacionAvaluos.length > 4){
+				 liquidacionPanelVO.parentDocument.liquidacionAvaluoVO4  = avaluoVO.liquidacionAvaluos.getItemAt(4) as LiquidacionAvaluo;
+				 }
+				 if(liquidacionPanelVO != null && avaluoVO.liquidacionAvaluos != null && avaluoVO.liquidacionAvaluos.length > 5){
+				 liquidacionPanelVO.parentDocument.liquidacionAvaluoVO5  = avaluoVO.liquidacionAvaluos.getItemAt(5) as LiquidacionAvaluo;
+				 }
+				 if(liquidacionPanelVO != null && avaluoVO.liquidacionAvaluos != null && avaluoVO.liquidacionAvaluos.length > 6){
+				 liquidacionPanelVO.parentDocument.liquidacionAvaluoVO6  = avaluoVO.liquidacionAvaluos.getItemAt(6) as LiquidacionAvaluo;
+				 }
+				 if(liquidacionPanelVO != null && avaluoVO.liquidacionAvaluos != null && avaluoVO.liquidacionAvaluos.length > 7){
+				 liquidacionPanelVO.parentDocument.liquidacionAvaluoVO7  = avaluoVO.liquidacionAvaluos.getItemAt(7) as LiquidacionAvaluo;
+				 }
+				 if(liquidacionPanelVO != null && avaluoVO.liquidacionAvaluos != null && avaluoVO.liquidacionAvaluos.length > 8){
+				 liquidacionPanelVO.parentDocument.liquidacionAvaluoVO8  = avaluoVO.liquidacionAvaluos.getItemAt(8) as LiquidacionAvaluo;
+				 }
+				 if(liquidacionPanelVO != null && avaluoVO.liquidacionAvaluos != null && avaluoVO.liquidacionAvaluos.length > 9){
+				 liquidacionPanelVO.parentDocument.liquidacionAvaluoVO9  = avaluoVO.liquidacionAvaluos.getItemAt(9) as LiquidacionAvaluo;
+				 }
+				 if(liquidacionPanelVO != null && avaluoVO.liquidacionTotal != null && avaluoVO.liquidacionTotal.length > 0){
+				 liquidacionPanelVO.parentDocument.liquidacionAvaluoTotalVO  = avaluoVO.liquidacionTotal.getItemAt(0) as LiquidacionAvaluoTotal;
+				 }
+				 break; 
+				 
+				 }
+				 */ 
 			}
 			
 			protected function validarCampos(categoria:int, todos:Boolean):void
 			{			
 				ejecutarValidacionCamposObligatorios(categoria); 
-				 				
+				
 			}
 			
 			/**
 			 *  Imprime estado de las novedades durante el registro del formultario 
 			 **/			
 			public function imprimirEstadoProceso(mensaje:String):void{
-				mensajes.text = mensaje ; 
+				parentDocument.parentDocument.parentDocument.mensajes.text = mensaje ; 
 			}
 			
 			protected function button2_clickHandler(event:MouseEvent):void
@@ -930,106 +964,106 @@
 				if(!validarCamposFormultario()){
 					return; 
 				}
-				var mensajeTransaccion:String = "Transacción exitosa. Bloque: Información Básica"; 
-				var avaluoTmp:Avaluo = new Avaluo();
+				imprimirEstadoProceso("Guardando bloque liquidación"); 
+				var liquidacionTotalList:ArrayCollection = new ArrayCollection(); 
+				var liquidacionList:ArrayCollection = guardarLiquidacion(parentDocument.parentDocument.parentDocument.avaluoVO, parentApplication.myUsuario);
+				parentDocument.liquidacionAvaluoTotalVO = guardarTotalLiquidacion(parentDocument.parentDocument.parentDocument.avaluoVO, parentApplication.myUsuario);
 				
-				/**
-				 if(informacionInmueblePanelVO != null){
-				 mensajeTransaccion = "Transacción exitosa. Bloque: Información Inmueble";
-				 
-				 var inmuebleList:ArrayCollection = new ArrayCollection();
-				 
-				 if(avaluoVO == null)
-				 avaluoTmp = informacionBasicaPanelVO.avaluo2; 
-				 else 
-				 avaluoTmp = avaluoVO ;
-				 
-				 inmuebleList.addItem(informacionInmueblePanelVO.guardarInmueble(avaluoTmp,myUsuario)); 
-				 avaluoTmp.informacionInmueble = inmuebleList;
-				 avaluoVO = avaluoTmp ;
-				 }
-				 
-				 if(informacionConstruccionPanelVO != null){
-				 mensajeTransaccion = "Transacción exitosa. Bloque: Información Construcción";
-				 
-				 var construccionList:ArrayCollection = new ArrayCollection(); 
-				 
-				 if(avaluoVO == null)
-				 avaluoTmp = informacionBasicaPanelVO.avaluo2; 
-				 else 
-				 avaluoTmp = avaluoVO ;
-				 
-				 construccionList.addItem(informacionConstruccionPanelVO.guardarInformacionConstruccion(avaluoTmp,myUsuario)); 
-				 avaluoTmp.informacionConstruccion = construccionList;
-				 
-				 var condicionList:ArrayCollection = new ArrayCollection(); 
-				 condicionList.addItem(informacionConstruccionPanelVO.guardarInformacionCondicionesSalubridad(avaluoTmp,myUsuario));
-				 avaluoTmp.condicionSalubridad =  condicionList; 
-				 avaluoVO = avaluoTmp ;
-				 }
-				 
-				 if(ofertaDemandaPanelVO != null){
-				 mensajeTransaccion = "Transacción exitosa. Bloque: Información Oferta y Demanda";
-				 
-				 var ofertademandaList:ArrayCollection = new ArrayCollection(); 
-				 
-				 if(avaluoVO == null)
-				 avaluoTmp = informacionBasicaPanelVO.avaluo2; 
-				 else 
-				 avaluoTmp = avaluoVO ;
-				 
-				 ofertademandaList.addItem(ofertaDemandaPanelVO.guarfarOfertaDemanda(avaluoTmp,myUsuario)); 
-				 avaluoTmp.compOfertaDemanda = ofertademandaList ; 
-				 avaluoVO = avaluoTmp ;
-				 }
-				 
-				 if(liquidacionPanelVO != null){
-				 mensajeTransaccion = "Transacción exitosa. Bloque: Liquidación";
-				 
-				 avaluoTmp.liquidacionAvaluos = liquidacionPanelVO.guardarLiquidacion(avaluoTmp,myUsuario);
-				 
-				 var liquidacionTotalList:ArrayCollection = new ArrayCollection(); 
-				 
-				 if(avaluoVO == null)
-				 avaluoTmp = informacionBasicaPanelVO.avaluo2; 
-				 else 
-				 avaluoTmp = avaluoVO ;
-				 
-				 liquidacionTotalList.addItem(liquidacionPanelVO.guardarTotalLiquidacion(avaluoTmp,myUsuario)); 
-				 avaluoTmp.liquidacionTotal = liquidacionTotalList ; 
-				 avaluoVO = avaluoTmp ;
-				 }
-				 
-				 if(observacionPanelVO != null){
-				 mensajeTransaccion = "Transacción exitosa. Bloque: Observación ";
-				 var observacionList:ArrayCollection = new ArrayCollection(); 
-				 
-				 if(avaluoVO == null)
-				 avaluoTmp = informacionBasicaPanelVO.avaluo2; 
-				 else 
-				 avaluoTmp = avaluoVO ;
-				 
-				 observacionList.addItem(observacionPanelVO.guardarObservacion(avaluoTmp,myUsuario)); 
-				 avaluoTmp.observacion = observacionList ; 
-				 avaluoVO = avaluoTmp ;
-				 }
-				 imprimirEstadoProceso(mensajeTransaccion);
-				 if(informacionBasicaPanelVO != null)
-				 informacionBasicaPanelVO.guardarInformacionBasica(avaluoVO, myUsuario);
-				 
-				 if(avaluoVO.usuarioCreacion == null)
-				 auditoriaAvaluo.usuarioCreacion.text = myUsuario.cedulaEmpleado ; 
-				 else 
-				 auditoriaAvaluo.usuarioCreacion.text = avaluoVO.usuarioCreacion ;
-				 
-				 if(avaluoVO.fechaCreacion != null)
-				 auditoriaAvaluo.fechaCreacion.selectedDate = avaluoVO.fechaCreacion ; 
-				 else 
-				 auditoriaAvaluo.fechaCreacion.selectedDate = new Date() ;
-				 
-				 auditoriaAvaluo.usuarioTransaccion.text = myUsuario.cedulaEmpleado ; 
-				 auditoriaAvaluo.fechaTransaccion.selectedDate = new Date() ;
-				 */
+				createResult11.token = parentDocument.liquidacionService.update(liquidacionList);
+				createResult8.token = parentDocument.liquidacionTotalService.update(parentDocument.liquidacionAvaluoTotalVO);
+				
+				liquidacionTotalList.addItem(parentDocument.liquidacionAvaluoTotalVO); 
+				parentDocument.parentDocument.parentDocument.avaluoVO.liquidacionTotal = liquidacionTotalList ; 
+				parentDocument.parentDocument.parentDocument.avaluoVO.liquidacionAvaluos = liquidacionList ;
+				
+				if(parentDocument.parentDocument.parentDocument.avaluoVO.usuarioCreacion == null)
+					auditoriaAvaluo.usuarioCreacion.text = parentApplication.myUsuario.cedulaEmpleado ; 
+				else 
+					auditoriaAvaluo.usuarioCreacion.text = parentDocument.parentDocument.parentDocument.avaluoVO.usuarioCreacion ;
+				
+				if(parentDocument.parentDocument.parentDocument.avaluoVO.fechaCreacion != null)
+					auditoriaAvaluo.fechaCreacion.selectedDate = parentDocument.parentDocument.parentDocument.avaluoVO.fechaCreacion ; 
+				else 
+					auditoriaAvaluo.fechaCreacion.selectedDate = new Date() ;
+				
+				auditoriaAvaluo.usuarioTransaccion.text = parentApplication.myUsuario.cedulaEmpleado ; 
+				auditoriaAvaluo.fechaTransaccion.selectedDate = new Date() ;
+				
+			}
+			
+			/**
+			 * Manejador del resultado del servicio barrio
+			 * */
+			protected function createResult8_resultHandler(event:ResultEvent):void
+			{
+				if(createResult8 != null && createResult8.lastResult != null){
+					imprimirEstadoProceso("Transacción exitosa. Bloque Liquidación");
+					createResult8.lastResult;					 
+				}
+			}
+			
+			/**
+			 * Manejador del resultado del servicio barrio
+			 * */
+			protected function createResult11_resultHandler(event:ResultEvent):void
+			{
+				if(createResult11 != null && createResult11.lastResult != null){
+					imprimirEstadoProceso("Transacción exitosa. Bloque Liquidación Total ");
+					parentDocument.nextTabAvaluo(); 
+				}
+			}
+			
+			
+			protected function module1_updateCompleteHandler(event:FlexEvent):void
+			{
+				cargarDescripcionLiquidacion(); 
+				valorUvrDiaTextInput_clickHandler(null); 
+			}
+			
+			protected function getValoresDominioResult28_resultHandler(event:ResultEvent):void
+			{
+				parentDocument.selectdescliq0 = getValoresDominioResult28.lastResult;
+				
+				if(parentDocument.parentDocument.parentDocument.parentDocument.avaluo != null){
+					getAvaluosPorIdResult.token = parentDocument.avaluosService.getAvaluosPorId(parentDocument.parentDocument.parentDocument.parentDocument.avaluo.idAvaluo);
+				}else{
+					parentDocument.liquidacionAvaluoVO0 = new LiquidacionAvaluo();
+					parentDocument.liquidacionAvaluoVO1  = new LiquidacionAvaluo();
+					parentDocument.liquidacionAvaluoVO2  = new LiquidacionAvaluo();
+					parentDocument.liquidacionAvaluoVO3  = new LiquidacionAvaluo();
+					parentDocument.liquidacionAvaluoVO4  = new LiquidacionAvaluo();
+					parentDocument.liquidacionAvaluoVO5  = new LiquidacionAvaluo();
+					parentDocument.liquidacionAvaluoVO6  = new LiquidacionAvaluo();
+					parentDocument.liquidacionAvaluoVO7  = new LiquidacionAvaluo();
+					parentDocument.liquidacionAvaluoVO8  = new LiquidacionAvaluo();
+					parentDocument.liquidacionAvaluoVO9  = new LiquidacionAvaluo();
+					parentDocument.liquidacionAvaluoTotalVO  = new LiquidacionAvaluoTotal(); 
+					
+				}
+				
+				
+				
+			}
+			
+			protected function genericService_faultHandler(event:FaultEvent,service:String):void
+			{
+				
+				var errorFull:String = event.fault.toString(); 
+				var error:String = event.fault.faultString.toString();
+				
+				var descripcionError:Array = new Array();
+				var errorMessage:String = "";  
+				
+				if(error != null && error.length > 0){
+					descripcionError = error.split(":"); 
+				}
+				
+				if(descripcionError.length>1){
+					errorMessage = descripcionError[1];
+					Utilidad.imprimirMensaje(errorMessage, "Validación de registros"); 
+					// limpiarControles();  
+				}
+				//Gardar Log en Tabla 				
 			}
 			
 		]]>
@@ -1037,191 +1071,184 @@
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 		
-		<valueObjects:InformacionConstruccion id="informacionConstruccionVO" />
-		<valueObjects:LiquidacionAvaluo id="liquidacionAvaluoVO0" />
-		<valueObjects:LiquidacionAvaluo id="liquidacionAvaluoVO1" />
-		<valueObjects:LiquidacionAvaluo id="liquidacionAvaluoVO2" />
-		<valueObjects:LiquidacionAvaluo id="liquidacionAvaluoVO3" />
-		<valueObjects:LiquidacionAvaluo id="liquidacionAvaluoVO4" />
-		<valueObjects:LiquidacionAvaluo id="liquidacionAvaluoVO5" />
-		<valueObjects:LiquidacionAvaluo id="liquidacionAvaluoVO6" />
-		<valueObjects:LiquidacionAvaluo id="liquidacionAvaluoVO7" />
-		<valueObjects:LiquidacionAvaluo id="liquidacionAvaluoVO8" />
-		<valueObjects:LiquidacionAvaluo id="liquidacionAvaluoVO9" />
-		<valueObjects:LiquidacionAvaluoTotal id="liquidacionAvaluoTotalVO" />
+		<services:DominiosAuxDao id="dominiosAuxDao" fault="genericService_faultHandler(event,'dominiosAuxDao')" showBusyCursor="true"/>
 		
 		<s:CallResponder id="getUvrDiaResult" result="getUvrDiaResult_resultHandler(event)"/>
-		<s:CallResponder id="getValoresDominioResult28" result="getValoresDominioResult28_resultHandler(event)"/>		
 		<s:CallResponder id="getValoresDominioResult68" result="getValoresDominioResult68_resultHandler(event)"/>
+		<s:CallResponder id="createResult11" result="createResult11_resultHandler(event)"/>
+		<s:CallResponder id="createResult8" result="createResult8_resultHandler(event)"/>
+		<s:CallResponder id="getAvaluosPorIdResult" result="getAvaluosPorIdResult_resultHandler(event)"/>
+		<s:CallResponder id="getValoresDominioResult28" result="getValoresDominioResult28_resultHandler(event)"/>
 		
 	</fx:Declarations>
-	
-	<s:Group>
-		<s:layout>
-			<s:HorizontalLayout/>
-		</s:layout>
-	
-	<s:Group width="150" height="100%">
-		<s:layout>
-			<s:VerticalLayout>
+	<s:VGroup width="{parentDocument.parentDocument.parentDocument.tn.width - 10}" height="{parentDocument.parentDocument.parentDocument.tn.height -10}">
+		
+		<s:Group width="100%" height="100%">
+			<s:layout>
+				<s:HorizontalLayout paddingLeft="10" paddingTop="10"/>
+			</s:layout>
+			
+			<s:Group width="150" height="100%">
+				<s:layout>
+					<s:VerticalLayout>
+						
+					</s:VerticalLayout>
+				</s:layout>
+				<s:Label text="Descripción Liquidación" fontWeight="bold" textAlign="center" width="100%" height="15" verticalAlign="middle"/>
+				<s:ComboBox id="cbxDescLiq0" dataProvider="{parentDocument.selectdescliq0}" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(parentDocument.liquidacionAvaluoVO0.descripcionLiquidacion,parentDocument.selectdescliq0,'rvLowValue')}" enabled="true" toolTip="{Utilidad.MSG_DESCLIQ}" tabIndex="234" width="100%" height="20"/>
+				<s:ComboBox id="cbxDescLiq1" dataProvider="{parentDocument.selectdescliq0}" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(parentDocument.liquidacionAvaluoVO1.descripcionLiquidacion,parentDocument.selectdescliq0,'rvLowValue')}" enabled="true" toolTip="{Utilidad.MSG_DESCLIQ}" tabIndex="239" width="100%" height="20"/>
+				<s:ComboBox id="cbxDescLiq2" dataProvider="{parentDocument.selectdescliq0}" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(parentDocument.liquidacionAvaluoVO2.descripcionLiquidacion,parentDocument.selectdescliq0,'rvLowValue')}" enabled="true" toolTip="{Utilidad.MSG_DESCLIQ}" tabIndex="244" width="100%" height="20"/>
+				<s:ComboBox id="cbxDescLiq3" dataProvider="{parentDocument.selectdescliq0}" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(parentDocument.liquidacionAvaluoVO3.descripcionLiquidacion,parentDocument.selectdescliq0,'rvLowValue')}" enabled="true" toolTip="{Utilidad.MSG_DESCLIQ}" tabIndex="249" width="100%" height="20"/>
+				<s:ComboBox id="cbxDescLiq4" dataProvider="{parentDocument.selectdescliq0}" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(parentDocument.liquidacionAvaluoVO4.descripcionLiquidacion,parentDocument.selectdescliq0,'rvLowValue')}" enabled="true" toolTip="{Utilidad.MSG_DESCLIQ}" tabIndex="254" width="100%" height="20"/>
+				<s:ComboBox id="cbxDescLiq5" dataProvider="{parentDocument.selectdescliq0}" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(parentDocument.liquidacionAvaluoVO5.descripcionLiquidacion,parentDocument.selectdescliq0,'rvLowValue')}" enabled="true" toolTip="{Utilidad.MSG_DESCLIQ}" tabIndex="259" width="100%" height="20"/>
+				<s:ComboBox id="cbxDescLiq6" dataProvider="{parentDocument.selectdescliq0}" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(parentDocument.liquidacionAvaluoVO6.descripcionLiquidacion,parentDocument.selectdescliq0,'rvLowValue')}" enabled="true" toolTip="{Utilidad.MSG_DESCLIQ}" tabIndex="264" width="100%" height="20"/>
+				<s:ComboBox id="cbxDescLiq7" dataProvider="{parentDocument.selectdescliq0}" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(parentDocument.liquidacionAvaluoVO7.descripcionLiquidacion,parentDocument.selectdescliq0,'rvLowValue')}" enabled="true" toolTip="{Utilidad.MSG_DESCLIQ}" tabIndex="269" width="100%" height="20"/>
+				<s:ComboBox id="cbxDescLiq8" dataProvider="{parentDocument.selectdescliq0}" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(parentDocument.liquidacionAvaluoVO8.descripcionLiquidacion,parentDocument.selectdescliq0,'rvLowValue')}" enabled="true" toolTip="{Utilidad.MSG_DESCLIQ}" tabIndex="274" width="100%" height="20"/>
+				<s:ComboBox id="cbxDescLiq9" dataProvider="{parentDocument.selectdescliq0}" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(parentDocument.liquidacionAvaluoVO9.descripcionLiquidacion,parentDocument.selectdescliq0,'rvLowValue')}" enabled="true" toolTip="{Utilidad.MSG_DESCLIQ}" tabIndex="279" width="100%" height="20"/>
 				
-			</s:VerticalLayout>
-		</s:layout>
-		<s:Label text="Descripción Liquidación" fontWeight="bold" textAlign="center" width="100%" height="15" verticalAlign="middle"/>
-		<s:ComboBox id="cbxDescLiq0" dataProvider="{selectdescliq0}" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(liquidacionAvaluoVO0.descripcionLiquidacion,selectdescliq0,'rvLowValue')}" enabled="true" toolTip="{Utilidad.MSG_DESCLIQ}" tabIndex="234" width="100%" height="20"/>
-		<s:ComboBox id="cbxDescLiq1" dataProvider="{selectdescliq0}" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(liquidacionAvaluoVO1.descripcionLiquidacion,selectdescliq0,'rvLowValue')}" enabled="true" toolTip="{Utilidad.MSG_DESCLIQ}" tabIndex="239" width="100%" height="20"/>
-		<s:ComboBox id="cbxDescLiq2" dataProvider="{selectdescliq0}" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(liquidacionAvaluoVO2.descripcionLiquidacion,selectdescliq0,'rvLowValue')}" enabled="true" toolTip="{Utilidad.MSG_DESCLIQ}" tabIndex="244" width="100%" height="20"/>
-		<s:ComboBox id="cbxDescLiq3" dataProvider="{selectdescliq0}" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(liquidacionAvaluoVO3.descripcionLiquidacion,selectdescliq0,'rvLowValue')}" enabled="true" toolTip="{Utilidad.MSG_DESCLIQ}" tabIndex="249" width="100%" height="20"/>
-		<s:ComboBox id="cbxDescLiq4" dataProvider="{selectdescliq0}" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(liquidacionAvaluoVO4.descripcionLiquidacion,selectdescliq0,'rvLowValue')}" enabled="true" toolTip="{Utilidad.MSG_DESCLIQ}" tabIndex="254" width="100%" height="20"/>
-		<s:ComboBox id="cbxDescLiq5" dataProvider="{selectdescliq0}" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(liquidacionAvaluoVO5.descripcionLiquidacion,selectdescliq0,'rvLowValue')}" enabled="true" toolTip="{Utilidad.MSG_DESCLIQ}" tabIndex="259" width="100%" height="20"/>
-		<s:ComboBox id="cbxDescLiq6" dataProvider="{selectdescliq0}" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(liquidacionAvaluoVO6.descripcionLiquidacion,selectdescliq0,'rvLowValue')}" enabled="true" toolTip="{Utilidad.MSG_DESCLIQ}" tabIndex="264" width="100%" height="20"/>
-		<s:ComboBox id="cbxDescLiq7" dataProvider="{selectdescliq0}" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(liquidacionAvaluoVO7.descripcionLiquidacion,selectdescliq0,'rvLowValue')}" enabled="true" toolTip="{Utilidad.MSG_DESCLIQ}" tabIndex="269" width="100%" height="20"/>
-		<s:ComboBox id="cbxDescLiq8" dataProvider="{selectdescliq0}" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(liquidacionAvaluoVO8.descripcionLiquidacion,selectdescliq0,'rvLowValue')}" enabled="true" toolTip="{Utilidad.MSG_DESCLIQ}" tabIndex="274" width="100%" height="20"/>
-		<s:ComboBox id="cbxDescLiq9" dataProvider="{selectdescliq0}" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(liquidacionAvaluoVO9.descripcionLiquidacion,selectdescliq0,'rvLowValue')}" enabled="true" toolTip="{Utilidad.MSG_DESCLIQ}" tabIndex="279" width="100%" height="20"/>
-		
-		<s:Label text="Calificación" fontWeight="bold" fontSize="16" width="100%" verticalAlign="middle" height="20"/>
-		<s:Label text="Valor Uvr Dia" fontWeight="bold" fontSize="12" width="100%" verticalAlign="middle" height="20"/>
-		<s:Label text="Valor Avaluo en Uvr" fontWeight="bold" fontSize="12" width="100%" verticalAlign="middle" height="20"/>
-		
-	</s:Group>
-	
-	<s:Group width="200" height="100%">
-		<s:layout>
-			<s:VerticalLayout>
+				<s:Label text="Calificación" fontWeight="bold" fontSize="16" width="100%" verticalAlign="middle" height="20"/>
+				<s:Label text="Valor Uvr Dia" fontWeight="bold" fontSize="12" width="100%" verticalAlign="middle" height="20"/>
+				<s:Label text="Valor Avaluo en Uvr" fontWeight="bold" fontSize="12" width="100%" verticalAlign="middle" height="20"/>
 				
-			</s:VerticalLayout>
-		</s:layout>
-		
-		<s:Label text="Descripción Dependencia" fontWeight="bold" textAlign="center" width="100%" height="15" verticalAlign="middle"/>
-		<s:TextInput id="descripcionDependenciaTextInput0" text="{liquidacionAvaluoVO0.descripcionDependencia}" height="20" maxChars="30" restrict="{Utilidad.restrict_}" enabled="true" tabIndex="235" width="100%"/>
-		<s:TextInput id="descripcionDependenciaTextInput1" text="{liquidacionAvaluoVO1.descripcionDependencia}" height="20" maxChars="30" restrict="{Utilidad.restrict_}" enabled="true" tabIndex="240" width="100%"/>
-		<s:TextInput id="descripcionDependenciaTextInput2" text="{liquidacionAvaluoVO2.descripcionDependencia}" height="20" maxChars="30" restrict="{Utilidad.restrict_}" enabled="true" tabIndex="245" width="100%"/>
-		<s:TextInput id="descripcionDependenciaTextInput3" text="{liquidacionAvaluoVO3.descripcionDependencia}" height="20" maxChars="30" restrict="{Utilidad.restrict_}" enabled="true" tabIndex="250" width="100%"/>
-		<s:TextInput id="descripcionDependenciaTextInput4" text="{liquidacionAvaluoVO4.descripcionDependencia}" height="20" maxChars="30" restrict="{Utilidad.restrict_}" enabled="true" tabIndex="255" width="100%"/>
-		<s:TextInput id="descripcionDependenciaTextInput5" text="{liquidacionAvaluoVO5.descripcionDependencia}" height="20" maxChars="30" restrict="{Utilidad.restrict_}" enabled="true" tabIndex="260" width="100%"/>
-		<s:TextInput id="descripcionDependenciaTextInput6" text="{liquidacionAvaluoVO6.descripcionDependencia}" height="20" maxChars="30" restrict="{Utilidad.restrict_}" enabled="true" tabIndex="265" width="100%"/>
-		<s:TextInput id="descripcionDependenciaTextInput7" text="{liquidacionAvaluoVO7.descripcionDependencia}" height="20" maxChars="30" restrict="{Utilidad.restrict_}" enabled="true" tabIndex="270" width="100%"/>
-		<s:TextInput id="descripcionDependenciaTextInput8" text="{liquidacionAvaluoVO8.descripcionDependencia}" height="20" maxChars="30" restrict="{Utilidad.restrict_}" enabled="true" tabIndex="275" width="100%"/>
-		<s:TextInput id="descripcionDependenciaTextInput9" text="{liquidacionAvaluoVO9.descripcionDependencia}" height="20" maxChars="30" restrict="{Utilidad.restrict_}" enabled="true" tabIndex="280" width="100%"/>
-		
-		<s:ComboBox id="cbxCalificacion" creationComplete="cbxCalificacion_creationCompleteHandler(event)" labelField="rvMeaning" dataProvider="{selectcalificacion}" selectedIndex="{Utilidad.getItemIndex(liquidacionAvaluoTotalVO.calificacion,selectcalificacion,'rvLowValue')}" enabled="true" tabIndex="287" width="100%" height="20"/>
-		<s:TextInput id="valorUvrDiaTextInput" click="valorUvrDiaTextInput_clickHandler(event)" text="{liquidacionAvaluoTotalVO.valorUvrDia}" restrict ="0-9,.," maxChars="23" textAlign="right" enabled="false" tabIndex="288" width="100%" height="20"/>
-		<s:TextInput id="avaluoUvrTextInput" focusIn="valorUvrDiaTextInput_focusOutHandler(event)" text="{liquidacionAvaluoTotalVO.avaluoUvr}" maxChars="23" textAlign="right" restrict="0-9,.,\," toolTip="{Utilidad.MSG_VALOR_AVALO}" tabIndex="289" width="100%" height="20"/>
-		
-		
-	</s:Group>
-	
-	<s:Group width="100" height="100%"> 
-		<s:layout>
-			<s:VerticalLayout>
+			</s:Group>
+			
+			<s:Group width="200" height="100%">
+				<s:layout>
+					<s:VerticalLayout>
+						
+					</s:VerticalLayout>
+				</s:layout>
 				
-			</s:VerticalLayout>
-		</s:layout>
-		
-		<s:Label text="Área (m2)" fontWeight="bold" textAlign="center" width="100%" height="15" verticalAlign="middle"/>
-		<s:TextInput height="20" id="areaLiquidacionTextInput0" text="{liquidacionAvaluoVO0.areaLiquidacion}" restrict ="0-9,.," maxChars="23" textAlign="right" enabled="true" focusOut="areaLiquidacionTextInput0_focusOutHandler(event)" tabIndex="236" width="100%"/>
-		<s:TextInput height="20" id="areaLiquidacionTextInput1" text="{liquidacionAvaluoVO1.areaLiquidacion}" restrict ="0-9,.," maxChars="23" textAlign="right" enabled="true" focusOut="areaLiquidacionTextInput1_focusOutHandler(event)" tabIndex="241" width="100%"/>
-		<s:TextInput height="20" id="areaLiquidacionTextInput2" text="{liquidacionAvaluoVO2.areaLiquidacion}" restrict ="0-9,.," maxChars="23" textAlign="right" enabled="true" focusOut="areaLiquidacionTextInput2_focusOutHandler(event)" tabIndex="246" width="100%"/>
-		<s:TextInput height="20" id="areaLiquidacionTextInput3" text="{liquidacionAvaluoVO3.areaLiquidacion}" restrict ="0-9,.," maxChars="23" textAlign="right" enabled="true" focusOut="areaLiquidacionTextInput3_focusOutHandler(event)" tabIndex="251" width="100%"/>
-		<s:TextInput height="20" id="areaLiquidacionTextInput4" text="{liquidacionAvaluoVO4.areaLiquidacion}" restrict ="0-9,.," maxChars="23" textAlign="right" enabled="true" focusOut="areaLiquidacionTextInput4_focusOutHandler(event)" tabIndex="256" width="100%"/>
-		<s:TextInput height="20" id="areaLiquidacionTextInput5" text="{liquidacionAvaluoVO5.areaLiquidacion}" restrict ="0-9,.," maxChars="23" textAlign="right" enabled="true" focusOut="areaLiquidacionTextInput5_focusOutHandler(event)" tabIndex="261" width="100%"/>
-		<s:TextInput height="20" id="areaLiquidacionTextInput6" text="{liquidacionAvaluoVO6.areaLiquidacion}" restrict ="0-9,.," maxChars="23" textAlign="right" enabled="true" focusOut="areaLiquidacionTextInput6_focusOutHandler(event)" tabIndex="266" width="100%"/>
-		<s:TextInput height="20" id="areaLiquidacionTextInput7" text="{liquidacionAvaluoVO7.areaLiquidacion}" restrict ="0-9,.," maxChars="23" textAlign="right" enabled="true" focusOut="areaLiquidacionTextInput7_focusOutHandler(event)" tabIndex="271" width="100%"/>
-		<s:TextInput height="20" id="areaLiquidacionTextInput8" text="{liquidacionAvaluoVO8.areaLiquidacion}" restrict ="0-9,.," maxChars="23" textAlign="right" enabled="true" focusOut="areaLiquidacionTextInput8_focusOutHandler(event)" tabIndex="276" width="100%"/>
-		<s:TextInput height="20" id="areaLiquidacionTextInput9" text="{liquidacionAvaluoVO9.areaLiquidacion}" restrict ="0-9,.," maxChars="23" textAlign="right" enabled="true" focusOut="areaLiquidacionTextInput9_focusOutHandler(event)" tabIndex="281" width="100%"/>
-		
-		
-	</s:Group>
-	
-	<s:Group width="150" height="100%">
-		<s:layout>
-			<s:VerticalLayout>
+				<s:Label text="Descripción Dependencia" fontWeight="bold" textAlign="center" width="100%" height="15" verticalAlign="middle"/>
+				<s:TextInput id="descripcionDependenciaTextInput0" text="{parentDocument.liquidacionAvaluoVO0.descripcionDependencia}" height="20" maxChars="30" restrict="{Utilidad.restrict_}" enabled="true" tabIndex="235" width="100%"/>
+				<s:TextInput id="descripcionDependenciaTextInput1" text="{parentDocument.liquidacionAvaluoVO1.descripcionDependencia}" height="20" maxChars="30" restrict="{Utilidad.restrict_}" enabled="true" tabIndex="240" width="100%"/>
+				<s:TextInput id="descripcionDependenciaTextInput2" text="{parentDocument.liquidacionAvaluoVO2.descripcionDependencia}" height="20" maxChars="30" restrict="{Utilidad.restrict_}" enabled="true" tabIndex="245" width="100%"/>
+				<s:TextInput id="descripcionDependenciaTextInput3" text="{parentDocument.liquidacionAvaluoVO3.descripcionDependencia}" height="20" maxChars="30" restrict="{Utilidad.restrict_}" enabled="true" tabIndex="250" width="100%"/>
+				<s:TextInput id="descripcionDependenciaTextInput4" text="{parentDocument.liquidacionAvaluoVO4.descripcionDependencia}" height="20" maxChars="30" restrict="{Utilidad.restrict_}" enabled="true" tabIndex="255" width="100%"/>
+				<s:TextInput id="descripcionDependenciaTextInput5" text="{parentDocument.liquidacionAvaluoVO5.descripcionDependencia}" height="20" maxChars="30" restrict="{Utilidad.restrict_}" enabled="true" tabIndex="260" width="100%"/>
+				<s:TextInput id="descripcionDependenciaTextInput6" text="{parentDocument.liquidacionAvaluoVO6.descripcionDependencia}" height="20" maxChars="30" restrict="{Utilidad.restrict_}" enabled="true" tabIndex="265" width="100%"/>
+				<s:TextInput id="descripcionDependenciaTextInput7" text="{parentDocument.liquidacionAvaluoVO7.descripcionDependencia}" height="20" maxChars="30" restrict="{Utilidad.restrict_}" enabled="true" tabIndex="270" width="100%"/>
+				<s:TextInput id="descripcionDependenciaTextInput8" text="{parentDocument.liquidacionAvaluoVO8.descripcionDependencia}" height="20" maxChars="30" restrict="{Utilidad.restrict_}" enabled="true" tabIndex="275" width="100%"/>
+				<s:TextInput id="descripcionDependenciaTextInput9" text="{parentDocument.liquidacionAvaluoVO9.descripcionDependencia}" height="20" maxChars="30" restrict="{Utilidad.restrict_}" enabled="true" tabIndex="280" width="100%"/>
 				
-			</s:VerticalLayout>
-		</s:layout>
-		
-		<s:Label text="Valor Unitario ($/m2)" fontWeight="bold" textAlign="center" width="100%" height="15" verticalAlign="middle"/>
-		<s:TextInput height="20"  id="valorTextInput0" text="{liquidacionAvaluoVO0.valor}" restrict ="0-9,.," maxChars="23" textAlign="right" enabled="true" focusOut="areaLiquidacionTextInput0_focusOutHandler(event)" tabIndex="237" width="100%"/>
-		<s:TextInput height="20" id="valorTextInput1" text="{liquidacionAvaluoVO1.valor}" restrict ="0-9,.," maxChars="23" textAlign="right" enabled="true" focusOut="areaLiquidacionTextInput1_focusOutHandler(event)" tabIndex="242" width="100%"/>
-		<s:TextInput height="20" id="valorTextInput2" text="{liquidacionAvaluoVO2.valor}" restrict ="0-9,.," maxChars="23" textAlign="right" enabled="true" focusOut="areaLiquidacionTextInput2_focusOutHandler(event)" tabIndex="247" width="100%"/>
-		<s:TextInput height="20" id="valorTextInput3" text="{liquidacionAvaluoVO3.valor}" restrict ="0-9,.," maxChars="23" textAlign="right" enabled="true" focusOut="areaLiquidacionTextInput3_focusOutHandler(event)" tabIndex="252" width="100%"/>
-		<s:TextInput height="20" id="valorTextInput4" text="{liquidacionAvaluoVO4.valor}" restrict ="0-9,.," maxChars="23" textAlign="right" enabled="true" focusOut="areaLiquidacionTextInput4_focusOutHandler(event)" tabIndex="257" width="100%"/>
-		<s:TextInput height="20" id="valorTextInput5" text="{liquidacionAvaluoVO5.valor}" restrict ="0-9,.," maxChars="23" textAlign="right" enabled="true" focusOut="areaLiquidacionTextInput5_focusOutHandler(event)" tabIndex="262" width="100%"/>
-		<s:TextInput height="20" id="valorTextInput6" text="{liquidacionAvaluoVO6.valor}" restrict ="0-9,.," maxChars="23" textAlign="right" enabled="true" focusOut="areaLiquidacionTextInput6_focusOutHandler(event)" tabIndex="267" width="100%"/>
-		<s:TextInput height="20" id="valorTextInput7" text="{liquidacionAvaluoVO7.valor}" restrict ="0-9,.," maxChars="23" textAlign="right" enabled="true" focusOut="areaLiquidacionTextInput7_focusOutHandler(event)" tabIndex="272" width="100%"/>
-		<s:TextInput height="20" id="valorTextInput8" text="{liquidacionAvaluoVO8.valor}" restrict ="0-9,.," maxChars="23" enabled="true" textAlign="right" focusOut="areaLiquidacionTextInput8_focusOutHandler(event)" tabIndex="277" width="100%"/>
-		<s:TextInput height="20" id="valorTextInput9" text="{liquidacionAvaluoVO9.valor}" restrict ="0-9,.," maxChars="23" textAlign="right" enabled="true" focusOut="areaLiquidacionTextInput9_focusOutHandler(event)" tabIndex="282" width="100%"/>
-		<s:Label  text="Valor Total Avaluo" fontSize="12" fontWeight="bold" height="20" verticalAlign="middle"/>
-		<s:Label  text="Valor Asegurable" fontWeight="bold" fontSize="14" height="20" verticalAlign="middle"/>
-	</s:Group>
-	
-	<s:Group width="200" height="100%">
-		<s:layout>
-			<s:VerticalLayout>
+				<s:ComboBox id="cbxCalificacion" creationComplete="cbxCalificacion_creationCompleteHandler(event)" labelField="rvMeaning" dataProvider="{selectcalificacion}" selectedIndex="{Utilidad.getItemIndex(parentDocument.liquidacionAvaluoTotalVO.calificacion,selectcalificacion,'rvLowValue')}" enabled="true" tabIndex="287" width="100%" height="20"/>
+				<s:TextInput id="valorUvrDiaTextInput" click="valorUvrDiaTextInput_clickHandler(event)" text="{parentDocument.liquidacionAvaluoTotalVO.valorUvrDia}" restrict ="0-9,.," maxChars="23" textAlign="right" enabled="false" tabIndex="288" width="100%" height="20"/>
+				<s:TextInput id="avaluoUvrTextInput" focusIn="valorUvrDiaTextInput_focusOutHandler(event)" text="{parentDocument.liquidacionAvaluoTotalVO.avaluoUvr}" maxChars="23" textAlign="right" restrict="0-9,.,\," toolTip="{Utilidad.MSG_VALOR_AVALO}" tabIndex="289" width="100%" height="20"/>
 				
-			</s:VerticalLayout>
-		</s:layout>
+				
+			</s:Group>
+			
+			<s:Group width="100" height="100%"> 
+				<s:layout>
+					<s:VerticalLayout>
+						
+					</s:VerticalLayout>
+				</s:layout>
+				
+				<s:Label text="Área (m2)" fontWeight="bold" textAlign="center" width="100%" height="15" verticalAlign="middle"/>
+				<s:TextInput height="20" id="areaLiquidacionTextInput0" text="{parentDocument.liquidacionAvaluoVO0.areaLiquidacion}" restrict ="0-9,.," maxChars="23" textAlign="right" enabled="true" focusOut="areaLiquidacionTextInput0_focusOutHandler(event)" tabIndex="236" width="100%"/>
+				<s:TextInput height="20" id="areaLiquidacionTextInput1" text="{parentDocument.liquidacionAvaluoVO1.areaLiquidacion}" restrict ="0-9,.," maxChars="23" textAlign="right" enabled="true" focusOut="areaLiquidacionTextInput1_focusOutHandler(event)" tabIndex="241" width="100%"/>
+				<s:TextInput height="20" id="areaLiquidacionTextInput2" text="{parentDocument.liquidacionAvaluoVO2.areaLiquidacion}" restrict ="0-9,.," maxChars="23" textAlign="right" enabled="true" focusOut="areaLiquidacionTextInput2_focusOutHandler(event)" tabIndex="246" width="100%"/>
+				<s:TextInput height="20" id="areaLiquidacionTextInput3" text="{parentDocument.liquidacionAvaluoVO3.areaLiquidacion}" restrict ="0-9,.," maxChars="23" textAlign="right" enabled="true" focusOut="areaLiquidacionTextInput3_focusOutHandler(event)" tabIndex="251" width="100%"/>
+				<s:TextInput height="20" id="areaLiquidacionTextInput4" text="{parentDocument.liquidacionAvaluoVO4.areaLiquidacion}" restrict ="0-9,.," maxChars="23" textAlign="right" enabled="true" focusOut="areaLiquidacionTextInput4_focusOutHandler(event)" tabIndex="256" width="100%"/>
+				<s:TextInput height="20" id="areaLiquidacionTextInput5" text="{parentDocument.liquidacionAvaluoVO5.areaLiquidacion}" restrict ="0-9,.," maxChars="23" textAlign="right" enabled="true" focusOut="areaLiquidacionTextInput5_focusOutHandler(event)" tabIndex="261" width="100%"/>
+				<s:TextInput height="20" id="areaLiquidacionTextInput6" text="{parentDocument.liquidacionAvaluoVO6.areaLiquidacion}" restrict ="0-9,.," maxChars="23" textAlign="right" enabled="true" focusOut="areaLiquidacionTextInput6_focusOutHandler(event)" tabIndex="266" width="100%"/>
+				<s:TextInput height="20" id="areaLiquidacionTextInput7" text="{parentDocument.liquidacionAvaluoVO7.areaLiquidacion}" restrict ="0-9,.," maxChars="23" textAlign="right" enabled="true" focusOut="areaLiquidacionTextInput7_focusOutHandler(event)" tabIndex="271" width="100%"/>
+				<s:TextInput height="20" id="areaLiquidacionTextInput8" text="{parentDocument.liquidacionAvaluoVO8.areaLiquidacion}" restrict ="0-9,.," maxChars="23" textAlign="right" enabled="true" focusOut="areaLiquidacionTextInput8_focusOutHandler(event)" tabIndex="276" width="100%"/>
+				<s:TextInput height="20" id="areaLiquidacionTextInput9" text="{parentDocument.liquidacionAvaluoVO9.areaLiquidacion}" restrict ="0-9,.," maxChars="23" textAlign="right" enabled="true" focusOut="areaLiquidacionTextInput9_focusOutHandler(event)" tabIndex="281" width="100%"/>
+				
+				
+			</s:Group>
+			
+			<s:Group width="150" height="100%">
+				<s:layout>
+					<s:VerticalLayout>
+						
+					</s:VerticalLayout>
+				</s:layout>
+				
+				<s:Label text="Valor Unitario ($/m2)" fontWeight="bold" textAlign="center" width="100%" height="15" verticalAlign="middle"/>
+				<s:TextInput height="20"  id="valorTextInput0" text="{parentDocument.liquidacionAvaluoVO0.valor}" restrict ="0-9,.," maxChars="23" textAlign="right" enabled="true" focusOut="areaLiquidacionTextInput0_focusOutHandler(event)" tabIndex="237" width="100%"/>
+				<s:TextInput height="20" id="valorTextInput1" text="{parentDocument.liquidacionAvaluoVO1.valor}" restrict ="0-9,.," maxChars="23" textAlign="right" enabled="true" focusOut="areaLiquidacionTextInput1_focusOutHandler(event)" tabIndex="242" width="100%"/>
+				<s:TextInput height="20" id="valorTextInput2" text="{parentDocument.liquidacionAvaluoVO2.valor}" restrict ="0-9,.," maxChars="23" textAlign="right" enabled="true" focusOut="areaLiquidacionTextInput2_focusOutHandler(event)" tabIndex="247" width="100%"/>
+				<s:TextInput height="20" id="valorTextInput3" text="{parentDocument.liquidacionAvaluoVO3.valor}" restrict ="0-9,.," maxChars="23" textAlign="right" enabled="true" focusOut="areaLiquidacionTextInput3_focusOutHandler(event)" tabIndex="252" width="100%"/>
+				<s:TextInput height="20" id="valorTextInput4" text="{parentDocument.liquidacionAvaluoVO4.valor}" restrict ="0-9,.," maxChars="23" textAlign="right" enabled="true" focusOut="areaLiquidacionTextInput4_focusOutHandler(event)" tabIndex="257" width="100%"/>
+				<s:TextInput height="20" id="valorTextInput5" text="{parentDocument.liquidacionAvaluoVO5.valor}" restrict ="0-9,.," maxChars="23" textAlign="right" enabled="true" focusOut="areaLiquidacionTextInput5_focusOutHandler(event)" tabIndex="262" width="100%"/>
+				<s:TextInput height="20" id="valorTextInput6" text="{parentDocument.liquidacionAvaluoVO6.valor}" restrict ="0-9,.," maxChars="23" textAlign="right" enabled="true" focusOut="areaLiquidacionTextInput6_focusOutHandler(event)" tabIndex="267" width="100%"/>
+				<s:TextInput height="20" id="valorTextInput7" text="{parentDocument.liquidacionAvaluoVO7.valor}" restrict ="0-9,.," maxChars="23" textAlign="right" enabled="true" focusOut="areaLiquidacionTextInput7_focusOutHandler(event)" tabIndex="272" width="100%"/>
+				<s:TextInput height="20" id="valorTextInput8" text="{parentDocument.liquidacionAvaluoVO8.valor}" restrict ="0-9,.," maxChars="23" enabled="true" textAlign="right" focusOut="areaLiquidacionTextInput8_focusOutHandler(event)" tabIndex="277" width="100%"/>
+				<s:TextInput height="20" id="valorTextInput9" text="{parentDocument.liquidacionAvaluoVO9.valor}" restrict ="0-9,.," maxChars="23" textAlign="right" enabled="true" focusOut="areaLiquidacionTextInput9_focusOutHandler(event)" tabIndex="282" width="100%"/>
+				<s:Label  text="Valor Total Avaluo" fontSize="12" fontWeight="bold" height="20" verticalAlign="middle"/>
+				<s:Label  text="Valor Asegurable" fontWeight="bold" fontSize="14" height="20" verticalAlign="middle"/>
+			</s:Group>
+			
+			<s:Group width="200" height="100%">
+				<s:layout>
+					<s:VerticalLayout>
+						
+					</s:VerticalLayout>
+				</s:layout>
+				
+				<s:Label text="Valor Total" fontWeight="bold" width="100%" textAlign="center" height="15" verticalAlign="middle"/>
+				<mx:HBox width="100%">												
+					<s:TextInput height="20" id="valorTotalTextInput0F"  text="{formatearMoneda(parentDocument.liquidacionAvaluoVO0.valorTotal)}" restrict ="0-9,.," maxChars="23" focusOut="valorTotalTextInput_focusOutHandler(event)" textAlign="right" enabled="{false}" tabIndex="238" width="80%"/>
+					<s:TextInput height="20" id="valorTotalTextInput0"  visible="false" text="{parentDocument.liquidacionAvaluoVO0.valorTotal}" restrict ="0-9,.," maxChars="23" focusOut="valorTotalTextInput_focusOutHandler(event)" textAlign="right" enabled="true" tabIndex="238" width="20%"/>
+				</mx:HBox>
+				<mx:HBox width="100%">
+					<s:TextInput height="20" id="valorTotalTextInput1F" text="{formatearMoneda(parentDocument.liquidacionAvaluoVO1.valorTotal)}" restrict ="0-9,.," maxChars="23" focusOut="valorTotalTextInput_focusOutHandler(event)" textAlign="right" enabled="{false}" tabIndex="243" width="80%"/>
+					<s:TextInput height="20" id="valorTotalTextInput1" visible="false"  text="{parentDocument.liquidacionAvaluoVO1.valorTotal}" restrict ="0-9,.," maxChars="23" focusOut="valorTotalTextInput_focusOutHandler(event)" textAlign="right" enabled="true" tabIndex="243" width="20%"/>												
+				</mx:HBox>
+				<mx:HBox width="100%">												
+					<s:TextInput height="20" id="valorTotalTextInput2F" text="{formatearMoneda(parentDocument.liquidacionAvaluoVO2.valorTotal)}" restrict ="0-9,.," maxChars="23" focusOut="valorTotalTextInput_focusOutHandler(event)" textAlign="right" enabled="{false}" tabIndex="248" width="80%"/>
+					<s:TextInput height="20" id="valorTotalTextInput2" visible="false" text="{parentDocument.liquidacionAvaluoVO2.valorTotal}" restrict ="0-9,.," maxChars="23" focusOut="valorTotalTextInput_focusOutHandler(event)" textAlign="right" enabled="true" tabIndex="248" width="20%"/>
+				</mx:HBox>
+				<mx:HBox width="100%">												
+					<s:TextInput height="20" id="valorTotalTextInput3F" text="{formatearMoneda(parentDocument.liquidacionAvaluoVO3.valorTotal)}" restrict ="0-9,.," maxChars="23" focusOut="valorTotalTextInput_focusOutHandler(event)" textAlign="right" enabled="{false}" tabIndex="253" width="80%"/>
+					<s:TextInput height="20" id="valorTotalTextInput3" visible="false" text="{parentDocument.liquidacionAvaluoVO3.valorTotal}" restrict ="0-9,.," maxChars="23" focusOut="valorTotalTextInput_focusOutHandler(event)" textAlign="right" enabled="true" tabIndex="253" width="20%"/>
+				</mx:HBox>
+				<mx:HBox width="100%">												
+					<s:TextInput height="20" id="valorTotalTextInput4F" text="{formatearMoneda(parentDocument.liquidacionAvaluoVO4.valorTotal)}" restrict ="0-9,.," maxChars="23" focusOut="valorTotalTextInput_focusOutHandler(event)" textAlign="right" enabled="{false}" tabIndex="258" width="80%"/>
+					<s:TextInput height="20" id="valorTotalTextInput4" visible="false" text="{parentDocument.liquidacionAvaluoVO4.valorTotal}" restrict ="0-9,.," maxChars="23" focusOut="valorTotalTextInput_focusOutHandler(event)" textAlign="right" enabled="true" tabIndex="258" width="20%"/>
+				</mx:HBox>
+				<mx:HBox width="100%">
+					<s:TextInput height="20" id="valorTotalTextInput5F" text="{formatearMoneda(parentDocument.liquidacionAvaluoVO5.valorTotal)}" restrict ="0-9,.," maxChars="23" focusOut="valorTotalTextInput_focusOutHandler(event)" textAlign="right" enabled="{false}" tabIndex="263" width="80%"/>
+					<s:TextInput height="20" id="valorTotalTextInput5" visible="false" text="{parentDocument.liquidacionAvaluoVO5.valorTotal}" restrict ="0-9,.," maxChars="23" focusOut="valorTotalTextInput_focusOutHandler(event)" textAlign="right" enabled="true" tabIndex="263" width="20%"/>
+				</mx:HBox>	
+				<mx:HBox width="100%">
+					<s:TextInput height="20" id="valorTotalTextInput6F" text="{formatearMoneda(parentDocument.liquidacionAvaluoVO6.valorTotal)}" restrict ="0-9,.," maxChars="23" focusOut="valorTotalTextInput_focusOutHandler(event)" textAlign="right" enabled="{false}" tabIndex="268" width="80%"/>
+					<s:TextInput height="20" id="valorTotalTextInput6" visible="false" text="{parentDocument.liquidacionAvaluoVO6.valorTotal}" restrict ="0-9,.," maxChars="23" focusOut="valorTotalTextInput_focusOutHandler(event)" textAlign="right" enabled="true" tabIndex="268" width="20%"/>												
+				</mx:HBox>			
+				<mx:HBox width="100%">												
+					<s:TextInput height="20" id="valorTotalTextInput7F" text="{formatearMoneda(parentDocument.liquidacionAvaluoVO7.valorTotal)}" restrict ="0-9,.," maxChars="23" focusOut="valorTotalTextInput_focusOutHandler(event)" textAlign="right" enabled="{false}" tabIndex="273" width="80%"/>
+					<s:TextInput height="20" id="valorTotalTextInput7" visible="false" text="{parentDocument.liquidacionAvaluoVO7.valorTotal}" restrict ="0-9,.," maxChars="23" focusOut="valorTotalTextInput_focusOutHandler(event)" textAlign="right" enabled="true" tabIndex="273" width="20%"/>
+				</mx:HBox>
+				<mx:HBox width="100%">
+					<s:TextInput height="20" id="valorTotalTextInput8F" text="{formatearMoneda(parentDocument.liquidacionAvaluoVO8.valorTotal)}" restrict ="0-9,.," maxChars="23" focusOut="valorTotalTextInput_focusOutHandler(event)" textAlign="right" enabled="{false}" tabIndex="278" width="80%"/>
+					<s:TextInput height="20" id="valorTotalTextInput8" visible="false" text="{parentDocument.liquidacionAvaluoVO8.valorTotal}" restrict ="0-9,.," maxChars="23" focusOut="valorTotalTextInput_focusOutHandler(event)" textAlign="right" enabled="true" tabIndex="278" width="20%"/>
+				</mx:HBox>
+				<mx:HBox width="100%">
+					<s:TextInput height="20" id="valorTotalTextInput9F" text="{formatearMoneda(parentDocument.liquidacionAvaluoVO9.valorTotal)}" restrict ="0-9,.," maxChars="23" focusOut="valorTotalTextInput_focusOutHandler(event)" textAlign="right" enabled="{false}" tabIndex="283" width="80%"/>
+					<s:TextInput height="20" id="valorTotalTextInput9" visible="false" text="{parentDocument.liquidacionAvaluoVO9.valorTotal}" restrict ="0-9,.," maxChars="23" focusOut="valorTotalTextInput_focusOutHandler(event)" textAlign="right" enabled="true" tabIndex="283" width="20%"/>
+				</mx:HBox>
+				<mx:HBox width="100%">
+					<s:TextInput id="totalAvaluoTextInputF" text="{formatearMoneda(parentDocument.liquidacionAvaluoTotalVO.totalAvaluo)}" fontWeight="bold" enabled="false" textAlign="right" tabIndex="284" width="80%"/>
+					<s:TextInput id="totalAvaluoTextInput" visible="false" text="{parentDocument.liquidacionAvaluoTotalVO.totalAvaluo}" fontWeight="bold" enabled="false" textAlign="right" tabIndex="284" width="20%"/>
+				</mx:HBox>
+				<mx:HBox width="100%">
+					<s:TextInput id="valorAsegurableTextInputF" height="20" text="{formatearMoneda(parentDocument.liquidacionAvaluoTotalVO.valorAsegurable)}" fontWeight="bold" fontSize="14"  restrict ="0-9,.," maxChars="23" textAlign="right" enabled="false" tabIndex="285" width="80%"/>
+					<s:TextInput id="valorAsegurableTextInput" height="20" visible="false" text="{parentDocument.liquidacionAvaluoTotalVO.valorAsegurable}" fontWeight="bold" fontSize="14"  restrict ="0-9,.," maxChars="23" textAlign="right" enabled="false" tabIndex="285" width="20%"/>
+				</mx:HBox>	
+			</s:Group>
+			
+			
+		</s:Group>
 		
-		<s:Label text="Valor Total" fontWeight="bold" width="100%" textAlign="center" height="15" verticalAlign="middle"/>
-		<mx:HBox width="100%">												
-			<s:TextInput height="20" id="valorTotalTextInput0F"  text="{formatearMoneda(liquidacionAvaluoVO0.valorTotal)}" restrict ="0-9,.," maxChars="23" focusOut="valorTotalTextInput_focusOutHandler(event)" textAlign="right" enabled="{false}" tabIndex="238" width="80%"/>
-			<s:TextInput height="20" id="valorTotalTextInput0"  visible="false" text="{liquidacionAvaluoVO0.valorTotal}" restrict ="0-9,.," maxChars="23" focusOut="valorTotalTextInput_focusOutHandler(event)" textAlign="right" enabled="true" tabIndex="238" width="20%"/>
-		</mx:HBox>
-		<mx:HBox width="100%">
-			<s:TextInput height="20" id="valorTotalTextInput1F" text="{formatearMoneda(liquidacionAvaluoVO1.valorTotal)}" restrict ="0-9,.," maxChars="23" focusOut="valorTotalTextInput_focusOutHandler(event)" textAlign="right" enabled="{false}" tabIndex="243" width="80%"/>
-			<s:TextInput height="20" id="valorTotalTextInput1" visible="false"  text="{liquidacionAvaluoVO1.valorTotal}" restrict ="0-9,.," maxChars="23" focusOut="valorTotalTextInput_focusOutHandler(event)" textAlign="right" enabled="true" tabIndex="243" width="20%"/>												
-		</mx:HBox>
-		<mx:HBox width="100%">												
-			<s:TextInput height="20" id="valorTotalTextInput2F" text="{formatearMoneda(liquidacionAvaluoVO2.valorTotal)}" restrict ="0-9,.," maxChars="23" focusOut="valorTotalTextInput_focusOutHandler(event)" textAlign="right" enabled="{false}" tabIndex="248" width="80%"/>
-			<s:TextInput height="20" id="valorTotalTextInput2" visible="false" text="{liquidacionAvaluoVO2.valorTotal}" restrict ="0-9,.," maxChars="23" focusOut="valorTotalTextInput_focusOutHandler(event)" textAlign="right" enabled="true" tabIndex="248" width="20%"/>
-		</mx:HBox>
-		<mx:HBox width="100%">												
-			<s:TextInput height="20" id="valorTotalTextInput3F" text="{formatearMoneda(liquidacionAvaluoVO3.valorTotal)}" restrict ="0-9,.," maxChars="23" focusOut="valorTotalTextInput_focusOutHandler(event)" textAlign="right" enabled="{false}" tabIndex="253" width="80%"/>
-			<s:TextInput height="20" id="valorTotalTextInput3" visible="false" text="{liquidacionAvaluoVO3.valorTotal}" restrict ="0-9,.," maxChars="23" focusOut="valorTotalTextInput_focusOutHandler(event)" textAlign="right" enabled="true" tabIndex="253" width="20%"/>
-		</mx:HBox>
-		<mx:HBox width="100%">												
-			<s:TextInput height="20" id="valorTotalTextInput4F" text="{formatearMoneda(liquidacionAvaluoVO4.valorTotal)}" restrict ="0-9,.," maxChars="23" focusOut="valorTotalTextInput_focusOutHandler(event)" textAlign="right" enabled="{false}" tabIndex="258" width="80%"/>
-			<s:TextInput height="20" id="valorTotalTextInput4" visible="false" text="{liquidacionAvaluoVO4.valorTotal}" restrict ="0-9,.," maxChars="23" focusOut="valorTotalTextInput_focusOutHandler(event)" textAlign="right" enabled="true" tabIndex="258" width="20%"/>
-		</mx:HBox>
-		<mx:HBox width="100%">
-			<s:TextInput height="20" id="valorTotalTextInput5F" text="{formatearMoneda(liquidacionAvaluoVO5.valorTotal)}" restrict ="0-9,.," maxChars="23" focusOut="valorTotalTextInput_focusOutHandler(event)" textAlign="right" enabled="{false}" tabIndex="263" width="80%"/>
-			<s:TextInput height="20" id="valorTotalTextInput5" visible="false" text="{liquidacionAvaluoVO5.valorTotal}" restrict ="0-9,.," maxChars="23" focusOut="valorTotalTextInput_focusOutHandler(event)" textAlign="right" enabled="true" tabIndex="263" width="20%"/>
-		</mx:HBox>	
-		<mx:HBox width="100%">
-			<s:TextInput height="20" id="valorTotalTextInput6F" text="{formatearMoneda(liquidacionAvaluoVO6.valorTotal)}" restrict ="0-9,.," maxChars="23" focusOut="valorTotalTextInput_focusOutHandler(event)" textAlign="right" enabled="{false}" tabIndex="268" width="80%"/>
-			<s:TextInput height="20" id="valorTotalTextInput6" visible="false" text="{liquidacionAvaluoVO6.valorTotal}" restrict ="0-9,.," maxChars="23" focusOut="valorTotalTextInput_focusOutHandler(event)" textAlign="right" enabled="true" tabIndex="268" width="20%"/>												
-		</mx:HBox>			
-		<mx:HBox width="100%">												
-			<s:TextInput height="20" id="valorTotalTextInput7F" text="{formatearMoneda(liquidacionAvaluoVO7.valorTotal)}" restrict ="0-9,.," maxChars="23" focusOut="valorTotalTextInput_focusOutHandler(event)" textAlign="right" enabled="{false}" tabIndex="273" width="80%"/>
-			<s:TextInput height="20" id="valorTotalTextInput7" visible="false" text="{liquidacionAvaluoVO7.valorTotal}" restrict ="0-9,.," maxChars="23" focusOut="valorTotalTextInput_focusOutHandler(event)" textAlign="right" enabled="true" tabIndex="273" width="20%"/>
-		</mx:HBox>
-		<mx:HBox width="100%">
-			<s:TextInput height="20" id="valorTotalTextInput8F" text="{formatearMoneda(liquidacionAvaluoVO8.valorTotal)}" restrict ="0-9,.," maxChars="23" focusOut="valorTotalTextInput_focusOutHandler(event)" textAlign="right" enabled="{false}" tabIndex="278" width="80%"/>
-			<s:TextInput height="20" id="valorTotalTextInput8" visible="false" text="{liquidacionAvaluoVO8.valorTotal}" restrict ="0-9,.," maxChars="23" focusOut="valorTotalTextInput_focusOutHandler(event)" textAlign="right" enabled="true" tabIndex="278" width="20%"/>
-		</mx:HBox>
-		<mx:HBox width="100%">
-			<s:TextInput height="20" id="valorTotalTextInput9F" text="{formatearMoneda(liquidacionAvaluoVO9.valorTotal)}" restrict ="0-9,.," maxChars="23" focusOut="valorTotalTextInput_focusOutHandler(event)" textAlign="right" enabled="{false}" tabIndex="283" width="80%"/>
-			<s:TextInput height="20" id="valorTotalTextInput9" visible="false" text="{liquidacionAvaluoVO9.valorTotal}" restrict ="0-9,.," maxChars="23" focusOut="valorTotalTextInput_focusOutHandler(event)" textAlign="right" enabled="true" tabIndex="283" width="20%"/>
-		</mx:HBox>
-		<mx:HBox width="100%">
-			<s:TextInput id="totalAvaluoTextInputF" text="{formatearMoneda(liquidacionAvaluoTotalVO.totalAvaluo)}" fontWeight="bold" enabled="false" textAlign="right" tabIndex="284" width="80%"/>
-			<s:TextInput id="totalAvaluoTextInput" visible="false" text="{liquidacionAvaluoTotalVO.totalAvaluo}" fontWeight="bold" enabled="false" textAlign="right" tabIndex="284" width="20%"/>
-		</mx:HBox>
-		<mx:HBox width="100%">
-			<s:TextInput id="valorAsegurableTextInputF" height="20" text="{formatearMoneda(liquidacionAvaluoTotalVO.valorAsegurable)}" fontWeight="bold" fontSize="14"  restrict ="0-9,.," maxChars="23" textAlign="right" enabled="false" tabIndex="285" width="80%"/>
-			<s:TextInput id="valorAsegurableTextInput" height="20" visible="false" text="{liquidacionAvaluoTotalVO.valorAsegurable}" fontWeight="bold" fontSize="14"  restrict ="0-9,.," maxChars="23" textAlign="right" enabled="false" tabIndex="285" width="20%"/>
-		</mx:HBox>	
-	</s:Group>
 		<comp:AuditoriaPanel id="auditoriaAvaluo">
 			
 		</comp:AuditoriaPanel>
-		<s:HGroup>				 
+		<s:HGroup paddingLeft="10" paddingBottom="10" paddingTop="10" paddingRight="10" width="100%" height="100%">				 
 			<mx:Button id="btGuardar" label="Guardar"  click="button1_clickHandler(event)"/>
-			<mx:Button label="Cancelar" click="button2_clickHandler(event)"/>
-			<s:Label text="Select the tabs to change the panel." paddingLeft="10" width="100%" 
-					 id="mensajes" color="#FD0000" fontWeight="bold" textDecoration="underline" height="15"/>
+			<mx:Button label="Cancelar" click="button2_clickHandler(event)"/>			
 		</s:HGroup>
-		
-</s:Group>
-
+	</s:VGroup>
 </mx:Module>

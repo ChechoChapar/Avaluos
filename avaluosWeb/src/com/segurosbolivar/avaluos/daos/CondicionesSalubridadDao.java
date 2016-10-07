@@ -64,7 +64,11 @@ public class CondicionesSalubridadDao extends JpaDao<CondicionesSalubridad> {
 	try {
 	    objeto.setFechaTransaccion(Calendar.getInstance().getTime());
 	    log.log(Level.INFO, "");
-	    merge(objeto);
+	    if(objeto.getIdCondicionSalubridad() == null){
+	    	persist((CondicionesSalubridad)objeto); 
+	    }else{
+	    	merge((CondicionesSalubridad)objeto);
+	    }
 	}
 	catch (Exception e) {
 	    log.log(Level.SEVERE, "[ERROR]", e);

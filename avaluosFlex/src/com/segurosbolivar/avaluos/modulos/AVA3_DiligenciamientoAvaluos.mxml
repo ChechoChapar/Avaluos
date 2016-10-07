@@ -297,12 +297,6 @@
 			private var infoInmueble:InformacionInmueble = new InformacionInmueble();
 			private var empAvaluo:EmpresasAvaluos = new EmpresasAvaluos();
 			
-			public var newVBoxAdicion:VBox ; 
-			public var mlAdicion:CustomModuleLoader ;
-			
-			public var newVBoxEdicion:VBox ; 
-			public var mlEdicion:CustomModuleLoader ;
-			
 			var restrict_:String ="^|<>&'";
 			
 			/**
@@ -324,7 +318,7 @@
 				//this.addElement(ui);
 				//MonsterDebugger.initialize(sprite);
 				//MonsterDebugger.trace(sprite, "Hello World!");
-
+				
 				myUsuario = parentApplication.getUsuarioActual();
 				if(myUsuario.codigoPerfil != "PGBPERITO01" && 
 					myUsuario.codigoPerfil != "PGBPERITO02" && 
@@ -773,7 +767,7 @@
 					avaluo.barrio = "";
 					avaluo.direccionInmueble = "";
 					avaluo.matriculaInmobiliariaPpal1 = "";
-					vstAvaluo.selectedIndex = 1;
+					// vstAvaluo.selectedIndex = 1;
 					if(cbxTipoIdentificacionEncabezado != null){
 						cbxTipoIdentificacionEncabezado.selectedIndex = 0;
 					}
@@ -786,7 +780,7 @@
 					if(cbxDepartamento != null){
 						cbxDepartamento.selectedItem= null ;
 					}
-						
+					
 					selectCiudadbasico = new ArrayCollection(); 
 					
 					crearModuloEdicionFormulario(true); 
@@ -1100,13 +1094,14 @@
 				if (dtgAvaluos.selectedItem != null)
 				{
 					avaluo2 = dtgAvaluos.selectedItem as Avaluo;
-					getAvaluosPorIdResult.token = avaluosService.getAvaluosPorId(avaluo2.idAvaluo);
-					if(acdAvaluo != null){
-						acdAvaluo.selectedIndex = 0; 
-						acdAvaluo.setFocus();
-					}
-					dtgAvaluos.selectedItem = null; 
-					impresionEnEdicion = new Boolean(true); 
+					/** getAvaluosPorIdResult.token = avaluosService.getAvaluosPorId(avaluo2.idAvaluo);
+					 if(acdAvaluo != null){
+					 acdAvaluo.selectedIndex = 0; 
+					 acdAvaluo.setFocus();
+					 }
+					 dtgAvaluos.selectedItem = null; 
+					 impresionEnEdicion = new Boolean(true);
+					 * */ 
 					
 					crearModuloEdicionFormulario(false);  
 				}
@@ -1116,7 +1111,7 @@
 				}
 				parentApplication.validateNow();
 			}	
-				
+			
 			
 			public function eliminar():void	
 			{
@@ -1144,18 +1139,7 @@
 			{
 				nombreSeccion = "encanbezado";
 				
-				/*if(cbxTipoInforme.selectedIndex == 1)
-				{
-				Alert.show("Recuerde diligenciar el avance de obra menor al 70% para que sea proyecto constructor");	
-				}
-				else*/
-				/*
-				if(cbxTipoInforme.selectedIndex == -1)
-				{
-				Alert.show("El tipo de  Avaluo es requerido",null, null, null, null, null, Alert.OK);
-				return;
-				}
-				*/
+				
 				if(nombreSolicitanteTextInput.text != null
 					&& nombreSolicitanteTextInput.text.length > 0
 					&& cbxTipoIdentificacionEncabezado.selectedItem != null 
@@ -1231,26 +1215,12 @@
 					Alert.show("Recuerde que debe marcar la vivienda como nueva y terminada para que sea proyecto constructor",null, null, null, null, null, Alert.OK);
 				}
 				
-				/*
-				if(cbxTipoInforme.selectedItem=="Individual")
-				{	
-				avaluo.tipoInforme = "1";
-				}
-				else if(cbxTipoInforme.selectedItem=="Constructor")
-				{	
-				avaluo.tipoInforme = "2";
-				}
-				*/
+				
 				
 				avaluo.idObjetoAvaluo="1";
 				createResult.token = avaluosService.create(avaluo);
 				
-				/*
-				if(cbxTipoInforme.selectedItem=="Constructor")
-				{	
-				Alert.show("Recuerde diligenciar el avance de obra menor al 70% para que sea proyecto constructor",null, null, null, null, null, Alert.OK);				
-				}
-				*/
+				
 				
 				dtgAvaluos.invalidateDisplayList();
 				dtgAvaluos.invalidateList();
@@ -1449,7 +1419,7 @@
 				//limpiarCampoRequeridoDTOlist(ListaCampos(1));
 				
 				
-							
+				
 				informacionBarrio.avaluo = null;
 				var avaluoTmp:Avaluo = new Avaluo();
 				avaluoTmp.idAvaluo = avaluo2.idAvaluo;				
@@ -1774,8 +1744,7 @@
 					if(cbxCategoria.selectedItem!=null)
 						rvLowvalue = (cbxCategoria.selectedItem as Dominios).rvLowValue;
 				
-				/*rvLowvalue=(categoria.rvLowValue) as String;
-				rvLowvalue=(categoria.rvLowValue) as String;*/
+				
 				
 				
 				
@@ -1933,11 +1902,7 @@
 					if(rvLowvalue!='12' && rvLowvalue!='15')
 						//if(categoria.rvLowValue!=12 && categoria.rvLowValue!=15)	
 						//Nota 62182 mantis 13739
-						/*if(rvLowvaluePropHor!=null)
-						if(rvLowvaluePropHor=='1')*/
-						/*
-						if != lote or loteurbano
-						if sometidoprophoriz*/
+						
 					{
 						mapCampos["numeroEdificiosTextInput"] = "N_NUMEDIF";				
 						mapCampos["unidadPorPisoTextInput"] = "N_UNDPISO";
@@ -2250,60 +2215,7 @@
 				campoRequeridoDTOListResult.token = avaluosService.campoRequeridoDTOList(arrayDtoValida);
 			}
 			
-			/*
-			//protected function validarCampo(nomcampo:String):void
-			protected function validarCampo(campo:CampoRequeridoDTO):void
-			{
-			//DisplayObject.
-			//You typically cast the return value to UIComponent
-			var componente:UIComponent;
 			
-			try{
-			
-			//componente = getChildByName(nomcampo) as UIComponent;
-			componente = getChildByName(campo.nombreComponente) as UIComponent;
-			if(componente==null)
-			componente =this[campo.nombreComponente];
-			
-			
-			
-			if(campovacio(componente))
-			{
-			//return true;
-			campoRequeridoDTOResult.token = avaluosService.campoRequeridoDTO(campo);
-			}	
-			
-			}catch(e:Error)
-			{
-			trace(e);
-			}
-			//return false;
-			}	
-			
-			
-			protected function campoRequeridoDTOResult_resultHandler(event:ResultEvent):void
-			{
-			var dtoResultado:CampoRequeridoDTO;
-			var componente:UIComponent;
-			
-			dtoResultado=campoRequeridoDTOResult.lastResult;
-			
-			try{					
-			componente = getChildByName(dtoResultado.nombreComponente) as UIComponent;
-			if(componente==null)
-			componente =this[dtoResultado.nombreComponente];
-			if(dtoResultado.requerido)
-			{
-			//Pintar verde
-			componente.setStyle("contentBackgroundColor", 0xcbffde);
-			componente.toolTip="Requerido";
-			}	
-			
-			}catch(e:Error)
-			{
-			trace(e);
-			}
-			}*/
 			
 			protected function campoRequeridoDTOListResult_resultHandler(event:ResultEvent):void
 			{
@@ -2432,19 +2344,7 @@
 					informacionInmueble2.ubicacion3 = cbxUbiaccionLocal.selectedItem.rvLowValue;
 				}
 				
-				/*12052016 error se comenta*/
-				/*
-				if((cbxusoInmuebleBUA != null) && (cbxusoInmuebleBUA.selectedIndex > -1)) {
-				informacionInmueble2.usoInmuebleBUA = cbxusoInmuebleBUA.selectedItem.rvLowValue;
-				}
-				*/
-				/*12052016 error se comenta*/
 				
-				/*
-				if((cbxusoInmuebleSF != null) && (cbxusoInmuebleSF.selectedIndex > -1)) {
-				informacionInmueble2.usoInmuebleSF = cbxusoInmuebleSF.selectedItem.rvLowValue;
-				}
-				*/
 				
 				informacionInmueble2.chip = chipTextInput.text;
 				informacionInmueble2.otroUsoInmueble = otroUsoInmuebleTextInput.text;
@@ -2505,7 +2405,7 @@
 				}
 				
 			}
-
+			
 			/**
 			 * Ejecuta la acción al pulsar el botón guardar sección en el bloque Observaciones.
 			 * Consume el WebService ServiciosTercerosWSPort.
@@ -3805,68 +3705,13 @@
 					cbxEstructura.selectedIndex = -1;
 					cbxEstructura.setStyle("backgroundColor", 0xFFFFFF);
 				}
-				/*
-				if(cbxUbiTanques != null){
-				cbxUbiTanques.selectedIndex = -1;
-				cbxUbiTanques.setStyle("backgroundColor", 0xFFFFFF);
-				}
-				*/
-				/*
-				if(textoEstructuraTextInput != null){
-				textoEstructuraTextInput.text = "";
-				textoEstructuraTextInput.setStyle("backgroundColor", 0xFFFFFF);
-				}
-				*/
-				/*
-				if(otraUbicacionTanqueTextInput != null){
-				otraUbicacionTanqueTextInput.text = "";
-				otraUbicacionTanqueTextInput.setStyle("backgroundColor", 0xFFFFFF);
-				}
-				*/
-				/*
-				if(cbxMaterialesEstructura != null){
-				cbxMaterialesEstructura.selectedIndex = -1;
-				cbxMaterialesEstructura.setStyle("backgroundColor", 0xFFFFFF);
-				}*/
-				/*
-				if(cbxLongLuces != null){
-				cbxLongLuces.selectedIndex = -1;
-				cbxLongLuces.setStyle("backgroundColor", 0xFFFFFF);
-				}
-				*/
-				/*
-				if(otroMaterialTextInput != null){
-				otroMaterialTextInput.text = "";
-				otroMaterialTextInput.setStyle("backgroundColor", 0xFFFFFF);
-				}*/
-				/*
-				if(cbxSimetriaAltura != null){
-				cbxSimetriaAltura.selectedIndex = -1;
-				cbxSimetriaAltura.setStyle("backgroundColor", 0xFFFFFF);
-				}*/
+				
 				
 				if(cbxFachada != null){
 					cbxFachada.selectedIndex = -1;
 					cbxFachada.setStyle("backgroundColor", 0xFFFFFF);
 				}
-				/*
-				if(cbxSimetriaPlanta != null){
-				cbxSimetriaPlanta.selectedIndex = -1;
-				cbxSimetriaPlanta.setStyle("backgroundColor", 0xFFFFFF);
-				}*/
 				
-				/*
-				if(textoFachadaTextInput != null){
-				textoFachadaTextInput.text = "";
-				textoFachadaTextInput.setStyle("backgroundColor", 0xFFFFFF);
-				}
-				*/
-				/*
-				if(cbxSobrepeso != null){
-				cbxSobrepeso.selectedIndex = -1;
-				cbxSobrepeso.setStyle("backgroundColor", 0xFFFFFF);
-				}
-				*/
 				if(cbxTipoFachada != null){
 					cbxTipoFachada.selectedIndex = -1;
 					cbxTipoFachada.setStyle("backgroundColor", 0xFFFFFF);
@@ -3879,23 +3724,7 @@
 					cbxCubierta.selectedIndex = -1;
 					cbxCubierta.setStyle("backgroundColor", 0xFFFFFF);
 				}
-				/*
-				if(cbxAsentamientos != null){
-				cbxAsentamientos.selectedIndex = -1;
-				cbxAsentamientos.setStyle("backgroundColor", 0xFFFFFF);
-				}*/
-				/*
-				if(textoCubiertaTextInput != null){
-				textoCubiertaTextInput.text = "";
-				textoCubiertaTextInput.setStyle("backgroundColor", 0xFFFFFF);
-				}
-				*/
-				/*
-				if(cbxDanoPrevio != null){
-				cbxDanoPrevio.selectedIndex = -1;
-				cbxDanoPrevio.setStyle("backgroundColor", 0xFFFFFF);
-				}	
-				*/
+				
 				if(salaTextInput != null){
 					salaTextInput.text = "0";
 					salaTextInput.setStyle("backgroundColor", 0xFFFFFF);
@@ -4882,11 +4711,8 @@
 			
 			protected function cbxDepartamentoEscritura_changeHandler(event:IndexChangeEvent):void
 			{
-				/*if(cbxCiudadEscritura.selectedIndex == spark.components.ComboBox.CUSTOM_SELECTED_ITEM /*|| cbxCiudadEscritura.selectedIndex == -1*/ // )
-				/* {	
-					cbxCiudadEscritura.selectedIndex = event.oldIndex;
-				}else */
-					
+				
+				
 				if(cbxDepartamentoEscritura.selectedItem == null){
 					selectciudadescritura = new ArrayCollection();					
 				}
@@ -5451,19 +5277,12 @@
 					nombreSeccion="InfoConstruccion";
 					//isChangeTab=true;
 					
-					 
+					
 					guardarInfoConstruccion();
 					
 					//isChangeTab=true;
 					//tbnAvaluosConstruccion
-					/* if(tbnAvaluosConstruccion.selectedIndex != 5)
-					{
-						isChangeTab=false;
-					}
-					else if(tbnAvaluosConstruccion.selectedIndex == 5)
-					{
-						isChangeTab=true;
-					}*/ 
+					
 					
 					if(!guardarConstruccionSinClick || event !=null){
 						if(!guardarConstruccionSinClick){
@@ -5474,7 +5293,7 @@
 						}						 
 						// administrarPanelesInformacionConstruccion();						
 					}
-					 
+					
 				}
 			}
 			
@@ -5549,41 +5368,11 @@
 				if((cbxParapetosCubierta != null) && (cbxParapetosCubierta.selectedIndex > -1)) {
 					informacionConstruccion.parapetosCubierta = cbxParapetosCubierta.selectedItem.rvLowValue;
 				}
-				/*
-				if((cbxUbiTanques != null) && (cbxUbiTanques.selectedIndex > -1)) {
-				informacionConstruccion.ubicacionTanque = cbxUbiTanques.selectedItem.rvLowValue;
-				}
-				*/
-				/*
-				if((cbxLongLuces != null) && (cbxLongLuces.selectedIndex > -1)) {
-				informacionConstruccion.luces = cbxLongLuces.selectedItem.rvLowValue;
-				}*/
-				/*
-				if((cbxSimetriaAltura != null) && (cbxSimetriaAltura.selectedIndex > -1)) {
-				informacionConstruccion.simetriaAltura = cbxSimetriaAltura.selectedItem.rvLowValue;
-				}
-				if(( cbxSimetriaPlanta!= null) && (cbxSimetriaPlanta.selectedIndex > -1)) {
-				informacionConstruccion.simetriaPlanta = cbxSimetriaPlanta.selectedItem.rvLowValue;
-				}
-				*/
-				/*
-				if((cbxSobrepeso != null) && (cbxSobrepeso.selectedIndex > -1)) {
-				informacionConstruccion.sobrePeso = cbxSobrepeso.selectedItem.rvLowValue;
-				}
-				*/
+				
 				if((cbxGolpeteo != null) && (cbxGolpeteo.selectedIndex > -1)) {
 					informacionConstruccion.golpeteo = cbxGolpeteo.selectedItem.rvLowValue;
 				}
-				/*
-				if((cbxAsentamientos != null) && (cbxAsentamientos.selectedIndex > -1)) {
-				informacionConstruccion.asentamientos = cbxAsentamientos.selectedItem.rvLowValue;
-				}
-				*/
-				/*
-				if((cbxDanoPrevio != null) && (cbxDanoPrevio.selectedIndex > -1)) {
-				informacionConstruccion.danoPrevio = cbxDanoPrevio.selectedItem.rvLowValue;
-				}
-				*/
+				
 				if((cbxCalidadPisos != null) && (cbxCalidadPisos.selectedIndex > -1)) {
 					informacionConstruccion.calidadPiso = cbxCalidadPisos.selectedItem.rvLowValue;
 				}
@@ -5639,19 +5428,7 @@
 					}
 					isCargaInicial = "true";
 					
-					/*
-					getValoresDominioResult28.token = dominiosAuxDao.getValoresDominio("DESCLIQUIDACION");
-					getValoresDominioResult69.token = dominiosAuxDao.getValoresDominio("DESCLIQUIDACION");
-					getValoresDominioResult70.token = dominiosAuxDao.getValoresDominio("DESCLIQUIDACION");
-					getValoresDominioResult71.token = dominiosAuxDao.getValoresDominio("DESCLIQUIDACION");
-					getValoresDominioResult71.token = dominiosAuxDao.getValoresDominio("DESCLIQUIDACION");
-					getValoresDominioResult72.token = dominiosAuxDao.getValoresDominio("DESCLIQUIDACION");
-					getValoresDominioResult73.token = dominiosAuxDao.getValoresDominio("DESCLIQUIDACION");
-					getValoresDominioResult74.token = dominiosAuxDao.getValoresDominio("DESCLIQUIDACION");
-					getValoresDominioResult75.token = dominiosAuxDao.getValoresDominio("DESCLIQUIDACION");
-					getValoresDominioResult76.token = dominiosAuxDao.getValoresDominio("DESCLIQUIDACION");
-					getValoresDominioResult77.token = dominiosAuxDao.getValoresDominio("DESCLIQUIDACION");
-					*/
+					
 					if(selectdescliq0==null || selectdescliq0.length<1)
 						getValoresDominioResult28.token = dominiosAuxDao.getValoresDominio("DESCLIQUIDACION");
 					if(selectdescliq1==null || selectdescliq1.length<1)
@@ -5779,31 +5556,7 @@
 				if(avanceObraTextInput != null) {
 					informacionConstruccion.avanceObra = avanceObraTextInput.text;
 				}
-				/*
-				if(textoEstructuraTextInput != null) {
-				informacionConstruccion.textoEstructura = textoEstructuraTextInput.text;
-				}
-				*/
-				/*
-				if(otroMaterialTextInput != null) {
-				informacionConstruccion.otroMaterial = otroMaterialTextInput.text;
-				}
-				*/
-				/*
-				if(textoFachadaTextInput != null) {
-				informacionConstruccion.textoFachada = textoFachadaTextInput.text;
-				}
-				*/
-				/*
-				if(textoCubiertaTextInput != null) {
-				informacionConstruccion.textoCubierta = textoCubiertaTextInput.text;
-				}
-				*/
-				/*
-				if(otraUbicacionTanqueTextInput != null) {
-				informacionConstruccion.otraUbicacionTanque = otraUbicacionTanqueTextInput.text;
-				}
-				*/
+				
 				if(salaTextInput != null) {
 					informacionConstruccion.sala = salaTextInput.text;
 				}
@@ -5922,45 +5675,7 @@
 				}	
 				
 				
-				/*
-				informacionConstruccion.danoPrevioSF 		 	= this.danoPrevioSFTextInput.text;
-				informacionConstruccion.danoReparadoSF		 	= this.danoReparadoSFTextInput.text;
-				informacionConstruccion.rangoConstruccionSF	 	= this.rangoConstruccionSFTextInput.text;
-				informacionConstruccion.danoPrevioBUA		 	= this.danoPrevioBUATextInput.text;
-				*/
 				
-				
-				/*
-				//DetalleMaterialSFBUA
-				informacionConstruccion.detalleMaterialSFBUA 	= this.detalleMaterialSFBUATextInput.text;
-				//EstructuraReforzadaBUA
-				informacionConstruccion.estructuraReforzadaBUA	= this.estructuraReforzadaBUATextInput.text;
-				//IrregularidadAlturaBUA
-				informacionConstruccion.irregularidadAlturaBUA	= this.irregularidadAlturaBUATextInput.text;
-				//IrregularidadPlantaBUA
-				informacionConstruccion.irregularidadPlantaBUA	= this.irregularidadPlantaBUATextInput.text;
-				//MaterialConstruccionBUA
-				informacionConstruccion.materialConstruccionBUA = this.materialConstruccionBUATextInput.text;
-				//ReparadosBUA
-				informacionConstruccion.reparadosBUA		 	= this.reparadosBUATextInput.text;
-				//SimetriaAlturaSF
-				informacionConstruccion.simetriaAlturaSF		= this.simetriaAlturaSFTextInput.text;
-				//SimetriaPlantaSF
-				informacionConstruccion.simetriaPlantaSF		= this.simetriaPlantaSFTextInput.text;
-				*/
-				
-				//AnoConstruccionBUA
-				//informacionConstruccion.anoConstruccionBUA	 	= this.anoConstruccionBUATextInput.text;
-				
-				/*
-				if((cbxdanoPrevioSF != null) && (cbxdanoPrevioSF.selectedIndex > -1)) {
-				informacionConstruccion.danoPrevioSF = cbxdanoPrevioSF.selectedItem.rvLowValue;
-				}
-				
-				if((cbxdanoReparadoSF != null) && (cbxdanoReparadoSF.selectedIndex > -1)) {
-				informacionConstruccion.danoReparadoSF = cbxdanoReparadoSF.selectedItem.rvLowValue;
-				}
-				*/
 				
 				if((cbxdanoPrevioBUA != null) && (cbxdanoPrevioBUA.selectedIndex > -1)) {
 					informacionConstruccion.danoPrevioBUA = cbxdanoPrevioBUA.selectedItem.rvLowValue;
@@ -5969,20 +5684,7 @@
 				if((cbxreparadosBUA != null) && (cbxreparadosBUA.selectedIndex > -1)) {
 					informacionConstruccion.reparadosBUA = cbxreparadosBUA.selectedItem.rvLowValue;
 				}
-				/*				
-				if((cbxsimetriaAlturaSF != null) && (cbxsimetriaAlturaSF.selectedIndex > -1)) {
-				informacionConstruccion.simetriaAlturaSF = cbxsimetriaAlturaSF.selectedItem.rvLowValue;
-				}
 				
-				if((cbxsimetriaPlantaSF != null) && (cbxsimetriaPlantaSF.selectedIndex > -1)) {
-				informacionConstruccion.simetriaPlantaSF = cbxsimetriaPlantaSF.selectedItem.rvLowValue;
-				}
-				*/
-				/*
-				if((cbxrangoConstruccionSF != null) && (cbxrangoConstruccionSF.selectedIndex > -1)) {
-				informacionConstruccion.rangoConstruccionSF = cbxrangoConstruccionSF.selectedItem.rvLowValue;
-				}
-				*/
 				if((cbxdetalleMaterialSFBUA != null) && (cbxdetalleMaterialSFBUA.selectedIndex > -1)) {
 					informacionConstruccion.detalleMaterialSFBUA = cbxdetalleMaterialSFBUA.selectedItem.rvLowValue;
 				}
@@ -6138,12 +5840,7 @@
 					createResult3.token = salubridadService.create(condicionesSalubridad);
 				}
 				
-				/*avaluo2.tipoInforme=2 
-				informacionConstruccion.estadoConstruccion = 
-				nueva informacionConstruccion.avanceObra   =*/
-				//limpiarControles();
-				//avaluo2.informacionConstruccion.
-				//avaluo2.liquidacionAvaluoTotal[0]							
+				
 			}
 			
 			
@@ -6232,7 +5929,7 @@
 					transaccionSatisfactoria();
 					//getAvaluosPorIdResult.token = avaluosService.getAvaluosPorId(avaluo2.idAvaluo);
 				}
-				vstAvaluo.selectedIndex = 0;
+				// vstAvaluo.selectedIndex = 0;
 			}
 			
 			
@@ -6937,18 +6634,7 @@
 			
 			protected function cbxMaterialEstructura_changeHandler(event:IndexChangeEvent):void
 			{
-				/*
-				if(cbxMaterialesEstructura.selectedItem != null ){
-				if ((cbxMaterialesEstructura.selectedItem as Dominios).rvLowValue == '9'){
-				//otroMaterialTextInput.enabled = true;
-				}
-				else {
 				
-				//otroMaterialTextInput.text = "";
-				//otroMaterialTextInput.enabled = false;
-				
-				}
-				}*/
 			}
 			
 			protected function cbxFachada_changeHandler(event:IndexChangeEvent):void
@@ -6958,10 +6644,7 @@
 						//textoFachadaTextInput.enabled = true;
 					}
 					else {
-						/*
-						textoFachadaTextInput.text = "";
-						textoFachadaTextInput.enabled = false;
-						*/
+						
 					}
 				}
 			}
@@ -6983,17 +6666,7 @@
 			
 			protected function cbxTanque_changeHandler(event:IndexChangeEvent):void
 			{
-				/*
-				if(cbxUbiTanques.selectedItem != null ){
-				if ((cbxUbiTanques.selectedItem as Dominios).rvLowValue == '3'){
-				//otraUbicacionTanqueTextInput.enabled = true;
-				}
-				else {						
-				//otraUbicacionTanqueTextInput.text = "";
-				//otraUbicacionTanqueTextInput.enabled = false;						
-				}
-				}
-				*/
+				
 			}
 			
 			
@@ -7508,17 +7181,7 @@
 				if(dtgAvaluos.selectedItem != null)
 				{
 					var avaluoDuplicar:Avaluo = dtgAvaluos.selectedItem as Avaluo;
-					//avaluoDuplicar.usuarioTransaccion = myUsuario.codigoUsuario;
-					
-					/*if((avaluoDuplicar.logsGeneraArchivo != null) 
-					&& (avaluoDuplicar.logsGeneraArchivo.nombreArchivo != null && (avaluoDuplicar.logsGeneraArchivo.nombreArchivo.length > 0))
-					) 
-					{
-					var nombreArchivo:String = avaluoDuplicar.logsGeneraArchivo.nombreArchivo;
-					Alert.show("El avaluo esta incluido en el archivo: "+nombreArchivo
-					+"\n\nPara ejecutar la copia primero debe reversar el archivo relacionado.","INFO")
-					}
-					else */if(avaluoDuplicar.estadoAvaluo == '2') 
+					if(avaluoDuplicar.estadoAvaluo == '2') 
 					{
 						Alert.show("Debe aprobar primero el Avaluo para poder copiarlo.","INFO", null, null, null, null, Alert.OK);
 					}					
@@ -7569,33 +7232,10 @@
 			{
 				
 				numeroIdentificacion3changed=true;
-				/*
-				Alert.show("Esta Seguro de cambiar la identificacion. esto cambiara el consecutivo?","cambiar", Alert.YES | Alert.CANCEL, null, 
-				function(e:CloseEvent):void
-				{
-				if (e.detail == Alert.YES) {
-				//doSomething(event.detail, param1, param2);
-				var fechaTmp:String = fechaAvaluoDateField2.text.replace("/","").replace("/","");
 				
-				fechaTmp + numeroIdentificacionTextInput3.text;
-				
-				consecutivoBancoTextInput.text = fechaTmp + numeroIdentificacionTextInput3.text;
-				}else{							
-				e.preventDefault();
-				event.preventDefault();
-				numeroIdentificacionTextInput3.text = numeroIdentificacion3;
-				}
-				}
-				, null, Alert.CANCEL);
-				*/
 			}
 			
-			/*
-			protected function numeroIdentificacionTextInput3_activateHandler(event:Event):void
-			{
-			// TODO Auto-generated method stub
-			}
-			*/
+			
 			
 			var numeroIdentificacion3:String;
 			var consecutivOld:String;
@@ -7859,7 +7499,7 @@
 							}
 						}
 					}
-										 
+					
 					/**/
 					//ojo pruebas campos en cero 0
 					informacionConstruccion.sala="0";
@@ -7964,10 +7604,7 @@
 			}
 			
 			
-			/*protected function panel_creationCompleteHandler(event:FlexEvent):void
-			{
-			getMensajeTransaccionResult2.token = avaluosService.getMensajeTransaccion();
-			}*/
+			
 			
 			
 			
@@ -8028,15 +7665,7 @@
 			
 			public function esConstructor( avaluoValidar:Avaluo ):Boolean
 			{
-				/*
-				var infocon:InformacionConstruccion = avaluoConstructor.informacionConstruccion.getItemAt(0) as InformacionConstruccion;
-				if(parseInt(infocon.avanceObra)<70)
-				{
-				return false;
-				}
-				*/
-				//if(avaluoValidar.)
-				//avaluo.tipoInforme = "2";
+				
 				return true;
 			}
 			
@@ -8061,23 +7690,11 @@
 						else
 						{	
 							var infocon:InformacionConstruccion = avaluoConstructor.informacionConstruccion.getItemAt(0) as InformacionConstruccion;
-							//if(avaluoConstructor.informacionConstruccion.getItemAt(0).
 							
-							
-							
-							//if(parseInt(infocon.avanceObra)<70)
-							//if(parseInt(infocon.avanceObra)<PORCENTAJE_ASOBANCARIA)
-							/*
-							if(infocon.estadoTerminadaNueva=="1" && avaluoConstructor.tipoInforme=="2")
-							{	
-							*/	
-							
-							//if(avaluoConstructor.usuarioCreacion == myUsuario.codigoUsuario)
-							//{	
 							
 							avaluoConstructor.usuarioTransaccion = myUsuario.codigoUsuario;
 							
-							//copiarAvaluoResult.token = avaluosService.copiarAvaluo(avaluoDuplicar);
+							
 							
 							nombreSeccion = "encanbezadoConstructor";
 							
@@ -8142,18 +7759,7 @@
 							
 							vstAvaluo.selectedIndex = 1;								
 							
-							//}else
-							//{
-							//Alert.show("El usuario de creacion puede duplicar un Avaluo");
-							//}
-							/*	
-							}
-							else
-							{
-							//Alert.show("Solo son proyectos constructor los Avaluos con avance de obra menor al 70%",null, null, null, null, null, Alert.OK);
-							//Alert.show("Solo son proyectos constructor los Avaluos con avance de obra menor al "+PORCENTAJE_ASOBANCARIA+"%",null, null, null, null, null, Alert.OK);
-							Alert.show("Solo son proyectos constructor los Avaluos con estado nuevo y terminado 100%",null, null, null, null, null, Alert.OK);
-							}*/
+							
 						}	
 						
 					}
@@ -8165,10 +7771,7 @@
 			}
 			
 			
-			/*protected function panel_creationCompleteHandler(event:FlexEvent):void
-			{
-			copiarAvaluoConstructorResult.token = avaluosService.copiarAvaluoConstructor( arg0);
-			}*/
+			
 			
 			
 			protected function copiarAvaluoConstructorResult_resultHandler(event:ResultEvent):void
@@ -8274,22 +7877,12 @@
 						
 					}
 					
-					/*coordenadasLatitudTextInput.enabled=true;
-					coordenadasLongitudTextInput.enabled=true;	
 					
-					coordenadasLatitudTextInput.text=coordenadasLatitud;
-					coordenadasLongitudTextInput.text=coordenadasLongitud;
-					
-					coordenadasLatitudTextInput.enabled=false;
-					coordenadasLongitudTextInput.enabled=false;*/
 					
 				}
 			}
 			protected function setPrecision(number:Number, precision:int) {
-				/*
-				precision = Math.pow(10, precision);
-				return Math.round(number * precision)/precision;
-				*/
+				
 				return truncate(number,precision);
 			}
 			
@@ -8421,42 +8014,14 @@
 			
 			protected function avaluosService_faultHandler(event:FaultEvent):void
 			{
-				// TODO Auto-generated method stub
-				/*
-				event.
-				avaluosService.
-				avaluosService.serviceControl.logout()
-				*/
-				//avaluosService.serviceControl.initialize();
+				
 				avaluosService = new AvaluosService();
 				//AvaluosService.
 				
 			}
 			
 			
-			/*protected function vBox2_creationCompleteHandler(event:FlexEvent):void
-			{
-			//getValoresDominioResult93.token = dominiosAuxDao.getValoresDominio(/*Enter value(s) for */ //arg0);
-			//getValoresDominioResult94.token = dominiosAuxDao.getValoresDominio(/*Enter value(s) for */ //arg0);
-			//}*/
 			
-			
-			/*12052016 error se comenta*/
-			/*
-			protected function cbxusoInmuebleBUA_changeHandler(event:IndexChangeEvent):void
-			{
-			if(cbxusoInmuebleBUA.selectedItem != null ){
-			if ((cbxusoInmuebleBUA.selectedItem as Dominios).rvLowValue == '13'){
-			otroClaseTextInput.enabled = true;
-			}
-			else {
-			otroClaseTextInput.text = "";
-			otroClaseTextInput.enabled = false;
-			}
-			}
-			}
-			*/
-			/*12052016 error se comenta*/
 			
 			
 			protected function cbxmaterialConstruccionBUA_changeHandler(event:IndexChangeEvent):void
@@ -8546,20 +8111,10 @@
 								}
 								
 								
-								//PopUpManager.centerPopUp(ventanaConstructor);
 								
-								//ventanaConstructor['btnSeleccionarPerito'].addEventListener(MouseEvent.CLICK,handleSeleccionarButton);
-								
-								
-								/*}else
-								{
-								//Alert.show("El usuario de creacion puede duplicar un Avaluo");
-								}*/
 							}
 							else
 							{
-								//Alert.show("Solo son proyectos constructor los Avaluos con avance de obra menor al 70%",null, null, null, null, null, Alert.OK);
-								//Alert.show("Solo son proyectos constructor los Avaluos con avance de obra menor al "+PORCENTAJE_ASOBANCARIA+"%",null, null, null, null, null, Alert.OK);
 								Alert.show("Solo son proyectos constructor los Avaluos con estado nuevo y terminado 100%",null, null, null, null, null, Alert.OK);
 							}	
 						}	
@@ -8672,7 +8227,7 @@
 				
 				var errorFull:String = event.fault.toString(); 
 				var error:String = event.fault.faultString.toString();
-
+				
 				var descripcionError:Array = new Array();
 				var errorMessage:String = "";  
 				
@@ -8697,8 +8252,8 @@
 								break;
 							case "tercerosWebService":
 								mensaje = "Se presenta problemas con el validador de direcciones. " +
-										  "\nPor favor valide con el administrador de la aplicación" +
-										  "\ne intentelo nuevamente"; 
+								"\nPor favor valide con el administrador de la aplicación" +
+								"\ne intentelo nuevamente"; 
 								imprimirMensaje(mensaje,"Falla en direcciones"); 
 								break;
 							case "liquidacionTotalService":
@@ -8731,7 +8286,7 @@
 							default:
 								imprimirMensaje(mensaje,"Error en la comunicación de la aplicación");  
 						}
-						 
+						
 					}else{
 						contadorIntentos = 0 ; 
 						imprimirMensaje(mensaje,"Error en la comunicación de la aplicación");						
@@ -8769,10 +8324,7 @@
 				{
 					if (valorTextInput1.text == "0")
 					{	
-						//areaLiquidacionTextInput2.selectionActivePosition .selectionBeginIndex = 0;
-						//areaLiquidacionTextInput2.selectionEndIndex = areaLiquidacionTextInput2.text.length;
-						//areaLiquidacionTextInput2.setFocus();
-						//event.currentTarget.selectAll();
+						
 						valorTextInput1.text="";							
 					}		
 				}
@@ -8855,7 +8407,7 @@
 			{
 				selectEstadoAvaluo =  getValoresDominioResult78.lastResult ;
 			}
-
+			
 			protected function direccionAnexosTextInput_changeHandler(event:FocusEvent):void
 			{
 				if(convierteDireccionDaneResult3.token == null){
@@ -8880,7 +8432,7 @@
 					convierteDireccionDaneResult3.lastResult = null ;					
 				}
 			}
-
+			
 			protected function direccionInmuebleTextInput_focusOutHandler(event:FocusEvent):void
 			{
 				if(convierteDireccionDaneResult3.token == null){
@@ -8893,7 +8445,7 @@
 					convierteDireccionDaneResult3.lastResult = null ;					
 				}
 			}
-
+			
 			protected function direccionInmuebleTextInput2_focusOutHandler(event:FocusEvent):void
 			{
 				if(convierteDireccionDaneResult3.token == null){
@@ -8906,7 +8458,7 @@
 					convierteDireccionDaneResult3.lastResult = null ;					
 				}
 			}
-
+			
 			protected function direccionInmuebleTextInput3_focusOutHandler(event:FocusEvent):void
 			{
 				if(convierteDireccionDaneResult3.token == null){
@@ -8919,8 +8471,8 @@
 					convierteDireccionDaneResult3.lastResult = null ;					
 				}
 			}
-
-
+			
+			
 			protected function convierteDireccionDaneResult3_resultHandler(event:ResultEvent):void
 			{
 				if(!((convierteDireccionDaneResult3.lastResult != " ") && (convierteDireccionDaneResult3.lastResult))){
@@ -9047,25 +8599,25 @@
 				
 				limpiarControles();
 			}
-
-
+			
+			
 			protected function cbxEstadoConstruccion_focusOutHandler(event:FocusEvent):void
 			{
 				cbxEstadoConstruccion_changeHandler(null); 
 			}
-
+			
 			protected function chbTerminado_changeHandler(event:Event):void
 			{
 				chbTerminado_clickHandler(null); 
 			}
-
-
+			
+			
 			protected function chbRemodelado_focusInHandler(event:FocusEvent):void
 			{
 				chbTerminado_clickHandler(null); 
 			}
-
-
+			
+			
 			protected function getValoresTipoDocumento_resultHandler(event:ResultEvent):void
 			{
 				if(selectTipoConsulta == null || selectTipoConsulta.length < 1){
@@ -9093,205 +8645,15 @@
 				informacionInmuebleTmp.usuarioTransaccion = avaluoTmp.usuarioTransaccion ; 
 				inmuebleService.persist(informacionInmuebleTmp) ; 
 			}
-
-
+			
+			
 			protected function getAvaluosAfterPersist_resultHandler(event:ResultEvent):void
 			{
 				//Se instancian nuevamente todos los objetos
-			/**	informacionBarrio = new InformacionBarrio();
-				informacionConstruccion = new InformacionConstruccion();
-				condicionesSalubridad = new CondicionesSalubridad();
-				comportamientoOfertaDemanda = new ComportamientoOfertaDemanda();
-				liquidacionAvaluo0 = new LiquidacionAvaluo();
-				liquidacionAvaluo1 = new LiquidacionAvaluo();
-				liquidacionAvaluo2 = new LiquidacionAvaluo();
-				liquidacionAvaluo3 = new LiquidacionAvaluo();
-				liquidacionAvaluo4 = new LiquidacionAvaluo();
-				liquidacionAvaluo5 = new LiquidacionAvaluo();
-				liquidacionAvaluo6 = new LiquidacionAvaluo();
-				liquidacionAvaluo7 = new LiquidacionAvaluo();
-				liquidacionAvaluo8 = new LiquidacionAvaluo();
-				liquidacionAvaluo9 = new LiquidacionAvaluo();
-				liquidacionAvaluoTotal = new LiquidacionAvaluoTotal();
 				
-				avaluo2 = getAvaluosPorIdResult.lastResult as Avaluo;
-				guardarTodoAvaluo(avaluo2); 
-				
-				//19 Nov 2012 Coordenadas Gps
-		/**		var coordenadas:String = avaluo2.ubicacionGps;
-				
-				
-				if(coordenadas!=null)
-				{
-					//var coordenadasArray:Array = coordenadas.split(";");
-					var coordenadasArray:Array = coordenadas.split(",");
-					//avaluo2.ubicacionGpsTextInput
-					try{
-						coordenadasLatitud =coordenadasArray[0];
-						coordenadasLongitud=coordenadasArray[1];
-						
-						if(coordenadasLongitud!="" && coordenadasLatitud!="")
-						{	
-							coordenadasLatitud  = numberFormatter.format(coordenadasLatitud) ;
-							coordenadasLongitud = numberFormatter.format(coordenadasLongitud) ;
-							avaluo2.ubicacionGps = coordenadasLatitud+","+coordenadasLongitud;
-							ubicacionGpsTextInput.text = avaluo2.ubicacionGps; 
-							coordenadasLatitudTextInput.text = coordenadasLatitud; 
-							coordenadasLongitudTextInput.text = coordenadasLongitud ; 
-						}
-						
-					}	
-					catch(e:Error)
-					{
-						trace(e);
-					}	
-				}
-				if(aprobar){
-					if((avaluo2.informacionInmueble != null) && (avaluo2.informacionInmueble.length > 0)) {
-						categoria.rvLowValue = (avaluo2.informacionInmueble[0] as InformacionInmueble).idCategoria;
-					}
-					else {
-						categoria = null;
-					}
-					if((categoria != null) && (categoria.rvLowValue != null)){
-						var ava:Avaluo = new Avaluo();
-						ava.idAvaluo = avaluo2.idAvaluo;
-						aprobarResult.token = avaluosService.aprobar(ava);
-					}
-					else {
-						Alert.show("Para aprobar el avaluo debe seleccionar una categoria del inmueble.\n\nRecuerde seleccionar la categoria y guardar la sección en información del inmueble.","INFO", null, null, null, null, Alert.OK);
-					}
-					aprobarResult.token = avaluosService.aprobar(avaluo2);
-					aprobar = false;
-				}
-					
-				else {
-					//valida si el archivo ya fue enviado
-					if(avaluo2.logsGeneraArchivo != null) 						
-					{
-						if(avaluo2.logsGeneraArchivo.estado!=null)
-						{	
-							if((avaluo2.logsGeneraArchivo.estado.toUpperCase() == "E") || (avaluo2.logsGeneraArchivo.estado.toUpperCase() == "G"))
-							{
-								isEnabled = false;
-							}
-							else if((avaluo2.logsGeneraArchivo.estado.toUpperCase() == "R") || (avaluo2.logsGeneraArchivo.estado.toUpperCase() == "V"))
-							{
-								isEnabled = true;
-								//Mantener Estado Actual
-							}
-							else
-							{
-								isEnabled = false;
-							}	
-							
-						}
-					}
-					
-					if(selectCiudadbasico != null && selectCiudadbasico.length == 0){
-						selectCiudadbasico.addItem(avaluo2.objCiudad);
-					}
-					
-					if((avaluo2.informacionBarrio != null) && (avaluo2.informacionBarrio.length > 0)) {
-						informacionBarrio = avaluo2.informacionBarrio.getItemAt(0) as InformacionBarrio;
-					}
-					if((avaluo2.informacionInmueble != null) && (avaluo2.informacionInmueble.length > 0)) {
-						informacionInmueble2 = avaluo2.informacionInmueble.getItemAt(0) as InformacionInmueble;						
-						
-						categoria.rvLowValue = informacionInmueble2.idCategoria;
-						isBodega = informacionInmueble2.idCategoria == '5'?true:false;
-						isLocal = informacionInmueble2.idCategoria == '6'?true:false;
-					}
-					
-					/**/
-					//ojo pruebas campos en cero 0
-			/**		informacionConstruccion.sala="0";
-					informacionConstruccion.banioSocial="0";
-					informacionConstruccion.banioPrivado="0";
-					informacionConstruccion.banioServicio="0";
-					informacionConstruccion.jardin="0";
-					informacionConstruccion.comedor="0";
-					informacionConstruccion.estarHabitacion="0";
-					informacionConstruccion.cocina="0";
-					informacionConstruccion.patioInterior="0";
-					informacionConstruccion.balcon="0";
-					informacionConstruccion.estudio="0";
-					informacionConstruccion.numeroHabitaciones="0";
-					informacionConstruccion.cuartoServicio="0";
-					informacionConstruccion.terraza="0";
-					informacionConstruccion.zonaVerdePrivada="0";
-					informacionConstruccion.totalGarajes="0";
-					informacionConstruccion.usoExclusivo="0";
-					informacionConstruccion.sencillo="0";
-					informacionConstruccion.deposito="0";
-					informacionConstruccion.local="0";
-					informacionConstruccion.cubierto="0";
-					informacionConstruccion.privado="0";
-					informacionConstruccion.doble="0";
-					informacionConstruccion.bodega="0";
-					informacionConstruccion.descubierto="0";
-					informacionConstruccion.bahiaComunal="0";
-					informacionConstruccion.servidumbre="0";
-					informacionConstruccion.oficina="0";
-					
-					/**/
-		/**			if((avaluo2.informacionConstruccion != null) && (avaluo2.informacionConstruccion.length > 0)) {
-						informacionConstruccion = avaluo2.informacionConstruccion.getItemAt(0) as InformacionConstruccion;
-					}
-					if((avaluo2.condicionSalubridad != null) && (avaluo2.condicionSalubridad.length > 0)) {
-						condicionesSalubridad = avaluo2.condicionSalubridad.getItemAt(0) as CondicionesSalubridad;
-					}
-					if((avaluo2.compOfertaDemanda != null) && (avaluo2.compOfertaDemanda.length > 0)) {
-						comportamientoOfertaDemanda = avaluo2.compOfertaDemanda.getItemAt(0) as ComportamientoOfertaDemanda;
-					}
-					if((avaluo2.observacion != null) && (avaluo2.observacion.length > 0)) {
-						observaciones = avaluo2.observacion.getItemAt(0) as Observaciones;
-					}
-					if((avaluo2.liquidacionTotal != null) && (avaluo2.liquidacionTotal.length > 0)) {
-						liquidacionAvaluoTotal = avaluo2.liquidacionTotal.getItemAt(0) as LiquidacionAvaluoTotal;
-					}
-					if((avaluo2.liquidacionAvaluos != null) && (avaluo2.liquidacionAvaluos.length > 0)) {
-						liquidacionAvaluo0 = avaluo2.liquidacionAvaluos.getItemAt(0) as LiquidacionAvaluo;
-					}
-					if((avaluo2.liquidacionAvaluos != null) && (avaluo2.liquidacionAvaluos.length > 1)) {
-						liquidacionAvaluo1 = avaluo2.liquidacionAvaluos.getItemAt(1) as LiquidacionAvaluo;
-					}
-					if((avaluo2.liquidacionAvaluos != null) && (avaluo2.liquidacionAvaluos.length > 2)) {
-						liquidacionAvaluo2 = avaluo2.liquidacionAvaluos.getItemAt(2) as LiquidacionAvaluo;
-					}
-					if((avaluo2.liquidacionAvaluos != null) && (avaluo2.liquidacionAvaluos.length > 3)) {
-						liquidacionAvaluo3 = avaluo2.liquidacionAvaluos.getItemAt(3) as LiquidacionAvaluo;	
-					}
-					if((avaluo2.liquidacionAvaluos != null) && (avaluo2.liquidacionAvaluos.length > 4)) {
-						liquidacionAvaluo4 = avaluo2.liquidacionAvaluos.getItemAt(4) as LiquidacionAvaluo;
-					}
-					if((avaluo2.liquidacionAvaluos != null) && (avaluo2.liquidacionAvaluos.length > 5)) {
-						liquidacionAvaluo5 = avaluo2.liquidacionAvaluos.getItemAt(5) as LiquidacionAvaluo;
-					}
-					if((avaluo2.liquidacionAvaluos != null) && (avaluo2.liquidacionAvaluos.length > 6)) {
-						liquidacionAvaluo6 = avaluo2.liquidacionAvaluos.getItemAt(6) as LiquidacionAvaluo;
-					}
-					if((avaluo2.liquidacionAvaluos != null) && (avaluo2.liquidacionAvaluos.length > 7)) {
-						liquidacionAvaluo7 = avaluo2.liquidacionAvaluos.getItemAt(7) as LiquidacionAvaluo;
-					}
-					if((avaluo2.liquidacionAvaluos != null) && (avaluo2.liquidacionAvaluos.length > 8)) {
-						liquidacionAvaluo8 = avaluo2.liquidacionAvaluos.getItemAt(8) as LiquidacionAvaluo;
-					}
-					if((avaluo2.liquidacionAvaluos != null) && (avaluo2.liquidacionAvaluos.length > 9)) {
-						liquidacionAvaluo9 = avaluo2.liquidacionAvaluos.getItemAt(9) as LiquidacionAvaluo;
-					}
-					
-					// Leonardo Galan 
-					// Este cambio esta afectando el proceso
-					//24 junio 2016 se agrega llamado para cargar coordenadas al editar
-					// ubicacionGpsTextInput_focusOutHandler(null);
-					//24 junio 2016 se agrega llamado para cargar coordenadas al editar
-					
-					vstAvaluo.selectedIndex = 2;
-				}***/
 			}
-
-
+			
+			
 			protected function imprimirEnEdicion_resultHandler(event:ResultEvent):void
 			{
 				// TODO Auto-generated method stub
@@ -9765,11 +9127,11 @@
 				inhabilitarCampos(direccionAnexosTextInput,isEnabled);
 				inhabilitarCampos(otrasDireccionesTextInput,isEnabled);
 				inhabilitarCampos(observacionAvaluoTextInput,isEnabled);
-
+				
 				
 			}
-
-
+			
+			
 			protected function cbxDepartamentoBasico_focusOutHandler(event:FocusEvent):void
 			{
 				// TODO Auto-generated method stub				
@@ -9778,8 +9140,8 @@
 					cbxCiudadBasico.selectedItem = avaluo2.objCiudad ;  
 				}				 
 			}
-
-
+			
+			
 			protected function cbxDepartamentoEscritura_focusOutHandler(event:FocusEvent):void
 			{
 				cbxDepartamentoEscritura_changeHandler(null);
@@ -9790,8 +9152,8 @@
 						cbxCiudadEscritura.selectedIndex = posicionCiudad ;  
 				} 				 
 			}
-
-
+			
+			
 			protected function fechaEscrituraDateField_focusInHandler(event:FocusEvent):void
 			{
 				fechaEscrituraDateField.setFocus();  
@@ -9803,8 +9165,8 @@
 					campo.enabled = isEnabled ;  	
 				}				
 			}
-
-
+			
+			
 			protected function cbxPorpiedadHorizontal_focusOutHandler(event:FocusEvent):void
 			{
 				// TODO Auto-generated method stub
@@ -9812,8 +9174,8 @@
 				guardarPropiedadHorizontal = true; 
 				cbxPorpiedadHorizontal_changeHandler(null);				 
 			}
-
-
+			
+			
 			protected function cbxDepartamento_focusOutHandler(event:FocusEvent):void
 			{
 				if(cbxDepartamento.selectedItem != null){
@@ -9824,68 +9186,65 @@
 			}
 			
 			protected function crearModuloEdicionFormulario(isNuevo:Boolean):void{
+				var newVBoxAdicion:VBox ; 
+				var mlAdicion:CustomModuleLoader ;
+				
+				var newVBoxEdicion:VBox ; 
+				var mlEdicion:CustomModuleLoader ;
+				
+				var randomnumber:Number=Math.floor(Math.random()*1000);
+				
 				if(isNuevo){
-					if(newVBoxAdicion == null){
-						newVBoxAdicion = new VBox();
-						newVBoxAdicion.label = "ADICIÓN DE AVALUOS";
-						newVBoxAdicion.alpha=100; 
-						newVBoxAdicion.percentWidth =100;
-						newVBoxAdicion.percentHeight=100;		
-					}
 					
-					if(mlAdicion == null){
-						mlAdicion = new CustomModuleLoader();
-						mlAdicion.url = "com/segurosbolivar/avaluos/modulos/FormularioAvaluosPanels.swf?estado=adicion";
-						mlAdicion.applicationDomain=ApplicationDomain.currentDomain;
-						mlAdicion.addEventListener(ModuleEvent.READY, parentApplication.modEventHandler);
-						mlAdicion.alpha=100;
-						mlAdicion.percentWidth=100;
-						mlAdicion.percentHeight=100;
-					}
-										
+					newVBoxAdicion = new VBox();
+					newVBoxAdicion.label = "ADICIÓN DE AVALUOS";
+					newVBoxAdicion.alpha=100; 
+					newVBoxAdicion.percentWidth =100;
+					newVBoxAdicion.percentHeight=100;		
+					
+					mlAdicion = new CustomModuleLoader();					
+					mlAdicion.url = "com/segurosbolivar/avaluos/modulos/FormularioAvaluosPanels.swf?session="+randomnumber;
+					mlAdicion.applicationDomain=ApplicationDomain.currentDomain;
+					mlAdicion.addEventListener(ModuleEvent.READY, parentApplication.modEventHandler);
+					mlAdicion.alpha=100;
+					mlAdicion.percentWidth=100;
+					mlAdicion.percentHeight=100;
+					
 					mlAdicion.avaluo  = null ;
 					newVBoxAdicion.addChild(mlAdicion);
-					
-					try{					
-						parentApplication.tn.getChildIndex(newVBoxAdicion);						
-					}catch(e:Error){
-						parentApplication.tn.addChild(newVBoxAdicion); 
-					}
-					
+					parentApplication.tn.addChild(newVBoxAdicion); 
+					parentApplication.tn.selectedIndex = parentApplication.tn.numChildren - 1;
+					parentApplication.tn.setFocus(); 
 					
 				}else{
-					if(newVBoxEdicion == null){
-						newVBoxEdicion = new VBox();
-						newVBoxEdicion.label = "EDICIÓN DE AVALUOS";
-						newVBoxEdicion.alpha=100; 
-						newVBoxEdicion.percentWidth =100;
-						newVBoxEdicion.percentHeight=100;				
-					}
 					
-					if(mlEdicion == null){
-						mlEdicion = new CustomModuleLoader();
-						mlEdicion.url = "com/segurosbolivar/avaluos/modulos/FormularioAvaluosPanels.swf?estado=edicion";
-						
-						mlEdicion.applicationDomain=ApplicationDomain.currentDomain;
-						mlEdicion.addEventListener(ModuleEvent.READY, parentApplication.modEventHandler);
-						mlEdicion.alpha=100;
-						mlEdicion.percentWidth=100;
-						mlEdicion.percentHeight=100;
-					}
+					newVBoxEdicion = new VBox();
+					newVBoxEdicion.label = "EDICIÓN DE AVALUOS";
+					newVBoxEdicion.alpha=100; 
+					newVBoxEdicion.percentWidth =100;
+					newVBoxEdicion.percentHeight=100;				
+					
+					
+					mlEdicion = new CustomModuleLoader();
+					mlEdicion.url = "com/segurosbolivar/avaluos/modulos/FormularioAvaluosPanels.swf?session="+randomnumber;
+					
+					mlEdicion.applicationDomain=ApplicationDomain.currentDomain;
+					mlEdicion.addEventListener(ModuleEvent.READY, parentApplication.modEventHandler);
+					mlEdicion.alpha=100;
+					mlEdicion.percentWidth=100;
+					mlEdicion.percentHeight=100;
 					
 					mlEdicion.avaluo  = avaluo2 ;
 					newVBoxEdicion.addChild(mlEdicion);
 					
-					try{					
-						parentApplication.tn.getChildIndex(newVBoxEdicion);						
-					}catch(e:Error){
-						parentApplication.tn.addChild(newVBoxEdicion); 
-					}
+					parentApplication.tn.addChild(newVBoxEdicion);
+					parentApplication.tn.selectedIndex = parentApplication.tn.numChildren - 1;
+					parentApplication.tn.setFocus(); 
 					
 				}
 			} 
 			
-
+			
 		]]>
 	</fx:Script>
 	<fx:Declarations>
@@ -9912,36 +9271,7 @@
 							triggerEvent=""
 							/>
 		
-		<!--
-		<mx:NumberValidator id="LongitudNumberValidator" property="text"
-		source="{coordenadasLongitudTextInput}"					
-		minValue="-82.500000" maxValue="-66.00000" domain="real"
-		trigger="{idBtnBasico}" triggerEvent="click"		
-		invalid="Alert.show('El valor de las coordenadas de longitud no es válido debe estar entre -82.500000 y -66.00000. Recuerde que el orden debe ser latitud,longitud y el separador debe ser coma',null,null,null,null,null, Alert.OK);{idBtnBasico.}" 
-		/>
 		
-		<mx:NumberValidator id="LatitudNumberValidator" property="text" 
-		source="{coordenadasLatitudTextInput}"
-		minValue="-4.400000" maxValue="13.500000" domain="real"
-		trigger="{idBtnBasico}" triggerEvent="click"
-		invalid="Alert.show('El valor de las coordenadas de latitud no es valido debe estar entre -4.400000 y 13.500000. Recuerde que el orden debe ser latitud,longitud y el separador debe ser coma',null,null,null,null,null, Alert.OK)" 
-		/>
-		-->
-		<!--
-		<mx:NumberValidator id="LongitudNumberValidator" property="text"
-		source="{coordenadasLongitudTextInput}"					
-		minValue="-82.500000" maxValue="-66.00000" domain="real"
-		trigger="{ubicacionGpsTextInput}" triggerEvent="focusOut"		
-		invalid="Alert.show('El valor de las coordenadas de longitud no es válido debe estar entre -82.500000 y -66.00000. Recuerde que el orden debe ser latitud,longitud y el separador debe ser coma');"
-		/>
-		
-		<mx:NumberValidator id="LatitudNumberValidator" property="text" 
-		source="{coordenadasLatitudTextInput}"
-		minValue="-4.400000" maxValue="13.500000" domain="real"
-		trigger="{ubicacionGpsTextInput}" triggerEvent="focusOut"
-		invalid="Alert.show('El valor de las coordenadas de latitud no es valido debe estar entre -4.400000 y 13.500000. Recuerde que el orden debe ser latitud,longitud y el separador debe ser coma');"
-		/>
-		-->
 		<mx:DateFormatter id="formatDateTime" formatString="DD/MM/YYYY" />
 		
 		<valueObjects:InformacionInmueble id="informacionInmueble">
@@ -10367,16 +9697,7 @@
 						<!--<s:TextInput id="txtMatriculaInmobiliariaPpal2Encab" maxChars="9" restrict="0-9,a-z,A-Z" width="100"/>-->
 						<s:TextInput id="txtMatriculaInmobiliariaPpal2Encab" text="{TmpmatriculaInmobiliariaPpal2}" maxChars="9" restrict="0-9,a-z,A-Z" width="100" tabIndex="10"/>						
 					</mx:FormItem>
-					<!--
-					<mx:FormItem label="Tipo Avaluo">
-					<s:ComboBox id="cbxTipoInforme" width="251"  selectedIndex="{nombreSeccion != 'encanbezadoConstructor'?0:1}" tabIndex="11">
-					<mx:ArrayList>
-					<fx:String>Individual</fx:String>
-					<fx:String>Constructor</fx:String>
-					</mx:ArrayList>
-					</s:ComboBox>
-					</mx:FormItem>
-					-->
+					
 					<mx:FormItem label="Proyecto Constructor" width="384">
 						<s:CheckBox id="chkTipoInforme" label="Seleccione" selected="{selectedConstructor()}"/>
 					</mx:FormItem>
@@ -10451,14 +9772,7 @@
 								<mx:VBox>
 									<s:Label text="Departamento"/>
 									<s:ComboBox id="cbxDepartamentoBasico" dataProvider="{selectDepartamento}" labelField="departamento" selectedIndex="{getItemIndex(avaluo2.objCiudad.departamento.codAsobancaria,selectDepartamento,'codAsobancaria')}" change="cbxDepartamentoBasico_changeHandler(event)"  creationComplete="cbxDepartamento_creationCompleteHandler(event)" width="176" enabled="{isEnabled}" tabIndex="11" focusOut="cbxDepartamentoBasico_focusOutHandler(event)"/>
-									<!--
-									<s:ComboBox id="cbxDepartamentoBasico" textInput="txtInpCbxDepartamentoBasico(event)" dataProvider="{selectDepartamento}" labelField="departamento" selectedIndex="{getItemIndex(avaluo2.objCiudad.departamento.codAsobancaria,selectDepartamento,'codAsobancaria')}" change="cbxDepartamentoBasico_changeHandler(event)"  creationComplete="cbxDepartamento_creationCompleteHandler(event)" width="176" enabled="{isEnabled}" tabIndex="11">
-									<fx:Script>
-									<![CDATA[
-									]]>
-									</fx:Script>
-									</s:ComboBox>
-									-->	
+									
 									<!--<mx:ComboBox id="cbxDepartamentoBasico" dataProvider="{selectDepartamento}" labelField="departamento" selectedIndex="{getItemIndex(avaluo2.objCiudad.departamento.codAsobancaria,selectDepartamento,'codAsobancaria')}" change="cbxDepartamentoBasico_changeHandler(event)"  creationComplete="cbxDepartamento_creationCompleteHandler(event)" width="176" enabled="{isEnabled}" tabIndex="11"/>-->
 								</mx:VBox>
 								<mx:VBox>
@@ -10514,16 +9828,8 @@
 									<s:Label text="Longitud" width="90"/>
 									<comp:NumberInput id="coordenadasLongitudTextInput" text="{coordenadasLongitud}" width="90" maxChars="12" allowNegative="true" fractionalDigits="7" visible="true" enabled="false" tabIndex="23"/>
 								</mx:VBox>
-								<!--
-								<mx:VBox height="100%">
-								<s:Label text="LatitSFBUA"/>
-								<s:TextInput id="latitudBUATextInput" text="{avaluo2.latitudSFBUA}"/>
-								</mx:VBox>
-								<mx:VBox height="100%">
-								<s:Label text="LongitudSFUA"/>
-								<s:TextInput id="longitudBUATextInput" text="{avaluo2.longitudSFBUA}"/>
-								</mx:VBox>
-								-->
+								
+								
 								<mx:VBox height="100%">
 									<s:Label text="Otro Sist de Coord."/>
 									<s:TextInput id="sisCoordBUATxtTextInput" maxChars="20" text="{avaluo2.sistemaCoordenadasTxtBUA}" tabIndex="25"/>
@@ -11001,84 +10307,7 @@
 											<s:Label width="130" text="Reparados"/>
 											<s:ComboBox selectedIndex="{getItemIndex(informacionConstruccion.reparadosBUA,selectreparadosBUA,'rvLowValue')}"  id="cbxreparadosBUA" dataProvider="{selectreparadosBUA}" creationComplete="cbxreparadosBUA_creationCompleteHandler(event)" labelField="rvMeaning"  width="226" enabled="{isEnabled}" tabIndex="134"/>
 										</mx:HBox>
-										<!--
-										<mx:HBox width="100%">
-										<s:Label width="150" text="RangoConstruccionSF"/>
-										<s:ComboBox selectedIndex="{getItemIndex(informacionConstruccion.rangoConstruccionSF,selectrangoConstruccionSF,'rvLowValue')}"  id="cbxrangoConstruccionSF" dataProvider="{selectrangoConstruccionSF}" creationComplete="cbxrangoConstruccionSF_creationCompleteHandler(event)" labelField="rvMeaning"  width="170"  tabIndex="126"/>
-										</mx:HBox>
-										<mx:HBox width="100%">
-										<s:Label width="150" text="anoConstruccionBUA"/>
-										<s:TextInput  width="170" id="anoConstruccionBUATextInput" text="{informacionConstruccion.anoConstruccionBUA}"  tabIndex="127"/>
-										</mx:HBox>
-										-->
-										<!--<mx:HBox width="100%">-->
-										<!--
-										<mx:Label width="130" text="IrregularidadAlturaBUA"/>
-										<s:ComboBox selectedIndex="{getItemIndex(informacionConstruccion.irregularidadAlturaBUA,selectirregularidadAlturaBUA,'rvLowValue')}"  id="cbxirregularidadAlturaBUA" dataProvider="{selectirregularidadAlturaBUA}" creationComplete="cbxirregularidadAlturaBUA_creationCompleteHandler(event)" labelField="rvMeaning"  width="226" />
-										-->
-										<!--</mx:HBox>-->
-										<!--<mx:HBox width="100%">-->
-										<!--
-										<s:Label width="150" text="IrregularidadPlantaBUA"/>
-										<s:ComboBox selectedIndex="{getItemIndex(informacionConstruccion.irregularidadPlantaBUA,selectirregularidadPlantaBUA,'rvLowValue')}"  id="cbxirregularidadPlantaBUA" dataProvider="{selectirregularidadPlantaBUA}" creationComplete="cbxirregularidadPlantaBUA_creationCompleteHandler(event)" labelField="rvMeaning"  width="170" />
-										-->
-										<!--
-										<mx:Label width="130" text="MaterialConstruccionBUA"/>
-										<s:ComboBox selectedIndex="{getItemIndex(informacionConstruccion.materialConstruccionBUA,selectmaterialConstruccionBUA,'rvLowValue')}"  id="cbxmaterialConstruccionBUA" dataProvider="{selectmaterialConstruccionBUA}" creationComplete="cbxmaterialConstruccionBUA_creationCompleteHandler(event)" labelField="rvMeaning"  width="226" />
-										-->
-										<!--</mx:HBox>-->
-										<!--<mx:HBox width="100%">-->
-										<!--
-										<s:Label width="150" text="Otra Fachada"/>
-										<s:TextInput id="textoFachadaTextInput" text="{informacionConstruccion.textoFachada}" width="170" restrict="{restrict_}" maxChars="30" enabled="false"/>
-										-->
-										<!--
-										<s:Label width="130" text="Sobrepeso"/>
-										<s:ComboBox selectedIndex="{getItemIndex(informacionConstruccion.sobrePeso,selectsobrepeso,'rvLowValue')}"  id="cbxSobrepeso" dataProvider="{selectsobrepeso}" creationComplete="cbxSobrepeso_creationCompleteHandler(event)" labelField="rvMeaning"  width="226" enabled="{isEnabled}"/>
-										-->
-										<!--</mx:HBox>-->
-										<!--<mx:HBox width="100%">-->
-										<!--
-										<s:Label width="130" text="Asentamientos"/>
-										<s:ComboBox selectedIndex="{getItemIndex(informacionConstruccion.asentamientos,selectasentamientos,'rvLowValue')}"  id="cbxAsentamientos" dataProvider="{selectasentamientos}" creationComplete="cbxAsentamientos_creationCompleteHandler(event)" labelField="rvMeaning"  width="226" enabled="{isEnabled}"/>
-										-->
-										<!--</mx:HBox>-->
 										
-										<!--<mx:HBox width="100%">-->
-										<!--
-										<s:Label width="150" text="DanoPrevioSF"/>
-										<s:ComboBox selectedIndex="{getItemIndex(informacionConstruccion.danoPrevioSF,selectdanoPrevioSF,'rvLowValue')}"  id="cbxdanoPrevioSF" dataProvider="{selectdanoPrevioSF}" creationComplete="cbxdanoPrevioSF_creationCompleteHandler(event)" labelField="rvMeaning"  width="170" />
-										<mx:Label width="130" text="DanoReparadoSF"/>
-										<s:ComboBox selectedIndex="{getItemIndex(informacionConstruccion.danoReparadoSF,selectdanoReparadoSF,'rvLowValue')}"  id="cbxdanoReparadoSF" dataProvider="{selectdanoReparadoSF}" creationComplete="cbxdanoReparadoSF_creationCompleteHandler(event)" labelField="rvMeaning"  width="226"/>
-										-->
-										<!--</mx:HBox>-->
-										
-										<!--
-										<mx:HBox width="100%">											
-										<s:Label width="150" text="DanoPrevioBUA"/>
-										<s:ComboBox selectedIndex="{getItemIndex(informacionConstruccion.danoPrevioBUA,selectdanoPrevioBUA,'rvLowValue')}"  id="cbxdanoPrevioBUA" dataProvider="{selectdanoPrevioBUA}" creationComplete="cbxdanoPrevioBUA_creationCompleteHandler(event)" labelField="rvMeaning"  width="170" />
-										-->
-										<!--
-										<mx:Label width="130" text="ReparadosBUA"/>
-										<s:ComboBox selectedIndex="{getItemIndex(informacionConstruccion.reparadosBUA,selectreparadosBUA,'rvLowValue')}"  id="cbxreparadosBUA" dataProvider="{selectreparadosBUA}" creationComplete="cbxreparadosBUA_creationCompleteHandler(event)" labelField="rvMeaning"  width="226" />											
-										</mx:HBox>
-										-->										
-										<!--<mx:HBox width="100%">-->
-										<!--
-										<s:Label width="150" text="SimetriaAlturaSF"/>
-										<s:ComboBox selectedIndex="{getItemIndex(informacionConstruccion.simetriaAlturaSF,selectsimetriaAlturaSF,'rvLowValue')}"  id="cbxsimetriaAlturaSF" dataProvider="{selectsimetriaAlturaSF}" creationComplete="cbxsimetriaAlturaSF_creationCompleteHandler(event)" labelField="rvMeaning"  width="170" />
-										<mx:Label width="130" text="SimetriaPlantaSF"/>
-										<s:ComboBox selectedIndex="{getItemIndex(informacionConstruccion.simetriaPlantaSF,selectsimetriaPlantaSF,'rvLowValue')}"  id="cbxsimetriaPlantaSF" dataProvider="{selectsimetriaPlantaSF}" creationComplete="cbxsimetriaPlantaSF_creationCompleteHandler(event)" labelField="rvMeaning"  width="226" />
-										-->
-										<!--</mx:HBox>-->
-										<!--<mx:HBox width="100%">-->
-										<!--
-										<s:Label width="150" text="MaterialConstruccionSF"/>
-										<s:ComboBox selectedIndex="{getItemIndex(informacionConstruccion.materialConstruccionSF,selectMaterialConstruccionSF,'rvLowValue')}"  id="cbxMaterialConstruccionSF" dataProvider="{selectMaterialConstruccionSF}" creationComplete="cbxMaterialConstruccionSF_creationCompleteHandler(event)" labelField="rvMeaning"  width="170"/>
-										<mx:Label width="130" text="EstructuraReforzadaSF"/>
-										<s:ComboBox selectedIndex="{getItemIndex(informacionConstruccion.estructuraReforzadaSF,selectEstructuraReforzadaSF,'rvLowValue')}"  id="cbxEstructuraReforzadaSF" dataProvider="{selectEstructuraReforzadaSF}" creationComplete="cbxEstructuraReforzadaSF_creationCompleteHandler(event)" labelField="rvMeaning" width="226"/>
-										-->
-										<!--</mx:HBox>-->										
 									</mx:VBox>
 								</mx:Form>
 							</s:NavigatorContent>

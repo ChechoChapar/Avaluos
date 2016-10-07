@@ -4,7 +4,6 @@
 		   xmlns:mx="library://ns.adobe.com/flex/mx"
 		   xmlns:valueObjects="valueObjects.*"
 		   xmlns:comp="com.segurosbolivar.avaluos.componentes.*"
-		   width="100%" height="100%" 
 		   updateComplete="group1_updateCompleteHandler(event)" 
 		   initialize="group1_initializeHandler(event)" >
 	
@@ -22,6 +21,7 @@
 			import valueObjects.CampoRequeridoDTO;
 			import valueObjects.Departamento;
 			import valueObjects.Dominios;
+			import valueObjects.InformacionInmueble;
 			import valueObjects.Usuario;
 			
 			[Bindable]
@@ -47,6 +47,8 @@
 			
 			[Bindable]
 			public static var selectDepartamentoEscritura:ArrayCollection = new ArrayCollection() ;
+			
+			private static var matriculaExpresionRegular:String = "(^[\\w]{3,3}[-]{1}[\\w]+)"; 
 			
 			[Bindable]
 			public var selectciudadescritura:ArrayCollection = new ArrayCollection();
@@ -163,17 +165,17 @@
 					categoria.rvLowValue = rvLowvalue;
 					//Valida si es bodega o local
 					if(rvLowvalue == '5'){
-						parentDocument.isBodega = true;
-						parentDocument.isLocal = false;
+						parentDocument.parentDocument.parentDocument.isBodega = true;
+						parentDocument.parentDocument.parentDocument.isLocal = false;
 					}
 					else if (rvLowvalue == '6'){
-						parentDocument.isLocal = true;
-						parentDocument.isBodega = false;
+						parentDocument.parentDocument.parentDocument.isLocal = true;
+						parentDocument.parentDocument.parentDocument.isBodega = false;
 					}
 					else
 					{
-						parentDocument.isBodega = false;
-						parentDocument.isLocal = false;
+						parentDocument.parentDocument.parentDocument.isBodega = false;
+						parentDocument.parentDocument.parentDocument.isLocal = false;
 						
 						// if(cbxAltura != null){
 						// cbxAltura.selectedIndex = -1;
@@ -188,8 +190,8 @@
 				}
 				else 
 				{
-					parentDocument.isBodega = false;
-					parentDocument.isLocal = false;
+					parentDocument.parentDocument.parentDocument.isBodega = false;
+					parentDocument.parentDocument.parentDocument.isLocal = false;
 				}
 				
 				/*if(cbxAltura != null){
@@ -204,21 +206,25 @@
 				}**/
 				if(cbxUbiaccionLocal != null){
 					cbxUbiaccionLocal.selectedIndex = -1;
-					cbxUbiaccionLocal.setVisible(parentDocument.isLocal);
-					txtUbicacionLocal.setVisible(parentDocument.isLocal);
+					cbxUbiaccionLocal.setVisible(parentDocument.parentDocument.parentDocument.isLocal);
+					txtUbicacionLocal.setVisible(parentDocument.parentDocument.parentDocument.isLocal);
 				}
 			}
 			
 			protected function cbxConstUsoActual_creationCompleteHandler(event:FlexEvent):void
 			{
 				if(selectafirmarusoactual==null || selectafirmarusoactual.length<1)
-					selectafirmarusoactual = parentDocument.selectafirmacion ;
+					selectafirmarusoactual = parentDocument.parentDocument.parentDocument.selectafirmacion ;
 			}
 			
 			
 			protected function group1_updateCompleteHandler(event:FlexEvent):void
 			{
-				
+				if(parentDocument.parentDocument.parentDocument.parentDocument.avaluo != null){
+					getAvaluosPorIdResult.token = parentDocument.avaluosService.getAvaluosPorId(parentDocument.parentDocument.parentDocument.parentDocument.avaluo.idAvaluo);
+				}else{
+					parentDocument.avaluo = new Avaluo(); 
+				}
 			}
 			
 			
@@ -237,9 +243,9 @@
 			protected function cbxDepartamentoEscritura_focusOutHandler(event:FocusEvent):void
 			{
 				cbxDepartamentoEscritura_changeHandler(null);
-				if(informacionInmuebleVO.ciudadEscritura != null){
+				if(parentDocument.informacionInmuebleVO.ciudadEscritura != null){
 					selectciudadescritura = cbxDepartamentoEscritura.selectedItem.ciudadesDepto;
-					var posicionCiudad:int = Utilidad.getItemIndex(informacionInmuebleVO.ciudadEscritura,selectciudadescritura,'codAsobancaria');
+					var posicionCiudad:int = Utilidad.getItemIndex(parentDocument.informacionInmuebleVO.ciudadEscritura,parentDocument.parentDocument.parentDocument.selectciudadescritura,'codAsobancaria');
 					if(posicionCiudad >= 0)
 						cbxCiudadEscritura.selectedIndex = posicionCiudad ;  
 				} 				 
@@ -253,77 +259,72 @@
 				}
 			}
 			
-			protected function fechaEscrituraDateField_focusInHandler(event:FocusEvent):void
-			{
-				fechaEscrituraDateField.setFocus();  
-			}
-			
 			/**
 			 * Crea o Actualiza la informacuón del inmueble.
 			 * */
 			public function guardarInmueble(avaluo:Avaluo, myUsuario:Usuario):InformacionInmueble{
 				try{
-					informacionInmuebleVO.avaluo = avaluo;	
+					parentDocument.informacionInmuebleVO.avaluo = avaluo;	
 					
 					if(avaluo.informacionInmueble != null && avaluo.informacionInmueble.length >0){
 						var inmueble:InformacionInmueble = avaluo.informacionInmueble.getItemAt(0) as InformacionInmueble; 
 						if(inmueble != null){
-							informacionInmuebleVO.idInfinmueble = inmueble.idInfinmueble ; 
-							informacionInmuebleVO.fechaCreacion = inmueble.fechaCreacion ; 
-							informacionInmuebleVO.usuarioCreacion = inmueble.usuarioCreacion ; 
+							parentDocument.informacionInmuebleVO.idInfinmueble = inmueble.idInfinmueble ; 
+							parentDocument.informacionInmuebleVO.fechaCreacion = inmueble.fechaCreacion ; 
+							parentDocument.informacionInmuebleVO.usuarioCreacion = inmueble.usuarioCreacion ; 
 						}
 					}
 					
 					if(cbxTipoVivienda.selectedIndex > -1) {
-						informacionInmuebleVO.tipoVivienda = cbxTipoVivienda.selectedItem.rvLowValue;
+						parentDocument.informacionInmuebleVO.tipoVivienda = cbxTipoVivienda.selectedItem.rvLowValue;
 					}
 					if(cbxCategoria.selectedIndex > -1) {
-						informacionInmuebleVO.idCategoria = cbxCategoria.selectedItem.rvLowValue;
+						parentDocument.informacionInmuebleVO.idCategoria = cbxCategoria.selectedItem.rvLowValue;
 					}
 					if(cbxUbicacion2.selectedIndex > -1) {
-						informacionInmuebleVO.ubicacion2 = cbxUbicacion2.selectedItem.rvLowValue;
+						parentDocument.informacionInmuebleVO.ubicacion2 = cbxUbicacion2.selectedItem.rvLowValue;
 					}
 					if(cbxUso.selectedIndex > -1) {
-						informacionInmuebleVO.usoInmueble = cbxUso.selectedItem.rvLowValue;
+						parentDocument.informacionInmuebleVO.usoInmueble = cbxUso.selectedItem.rvLowValue;
 					}
 					
 					/*12052016 error*/
 					
 					if(cbxClase.selectedIndex > -1) {
-						informacionInmuebleVO.claseInmueble = cbxClase.selectedItem.rvLowValue;
+						parentDocument.informacionInmuebleVO.claseInmueble = cbxClase.selectedItem.rvLowValue;
 					}
 					/*12052016 error*/
 					
 					if(cbxConstUsoActual.selectedIndex > -1) {
-						informacionInmuebleVO.ediContUso = cbxConstUsoActual.selectedItem.rvLowValue;
+						parentDocument.informacionInmuebleVO.ediContUso = cbxConstUsoActual.selectedItem.rvLowValue;
 					}
 					if(cbxDepartamentoEscritura.selectedIndex > -1) {
-						informacionInmuebleVO.departamentoEscritura = cbxDepartamentoEscritura.selectedItem.codAsobancaria;
+						parentDocument.informacionInmuebleVO.departamentoEscritura = cbxDepartamentoEscritura.selectedItem.codAsobancaria;
 					}
 					if(cbxCiudadEscritura.selectedIndex > -1) {
-						informacionInmuebleVO.ciudadEscritura = cbxCiudadEscritura.selectedItem.codAsobancaria;
+						parentDocument.informacionInmuebleVO.ciudadEscritura = cbxCiudadEscritura.selectedItem.codAsobancaria;
 					}
 					if(cbxUbiaccionLocal.selectedIndex > -1) {
-						informacionInmuebleVO.ubicacion3 = cbxUbiaccionLocal.selectedItem.rvLowValue;
+						parentDocument.informacionInmuebleVO.ubicacion3 = cbxUbiaccionLocal.selectedItem.rvLowValue;
 					}
 					
-					informacionInmuebleVO.chip = chipTextInput.text;
-					informacionInmuebleVO.otroUsoInmueble = otroUsoInmuebleTextInput.text;
-					informacionInmuebleVO.otroClase = otroClaseTextInput.text;
-					informacionInmuebleVO.matriculaInmobiliariaPpal1 = matriculaInmobiliariaPpal1TextInput3.text;
-					informacionInmuebleVO.matriculaInmobiliariaPpal2 = matriculaInmobiliariaPpal2TextInput.text;
-					informacionInmuebleVO.matriculaInmobiliariaGaraje1 = matriculaInmobiliariaGaraje1TextInput.text;
-					informacionInmuebleVO.matriculaInmobiliariaGaraje2 = matriculaInmobiliariaGaraje2TextInput.text;
-					informacionInmuebleVO.matriculaInmobiliariaGaraje3 = matriculaInmobiliariaGaraje3TextInput.text;
-					informacionInmuebleVO.matriculaInmobiliariaGaraje4 = matriculaInmobiliariaGaraje4TextInput.text;
-					informacionInmuebleVO.matriculaInmobiliariaGaraje5 = matriculaInmobiliariaGaraje5TextInput.text;
-					informacionInmuebleVO.matriculaInmobiliariaDeposito1 = matriculaInmobiliariaDeposito1TextInput.text;
-					informacionInmuebleVO.matriculaInmobiliariaDeposito2 = txtMatriculaInmDeposito2.text;
-					informacionInmuebleVO.numeroEscritura = numeroEscrituraTextInput.text;
-					informacionInmuebleVO.notaria = notariaTextInput.text;
-					informacionInmuebleVO.fechaEscritura = fechaEscrituraDateField.selectedDate;
-					informacionInmuebleVO.usuarioTransaccion = myUsuario.codigoUsuario;
-					informacionInmuebleVO.catastralSF = catastralTextInput.text;
+					parentDocument.informacionInmuebleVO.chip = chipTextInput.text;
+					parentDocument.informacionInmuebleVO.otroUsoInmueble = otroUsoInmuebleTextInput.text;
+					parentDocument.informacionInmuebleVO.otroClase = otroClaseTextInput.text;
+					parentDocument.informacionInmuebleVO.matriculaInmobiliariaPpal1 = matriculaInmobiliariaPpal1TextInput3.text;
+					parentDocument.informacionInmuebleVO.matriculaInmobiliariaPpal2 = matriculaInmobiliariaPpal2TextInput.text;
+					parentDocument.informacionInmuebleVO.matriculaInmobiliariaGaraje1 = matriculaInmobiliariaGaraje1TextInput.text;
+					parentDocument.informacionInmuebleVO.matriculaInmobiliariaGaraje2 = matriculaInmobiliariaGaraje2TextInput.text;
+					parentDocument.informacionInmuebleVO.matriculaInmobiliariaGaraje3 = matriculaInmobiliariaGaraje3TextInput.text;
+					parentDocument.informacionInmuebleVO.matriculaInmobiliariaGaraje4 = matriculaInmobiliariaGaraje4TextInput.text;
+					parentDocument.informacionInmuebleVO.matriculaInmobiliariaGaraje5 = matriculaInmobiliariaGaraje5TextInput.text;
+					parentDocument.informacionInmuebleVO.matriculaInmobiliariaDeposito1 = matriculaInmobiliariaDeposito1TextInput.text;
+					parentDocument.informacionInmuebleVO.matriculaInmobiliariaDeposito2 = txtMatriculaInmDeposito2.text;
+					parentDocument.informacionInmuebleVO.numeroEscritura = numeroEscrituraTextInput.text;
+					parentDocument.informacionInmuebleVO.notaria = notariaTextInput.text;
+					parentDocument.informacionInmuebleVO.fechaEscritura = fechaEscrituraDateField.selectedDate;
+					parentDocument.informacionInmuebleVO.usuarioTransaccion = myUsuario.codigoUsuario;
+					parentDocument.informacionInmuebleVO.catastralSF = catastralTextInput.text;
 					
 				}catch(error:Error){
 					error.getStackTrace(); 
@@ -331,7 +332,7 @@
 					parentDocument.imprimirEstadoProceso(error.message);
 				}
 				
-				return informacionInmuebleVO; 
+				return parentDocument.informacionInmuebleVO; 
 				
 			}
 			
@@ -346,6 +347,7 @@
 			}
 			
 			public function validarCamposVacios():Boolean{
+				ejecutarValidacionCamposObligatorios(0,true); 
 				return true; 
 			}
 			
@@ -474,17 +476,22 @@
 			protected function getAvaluosPorIdResult_resultHandler(event:ResultEvent):void
 			{
 				//Se instancian nuevamente todos los objetos
+				parentDocument.informacionInmuebleVO = new InformacionInmueble(); 
+				parentDocument.avaluo = getAvaluosPorIdResult.lastResult as Avaluo;
 				
-				
-				informacionInmuebleVO = new InformacionInmueble(); 
-				
+				if(parentDocument.avaluo != null){ 
+					if(parentDocument.avaluo.informacionInmueble != null && parentDocument.avaluo.informacionInmueble.length > 0){
+						parentDocument.informacionInmuebleVO = parentDocument.avaluo.informacionInmueble.getItemAt(0) as InformacionInmueble ;
+					}
+					validateNow();
+				}
 			}
 			
 			/**
 			 *  Imprime estado de las novedades durante el registro del formultario 
 			 **/			
 			public function imprimirEstadoProceso(mensaje:String):void{
-				mensajes.text = mensaje ; 
+				parentDocument.parentDocument.parentDocument.mensajes.text = mensaje ; 
 			}
 			
 			protected function button1_clickHandler(event:MouseEvent):void{
@@ -494,19 +501,29 @@
 				var mensajeTransaccion:String = ""; 
 				var avaluoTmp:Avaluo = new Avaluo();
 				
-				mensajeTransaccion = "Transacción exitosa. Bloque: Información Inmueble";
+				mensajeTransaccion = "Guardando Información Inmueble... ";
 				
 				var inmuebleList:ArrayCollection = new ArrayCollection();
 				
-				informacionInmuebleVO = guardarInmueble(parentDocument.parentDocument.parentDocument.avaluoVO, parentApplication.myUsuario);
+				parentDocument.informacionInmuebleVO = guardarInmueble(parentDocument.parentDocument.parentDocument.avaluoVO, parentApplication.myUsuario);
 				
-				createResult2.token = parentDocument.barrioService.update(informacionInmuebleVO);
+				createResult2.token = parentDocument.inmuebleService.update(parentDocument.informacionInmuebleVO);
 				
-				inmuebleList.addItem(informacionInmuebleVO); 
-				parentDocument.parentDocument.parentDocument.informacionInmueble = inmuebleList;
-				parentDocument.avaluoVO = avaluoTmp ;
+				inmuebleList.addItem(parentDocument.informacionInmuebleVO); 
+				parentDocument.parentDocument.parentDocument.avaluoVO.informacionInmueble = inmuebleList;
 				
+				if(parentDocument.parentDocument.parentDocument.avaluoVO.usuarioCreacion == null)
+					auditoriaAvaluo.usuarioCreacion.text = parentApplication.myUsuario.cedulaEmpleado ; 
+				else 
+					auditoriaAvaluo.usuarioCreacion.text = parentDocument.parentDocument.parentDocument.avaluoVO.usuarioCreacion ;
 				
+				if(parentDocument.parentDocument.parentDocument.avaluoVO.fechaCreacion != null)
+					auditoriaAvaluo.fechaCreacion.selectedDate = parentDocument.parentDocument.parentDocument.avaluoVO.fechaCreacion ; 
+				else 
+					auditoriaAvaluo.fechaCreacion.selectedDate = new Date() ;
+				
+				auditoriaAvaluo.usuarioTransaccion.text = parentApplication.myUsuario.cedulaEmpleado ; 
+				auditoriaAvaluo.fechaTransaccion.selectedDate = new Date() ;
 			}
 			
 			protected function button2_clickHandler(event:MouseEvent):void
@@ -520,8 +537,8 @@
 			protected function createResult2_resultHandler(event:ResultEvent):void
 			{
 				if(createResult2 != null && createResult2.lastResult != null){
-					imprimirEstadoProceso("Transacción exitosa. Info: Informacion Básica");
-					informacionInmuebleVO = createResult2.lastResult;
+					imprimirEstadoProceso("Transacción exitosa. Bloque Información Inmueble");
+					parentDocument.informacionInmuebleVO = createResult2.lastResult;
 					parentDocument.nextTabAvaluo(); 
 				}
 			}
@@ -532,7 +549,26 @@
 	
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
-		<valueObjects:InformacionInmueble id="informacionInmuebleVO"/>
+		
+		<mx:RegExpValidator id="regExpV" 
+							source="{matriculaInmobiliariaPpal1TextInput3}" property="text" 
+							expression="{matriculaExpresionRegular}" 
+							valid="imprimirEstadoProceso('')"
+							required="true"
+							requiredFieldError="Ingrese un formato de matrícula inmobiliaria"
+							invalid="imprimirEstadoProceso('El formato de la expresion es XXX-XXXXX')"
+							noExpressionError="La matrícula inmobiliaria principal es requerida." 
+							noMatchError="El formato es invalido"
+							/>
+		
+		<mx:DateValidator id="fechaEscrituraDateFieldVal" source="{fechaEscrituraDateField}" property="text" inputFormat="dd/mm/yyyy"
+						  formatError= "El formato de la fecha no es el correcto, por favor verifique." 
+						  invalidCharError="El formato de la fecha contiene carácteres no válidos, por favor verifique."
+						  wrongDayError="Ingrese un dia del més válido."
+						  wrongLengthError="Ingrese la longitud de la fecha correcta." 
+						  wrongMonthError="Ingrese un més válido, entre 1 y 12."
+						  wrongYearError="Ingrese un año válido, entre 0 y 9999."
+						  />
 		
 		<s:CallResponder id="getValoresDominioResult6" result="getValoresDominioResult6_resultHandler(event)"/>
 		<s:CallResponder id="getValoresDominioResult7" result="getValoresDominioResult7_resultHandler(event)"/>
@@ -541,27 +577,28 @@
 		<s:CallResponder id="getValoresDominioResult10" result="getValoresDominioResult10_resultHandler(event)"/>
 		<s:CallResponder id="getValoresDominioResult11" result="getValoresDominioResult11_resultHandler(event)"/>
 		<s:CallResponder id="createResult2" result="createResult2_resultHandler(event)"/>
+		<s:CallResponder id="getAvaluosPorIdResult" result="getAvaluosPorIdResult_resultHandler(event)"/>
 		
 	</fx:Declarations>
 	
-	<s:Group>
+	<s:Group width="{parentDocument.parentDocument.parentDocument.tn.width - 10}" height="{parentDocument.parentDocument.parentDocument.tn.height -10}">
 		<s:layout>
 			<s:VerticalLayout/>
 		</s:layout>
 		
 		<s:Group width="100%">
 			<s:layout>
-				<s:HorizontalLayout /> 
+				<s:HorizontalLayout paddingLeft="10" paddingTop="5"/> 
 			</s:layout>
 			
 			<s:Label width="120" text="Tipo Vivienda" />
-			<s:ComboBox width="120" id="cbxTipoVivienda" dataProvider="{selecttipovivienda}" updateComplete="cbxTipoVivienda_creationCompleteHandler(event)" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(informacionInmuebleVO.tipoVivienda,selecttipovivienda,'rvLowValue')}" enabled="true" tabIndex="69" />				
+			<s:ComboBox width="120" id="cbxTipoVivienda" dataProvider="{selecttipovivienda}" updateComplete="cbxTipoVivienda_creationCompleteHandler(event)" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(parentDocument.informacionInmuebleVO.tipoVivienda,selecttipovivienda,'rvLowValue')}" enabled="true" tabIndex="69" />				
 			
 			<s:Label width="120" text="Uso" />
-			<s:ComboBox width="120" id="cbxUso" dataProvider="{selectusoinmueble}" updateComplete="cbxUso_creationCompleteHandler(event)" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(informacionInmuebleVO.usoInmueble,selectusoinmueble,'rvLowValue')}" enabled="true" change="cbxUso_changeHandler(event)" tabIndex="70"/>	
+			<s:ComboBox width="120" id="cbxUso" dataProvider="{selectusoinmueble}" updateComplete="cbxUso_creationCompleteHandler(event)" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(parentDocument.informacionInmuebleVO.usoInmueble,selectusoinmueble,'rvLowValue')}" enabled="true" change="cbxUso_changeHandler(event)" tabIndex="70"/>	
 			
 			<s:Label width="120" text="Otro Uso" />
-			<s:TextInput width="120" id="otroUsoInmuebleTextInput" text="{informacionInmuebleVO.otroUsoInmueble}" maxChars="30" restrict="{Utilidad.restrict_}" enabled="false" tabIndex="74"/>	
+			<s:TextInput width="120" id="otroUsoInmuebleTextInput" text="{parentDocument.informacionInmuebleVO.otroUsoInmueble}" maxChars="30" restrict="{Utilidad.restrict_}" enabled="false" tabIndex="74"/>	
 			
 			
 		</s:Group>
@@ -569,129 +606,124 @@
 		
 		<s:Group width="100%">
 			<s:layout>
-				<s:HorizontalLayout /> 
+				<s:HorizontalLayout paddingLeft="10" paddingTop="5"/> 
 			</s:layout>
 			
 			<s:Label width="120" text="Clase"/>
-			<s:ComboBox width="120" id="cbxClase" dataProvider="{selectclaseinmueble}" updateComplete="cbxClase_creationCompleteHandler(event)" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(informacionInmuebleVO.claseInmueble,selectclaseinmueble,'rvLowValue')}" enabled="true" change="cbxClase_changeHandler(event)" tabIndex="71"/>
+			<s:ComboBox width="120" id="cbxClase" dataProvider="{selectclaseinmueble}" updateComplete="cbxClase_creationCompleteHandler(event)" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(parentDocument.informacionInmuebleVO.claseInmueble,selectclaseinmueble,'rvLowValue')}" enabled="true" change="cbxClase_changeHandler(event)" tabIndex="71"/>
 			
 			<s:Label width="120" text="Otro Clase"/>
-			<s:TextInput width="120" id="otroClaseTextInput" text="{informacionInmuebleVO.otroClase}" maxChars="30" restrict="{Utilidad.restrict_}" enabled="false" tabIndex="75"/>	
+			<s:TextInput width="120" id="otroClaseTextInput" text="{parentDocument.informacionInmuebleVO.otroClase}" maxChars="30" restrict="{Utilidad.restrict_}" enabled="false" tabIndex="75"/>	
 			
 			<s:Label width="120" text="Categoria" />
-			<s:ComboBox width="120" id="cbxCategoria" dataProvider="{selectcategoria}" updateComplete="cbxCategoria_creationCompleteHandler(event)" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(informacionInmuebleVO.idCategoria,selectcategoria,'rvLowValue')}" enabled="true" change="cbxCategoria_changeHandler(event)" tabIndex="72"/>
+			<s:ComboBox width="120" id="cbxCategoria" dataProvider="{selectcategoria}" updateComplete="cbxCategoria_creationCompleteHandler(event)" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(parentDocument.informacionInmuebleVO.idCategoria,selectcategoria,'rvLowValue')}" enabled="true" change="cbxCategoria_changeHandler(event)" tabIndex="72"/>
 		</s:Group>
 		
 		<s:Group width="100%">
 			<s:layout>
-				<s:HorizontalLayout /> 
+				<s:HorizontalLayout paddingLeft="10" paddingTop="5"/> 
 			</s:layout>
 			
 			<s:Label width="120" text="Ubicación" />
-			<s:ComboBox width="120" id="cbxUbicacion2" dataProvider="{selectubicacion2}" updateComplete="cbxUbicacion2_creationCompleteHandler(event)" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(informacionInmuebleVO.ubicacion2,selectubicacion2,'rvLowValue')}" enabled="true" tabIndex="73" />
+			<s:ComboBox width="120" id="cbxUbicacion2" dataProvider="{selectubicacion2}" updateComplete="cbxUbicacion2_creationCompleteHandler(event)" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(parentDocument.informacionInmuebleVO.ubicacion2,selectubicacion2,'rvLowValue')}" enabled="true" tabIndex="73" />
 			
 			<s:Label width="120" text="Construido Para el Uso Actual"/>
-			<s:ComboBox width="120" id="cbxConstUsoActual" dataProvider="{selectafirmarusoactual}" updateComplete="cbxConstUsoActual_creationCompleteHandler(event)" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(informacionInmuebleVO.ediContUso,selectafirmarusoactual,'rvLowValue')}" enabled="true" tabIndex="76"/>
+			<s:ComboBox width="120" id="cbxConstUsoActual" dataProvider="{selectafirmarusoactual}" updateComplete="cbxConstUsoActual_creationCompleteHandler(event)" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(parentDocument.informacionInmuebleVO.ediContUso,selectafirmarusoactual,'rvLowValue')}" enabled="true" tabIndex="76"/>
 			
-			<s:Label width="120" id="txtUbicacionLocal" text="Ubicacion Local" visible="{parentDocument.isLocal}"  />
-			<s:ComboBox width="120" id="cbxUbiaccionLocal" dataProvider="{selectubicacion3}" updateComplete="cbxUbicacion3_creationCompleteHandler(event)" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(informacionInmuebleVO.ubicacion3,selectubicacion3,'rvLowValue')}" enabled="true" visible="{parentDocument.isLocal}" tabIndex="77" />
+			<s:Label width="120" id="txtUbicacionLocal" text="Ubicacion Local" visible="{parentDocument.parentDocument.parentDocument.isLocal}"  />
+			<s:ComboBox width="120" id="cbxUbiaccionLocal" dataProvider="{selectubicacion3}" updateComplete="cbxUbicacion3_creationCompleteHandler(event)" labelField="rvMeaning" selectedIndex="{Utilidad.getItemIndex(parentDocument.informacionInmuebleVO.ubicacion3,selectubicacion3,'rvLowValue')}" enabled="true" visible="{parentDocument.parentDocument.parentDocument.isLocal}" tabIndex="77" />
 		</s:Group>
-		
-		<mx:HRule width="100%"> </mx:HRule>
 		
 		<s:Group width="100%">
 			<s:layout>
-				<s:HorizontalLayout /> 
+				<s:HorizontalLayout paddingLeft="10" paddingTop="5"/> 
 			</s:layout>
 			
 			<s:Label width="120"  text="Notaria"/>
-			<s:TextInput width="120" id="notariaTextInput" text="{informacionInmuebleVO.notaria}" maxChars="5" restrict="{Utilidad.restrict_}" enabled="true" tabIndex="78"/>
+			<s:TextInput width="120" id="notariaTextInput" text="{parentDocument.informacionInmuebleVO.notaria}" maxChars="5" restrict="{Utilidad.restrict_}" enabled="true" tabIndex="78"/>
 			
 			<s:Label width="120" text="Número Escritura"/>
-			<s:TextInput width="120" id="numeroEscrituraTextInput" text="{informacionInmuebleVO.numeroEscritura}" restrict="{Utilidad.restrict_}" maxChars="5" enabled="true" tabIndex="79"/>
+			<s:TextInput width="120" id="numeroEscrituraTextInput" text="{parentDocument.informacionInmuebleVO.numeroEscritura}" restrict="{Utilidad.restrict_}" maxChars="5" enabled="true" tabIndex="79"/>
 			
 		</s:Group>
 		
 		<s:Group width="100%">
 			<s:layout>
-				<s:HorizontalLayout /> 
+				<s:HorizontalLayout paddingLeft="10" paddingTop="5"/> 
 			</s:layout>
 			
 			<s:Label width="120" text="Departamento Escritura" />
-			<s:ComboBox width="120" id="cbxDepartamentoEscritura" dataProvider="{parentDocument.selectDepartamento}" labelField="departamento" selectedIndex="{Utilidad.getItemIndex(informacionInmuebleVO.departamentoEscritura,parentDocument.selectDepartamento,'codAsobancaria')}" updateComplete="cbxDepartamentoEscritura_creationCompleteHandler(event)" change="cbxDepartamentoEscritura_changeHandler(event)" enabled="true" tabIndex="79" focusOut="cbxDepartamentoEscritura_focusOutHandler(event)"/>
+			<s:ComboBox width="120" id="cbxDepartamentoEscritura" dataProvider="{parentDocument.parentDocument.parentDocument.selectDepartamento}" labelField="departamento" selectedIndex="{Utilidad.getItemIndex(parentDocument.informacionInmuebleVO.departamentoEscritura,parentDocument.parentDocument.parentDocument.selectDepartamento,'codAsobancaria')}" updateComplete="cbxDepartamentoEscritura_creationCompleteHandler(event)" change="cbxDepartamentoEscritura_changeHandler(event)" enabled="true" tabIndex="79" focusOut="cbxDepartamentoEscritura_focusOutHandler(event)"/>
 			
 			<s:Label width="120" text="Ciudad Escritura" />
-			<s:ComboBox width="120" id="cbxCiudadEscritura" labelField="ciudad" dataProvider="{selectciudadescritura}" selectedIndex="{Utilidad.getItemIndex(informacionInmuebleVO.ciudadEscritura,selectciudadescritura,'codAsobancaria')}"  enabled="true" tabIndex="80" change="cbxCiudadEscritura_changeHandler(event)"/>
+			<s:ComboBox width="120" id="cbxCiudadEscritura" labelField="ciudad" dataProvider="{selectciudadescritura}" selectedIndex="{Utilidad.getItemIndex(parentDocument.informacionInmuebleVO.ciudadEscritura,selectciudadescritura,'codAsobancaria')}"  enabled="true" tabIndex="80" change="cbxCiudadEscritura_changeHandler(event)"/>
 			
 		</s:Group>
 		
 		<s:Group width="100%">
 			<s:layout>
-				<s:HorizontalLayout /> 
+				<s:HorizontalLayout paddingLeft="10" paddingTop="5"/> 
 			</s:layout>
-			<s:Label width="120" text="Fecha Escritura"/>
-			
-			<mx:DateField width="120" id="fechaEscrituraDateField" selectedDate="{informacionInmuebleVO.fechaEscritura}" formatString="DD/MM/YYYY" updateComplete="Utilidad.dateChooser_init(fechaEscrituraDateField)" enabled="true" yearNavigationEnabled="true" tabIndex="80" focusIn="fechaEscrituraDateField_focusInHandler(event)"/>
+			<s:Label width="120" text="Fecha Escritura"/>			
+			<mx:DateField width="120" id="fechaEscrituraDateField" selectedDate="{parentDocument.informacionInmuebleVO.fechaEscritura}" formatString="DD/MM/YYYY" creationComplete="Utilidad.dateChooser_init(fechaEscrituraDateField)" enabled="true"  yearNavigationEnabled="true" tabIndex="80" editable="true" />
 			
 			<s:Label width="120" text="Matrícula Inmobiliaria Ppal1"/>
-			<s:TextInput width="120" id="matriculaInmobiliariaPpal1TextInput3" text="{informacionInmuebleVO.matriculaInmobiliariaPpal1}" maxChars="20" restrict="0-9,a-z,A-Z" enabled="true" tabIndex="81"/>
+			<s:TextInput width="120" id="matriculaInmobiliariaPpal1TextInput3" text="{parentDocument.informacionInmuebleVO.matriculaInmobiliariaPpal1}" maxChars="20" enabled="true" tabIndex="81"/>
 			
 			<s:Label width="120" text="Matrícula Inmobiliaria Ppal2"/>
-			<s:TextInput width="120" id="matriculaInmobiliariaPpal2TextInput" text="{informacionInmuebleVO.matriculaInmobiliariaPpal2}" maxChars="20" restrict="0-9,a-z,A-Z" enabled="true" tabIndex="82"/>
+			<s:TextInput width="120" id="matriculaInmobiliariaPpal2TextInput" text="{parentDocument.informacionInmuebleVO.matriculaInmobiliariaPpal2}" maxChars="20" restrict="0-9,a-z,A-Z" enabled="true" tabIndex="82"/>
 			
 		</s:Group>
 		<s:Group width="100%">
 			<s:layout>
-				<s:HorizontalLayout /> 
+				<s:HorizontalLayout paddingLeft="10" paddingTop="5"/> 
 			</s:layout>
 			<s:Label width="120" text="Matrícula Inmobiliaria Garaje 1"/>
-			<s:TextInput width="120" id="matriculaInmobiliariaGaraje1TextInput" text="{informacionInmuebleVO.matriculaInmobiliariaGaraje1}" maxChars="20" restrict="0-9,a-z,A-Z" enabled="true" tabIndex="83"/>
+			<s:TextInput width="120" id="matriculaInmobiliariaGaraje1TextInput" text="{parentDocument.informacionInmuebleVO.matriculaInmobiliariaGaraje1}" maxChars="20" restrict="0-9,a-z,A-Z" enabled="true" tabIndex="83"/>
 			
 			<s:Label width="120" text="Matrícula Inmobiliaria Garaje 2"/>
-			<s:TextInput width="120" id="matriculaInmobiliariaGaraje2TextInput" text="{informacionInmuebleVO.matriculaInmobiliariaGaraje2}" maxChars="20" restrict="0-9,a-z,A-Z" enabled="true" tabIndex="84"/>
+			<s:TextInput width="120" id="matriculaInmobiliariaGaraje2TextInput" text="{parentDocument.informacionInmuebleVO.matriculaInmobiliariaGaraje2}" maxChars="20" restrict="0-9,a-z,A-Z" enabled="true" tabIndex="84"/>
 			
 			<s:Label width="120" text="Matrícula Inmobiliaria Garaje 3"/>
-			<s:TextInput width="120" id="matriculaInmobiliariaGaraje3TextInput" text="{informacionInmuebleVO.matriculaInmobiliariaGaraje3}" maxChars="20" restrict="0-9,a-z,A-Z" enabled="true" tabIndex="85"/>
+			<s:TextInput width="120" id="matriculaInmobiliariaGaraje3TextInput" text="{parentDocument.informacionInmuebleVO.matriculaInmobiliariaGaraje3}" maxChars="20" restrict="0-9,a-z,A-Z" enabled="true" tabIndex="85"/>
 			
 		</s:Group>		
 		<s:Group width="100%">
 			<s:layout>
-				<s:HorizontalLayout /> 
+				<s:HorizontalLayout paddingLeft="10" paddingTop="5"/> 
 			</s:layout>
 			
 			<s:Label width="120" text="Matrícula Inmobiliaria Garaje 4"/>
-			<s:TextInput width="120" id="matriculaInmobiliariaGaraje4TextInput" text="{informacionInmuebleVO.matriculaInmobiliariaGaraje4}" maxChars="20" restrict="0-9,a-z,A-Z" enabled="true" tabIndex="86"/>
+			<s:TextInput width="120" id="matriculaInmobiliariaGaraje4TextInput" text="{parentDocument.informacionInmuebleVO.matriculaInmobiliariaGaraje4}" maxChars="20" restrict="0-9,a-z,A-Z" enabled="true" tabIndex="86"/>
 			
 			<s:Label width="120" text="Matrícula Inmobiliaria Garaje 5"/>
-			<s:TextInput width="120" id="matriculaInmobiliariaGaraje5TextInput" text="{informacionInmuebleVO.matriculaInmobiliariaGaraje5}" maxChars="20" restrict="0-9,a-z,A-Z" enabled="true" tabIndex="87"/>
+			<s:TextInput width="120" id="matriculaInmobiliariaGaraje5TextInput" text="{parentDocument.informacionInmuebleVO.matriculaInmobiliariaGaraje5}" maxChars="20" restrict="0-9,a-z,A-Z" enabled="true" tabIndex="87"/>
 			
 			<s:Label width="120" text="Matrícula Inmobiliaria Deposito 1"/>
-			<s:TextInput width="120" id="matriculaInmobiliariaDeposito1TextInput" text="{informacionInmuebleVO.matriculaInmobiliariaDeposito1}" maxChars="20" restrict="0-9,a-z,A-Z" enabled="true" tabIndex="88"/>
+			<s:TextInput width="120" id="matriculaInmobiliariaDeposito1TextInput" text="{parentDocument.informacionInmuebleVO.matriculaInmobiliariaDeposito1}" maxChars="20" restrict="0-9,a-z,A-Z" enabled="true" tabIndex="88"/>
 			
 		</s:Group>
 		<s:Group width="100%">
 			<s:layout>
-				<s:HorizontalLayout /> 
+				<s:HorizontalLayout paddingLeft="10" paddingTop="5"/> 
 			</s:layout>
 			
 			<s:Label width="120" text="Matrícula Inmobiliaria Deposito 2"/>
-			<s:TextInput width="120" id="txtMatriculaInmDeposito2" text="{informacionInmuebleVO.matriculaInmobiliariaDeposito2}" maxChars="20" restrict="0-9,a-z,A-Z" enabled="true" tabIndex="89"/>
+			<s:TextInput width="120" id="txtMatriculaInmDeposito2" text="{parentDocument.informacionInmuebleVO.matriculaInmobiliariaDeposito2}" maxChars="20" restrict="0-9,a-z,A-Z" enabled="true" tabIndex="89"/>
 			
 			<s:Label width="120" text="Chip"/>
-			<s:TextInput width="120" id="chipTextInput" text="{informacionInmuebleVO.chip}" maxChars="20" restrict="{Utilidad.restrict_}" enabled="true" tabIndex="90"/>
+			<s:TextInput width="120" id="chipTextInput" text="{parentDocument.informacionInmuebleVO.chip}" maxChars="20" restrict="{Utilidad.restrict_}" enabled="true" tabIndex="90"/>
 			
 			<s:Label width="120" text="Número Catastral"/>
-			<s:TextInput width="120" id="catastralTextInput" text="{informacionInmuebleVO.catastralSF}" maxChars="20" tabIndex="100"/>
+			<s:TextInput width="120" id="catastralTextInput" text="{parentDocument.informacionInmuebleVO.catastralSF}" maxChars="20" tabIndex="100"/>
 			
 		</s:Group>
-		<comp:AuditoriaPanel id="auditoriaAvaluo">
+		<comp:AuditoriaPanel id="auditoriaAvaluo" >
 			
 		</comp:AuditoriaPanel>
-		<s:HGroup>				 
+		<s:HGroup paddingLeft="10" paddingRight="10" width="100%">				 
 			<mx:Button id="btGuardar" label="Guardar"  click="button1_clickHandler(event)"/>
-			<mx:Button label="Cancelar" click="button2_clickHandler(event)"/>
-			<s:Label text="Select the tabs to change the panel." paddingLeft="10" width="100%" 
-					 id="mensajes" color="#FD0000" fontWeight="bold" textDecoration="underline" height="15"/>
+			<mx:Button label="Cancelar" click="button2_clickHandler(event)"/>			
 		</s:HGroup>
 	</s:Group>
 </mx:Module>

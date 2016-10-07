@@ -15,7 +15,7 @@ url.keystore=/home/app/wlogic/certificados/pruebas/ambpruebas.jks
 pass.keystore=Amp11B0l1v4r
 datasource=jdbc/avaluosDS
 #Local 1 ,Servidor 0
-ambiente.local=1
+ambiente.local=0
 
 reportes=reportes
 tmp=tmp/

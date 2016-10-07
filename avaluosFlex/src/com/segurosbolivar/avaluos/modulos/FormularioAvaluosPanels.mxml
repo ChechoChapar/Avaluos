@@ -5,8 +5,9 @@
 		   xmlns:comp="com.segurosbolivar.avaluos.componentes.*"
 		   implements="modulos.IModule"
 		   xmlns:services="services.*"
-		   width="98%" height="98%" 		  
+		   width="100%" height="100%" 		  
 		   initialize="module1_initializeHandler(event)" 
+		   updateComplete="module1_updateCompleteHandler(event)"
 		   xmlns:valueObjects="valueObjects.*" xmlns:local="*">
 
 	<fx:Script>
@@ -62,6 +63,8 @@
 			
 			[Bindable]
 			public var selectDepartamento:ArrayCollection = new ArrayCollection() ;
+			
+			public var selectdescliq0:ArrayCollection = new ArrayCollection();
 			
 			[Bindable]
 			var myListaPermisos:Permiso=null;
@@ -138,103 +141,7 @@
 				var mensajeTransaccion:String = "Transacción exitosa. Bloque: Información Básica"; 
 				var avaluoTmp:Avaluo = new Avaluo();
 				
-				/**
-				if(informacionInmueblePanelVO != null){
-					mensajeTransaccion = "Transacción exitosa. Bloque: Información Inmueble";
-					
-					var inmuebleList:ArrayCollection = new ArrayCollection();
-					 
-					if(avaluoVO == null)
-						avaluoTmp = informacionBasicaPanelVO.avaluo2; 
-					else 
-						avaluoTmp = avaluoVO ;
-					
-					inmuebleList.addItem(informacionInmueblePanelVO.guardarInmueble(avaluoTmp,myUsuario)); 
-					avaluoTmp.informacionInmueble = inmuebleList;
-					avaluoVO = avaluoTmp ;
-				}
 				
-				if(informacionConstruccionPanelVO != null){
-					mensajeTransaccion = "Transacción exitosa. Bloque: Información Construcción";
-					
-					var construccionList:ArrayCollection = new ArrayCollection(); 
-					 
-					if(avaluoVO == null)
-						avaluoTmp = informacionBasicaPanelVO.avaluo2; 
-					else 
-						avaluoTmp = avaluoVO ;
-					
-					construccionList.addItem(informacionConstruccionPanelVO.guardarInformacionConstruccion(avaluoTmp,myUsuario)); 
-					avaluoTmp.informacionConstruccion = construccionList;
-					
-					var condicionList:ArrayCollection = new ArrayCollection(); 
-					condicionList.addItem(informacionConstruccionPanelVO.guardarInformacionCondicionesSalubridad(avaluoTmp,myUsuario));
-					avaluoTmp.condicionSalubridad =  condicionList; 
-					avaluoVO = avaluoTmp ;
-				}
-				
-				if(ofertaDemandaPanelVO != null){
-					mensajeTransaccion = "Transacción exitosa. Bloque: Información Oferta y Demanda";
-					
-					var ofertademandaList:ArrayCollection = new ArrayCollection(); 
-					 
-					if(avaluoVO == null)
-						avaluoTmp = informacionBasicaPanelVO.avaluo2; 
-					else 
-						avaluoTmp = avaluoVO ;
-					
-					ofertademandaList.addItem(ofertaDemandaPanelVO.guarfarOfertaDemanda(avaluoTmp,myUsuario)); 
-					avaluoTmp.compOfertaDemanda = ofertademandaList ; 
-					avaluoVO = avaluoTmp ;
-				}
-				
-				if(liquidacionPanelVO != null){
-					mensajeTransaccion = "Transacción exitosa. Bloque: Liquidación";
-					
-					avaluoTmp.liquidacionAvaluos = liquidacionPanelVO.guardarLiquidacion(avaluoTmp,myUsuario);
-					
-					var liquidacionTotalList:ArrayCollection = new ArrayCollection(); 
-					 
-					if(avaluoVO == null)
-						avaluoTmp = informacionBasicaPanelVO.avaluo2; 
-					else 
-						avaluoTmp = avaluoVO ;
-					
-					liquidacionTotalList.addItem(liquidacionPanelVO.guardarTotalLiquidacion(avaluoTmp,myUsuario)); 
-					avaluoTmp.liquidacionTotal = liquidacionTotalList ; 
-					avaluoVO = avaluoTmp ;
-				}
-				
-				if(observacionPanelVO != null){
-					mensajeTransaccion = "Transacción exitosa. Bloque: Observación ";
-					var observacionList:ArrayCollection = new ArrayCollection(); 
-					 
-					if(avaluoVO == null)
-						avaluoTmp = informacionBasicaPanelVO.avaluo2; 
-					else 
-						avaluoTmp = avaluoVO ;
-					
-					observacionList.addItem(observacionPanelVO.guardarObservacion(avaluoTmp,myUsuario)); 
-					avaluoTmp.observacion = observacionList ; 
-					avaluoVO = avaluoTmp ;
-				}
-				imprimirEstadoProceso(mensajeTransaccion);
-				if(informacionBasicaPanelVO != null)
-					informacionBasicaPanelVO.guardarInformacionBasica(avaluoVO, myUsuario);
-				
-				if(avaluoVO.usuarioCreacion == null)
-					auditoriaAvaluo.usuarioCreacion.text = myUsuario.cedulaEmpleado ; 
-				else 
-					auditoriaAvaluo.usuarioCreacion.text = avaluoVO.usuarioCreacion ;
-				
-				if(avaluoVO.fechaCreacion != null)
-					auditoriaAvaluo.fechaCreacion.selectedDate = avaluoVO.fechaCreacion ; 
-				else 
-					auditoriaAvaluo.fechaCreacion.selectedDate = new Date() ;
-				
-				auditoriaAvaluo.usuarioTransaccion.text = myUsuario.cedulaEmpleado ; 
-				auditoriaAvaluo.fechaTransaccion.selectedDate = new Date() ;
-				*/
 			}
 			
 			private function validarCamposFormultario():Boolean{
@@ -246,7 +153,7 @@
 			 *  Imprime estado de las novedades durante el registro del formultario 
 			 **/			
 			public function imprimirEstadoProceso(mensaje:String):void{
-				// mensajes.text = mensaje ; 
+				mensajes.text = mensaje ; 
 			}
 			
 			protected function module1_initializeHandler(event:FlexEvent):void
@@ -259,24 +166,7 @@
 				if(parentDocument.avaluo != null){
 					avaluoVO = parentDocument.avaluo ; 
 					getAvaluosPorIdResult.token = avaluosService.getAvaluosPorId(avaluoVO.idAvaluo);
-					generarAvaluoPanels(parentDocument.avaluo);
-					
-					
-					
-				}else {
-					generarAvaluoPanels(null); 
-				}
-				
-				  
-				mlBarrio = new CustomModuleLoader();
-				mlBarrio.url = "com/segurosbolivar/avaluos/modulos/InformacionBarrioModule.swf?estado=adicion";
-				mlBarrio.applicationDomain=ApplicationDomain.currentDomain;
-				mlBarrio.addEventListener(ModuleEvent.READY, parentApplication.modEventHandler);
-				mlBarrio.alpha=100;
-				mlBarrio.percentWidth=100;
-				mlBarrio.percentHeight=100;
-				mlBarrio.avaluo  = parentDocument.avaluo ;
-				informacionBarrioPanelVO = mlBarrio ; 
+				}				
 				
 				if(selectafirmacion==null || selectafirmacion.length<1)
 					getValoresDominioResult33.token = dominiosAuxDao.getValoresDominio("AFIRMAR");
@@ -305,17 +195,8 @@
 				if(tn.selectedIndex<tn.numChildren){
 					if(tn.selectedIndex<tn.numElements)
 					{
-						if(tn.selectedIndex+1 != 7){
-							tn.selectedIndex = tn.selectedIndex+1;
-						}else {
-							if(isEnabledImagesUpload()){
-								tn.selectedIndex = tn.selectedIndex+1;								
-							}else{
-								imprimirEstadoProceso("Por favor, guarde el avaluo antes de subir las imagenes"); 
-							}
-						}
-					}
-					
+						tn.selectedIndex = tn.selectedIndex+1;
+					}					
 				}
 			}
 			
@@ -332,11 +213,17 @@
 					descripcionError = error.split(":"); 
 				}
 				
+				Utilidad.imprimirMensaje(errorFull + "|sevice|" + service, "Validación de registros");
+				
 				if(descripcionError.length>1){
 					errorMessage = descripcionError[1];
-					Utilidad.imprimirMensaje(errorMessage, "Validación de registros"); 
+					// Utilidad.imprimirMensaje(errorMessage, "Validación de registros"); 
 					// limpiarControles();  
 				}
+				imprimirEstadoProceso(errorFull); 
+				trace(errorFull); 
+				trace(error); 
+				
 				//Gardar Log en Tabla 				
 			}
 			
@@ -377,223 +264,8 @@
 				//Se instancian nuevamente todos los objetos
 				if (getAvaluosPorIdResult.lastResult != null && StringUtil.trim(getAvaluosPorIdResult.lastResult).length>0){
 					avaluoVO = getAvaluosPorIdResult.lastResult as Avaluo;
-					
-					
-					
-					
 				}
 			}
-			
-			public function generarAvaluoPanels(avaluo:Avaluo){
-				var newVBoxBasico:NavigatorContent = new NavigatorContent();
-				var newVBoxBarrio:VBox = new VBox();
-				var newVBoxInmueble:VBox = new VBox();
-				var newVBoxConstruccion:VBox = new VBox();
-				var newVBoxOfertaDemanda:VBox = new VBox();
-				var newVBoxliquidacion:VBox = new VBox();
-				var newVBoxObservacion:VBox = new VBox();
-				var newVBoxRegistro:VBox = new VBox();
-				
-				var mlBasico:CustomModuleLoader = new CustomModuleLoader();
-				var mlBarrio:CustomModuleLoader = new CustomModuleLoader();
-				var mlInmueble:CustomModuleLoader = new CustomModuleLoader();
-				var mlConstruccion:CustomModuleLoader = new CustomModuleLoader();
-				var mlOfertaDemanda:CustomModuleLoader = new CustomModuleLoader();
-				var mlliquidacion:CustomModuleLoader = new CustomModuleLoader();
-				var mlObservacion:CustomModuleLoader = new CustomModuleLoader();
-				var mlRegistro:CustomModuleLoader = new CustomModuleLoader();
-				
-				/* newVBoxBasico = new NavigatorContent();
-				newVBoxBasico.label = "Inf. Básica";
-				newVBoxBasico.alpha=100; 
-				newVBoxBasico.percentWidth =100;
-				newVBoxBasico.percentHeight=100;	
-				
-				mlBasico = new CustomModuleLoader();
-				mlBasico.url = "com/segurosbolivar/avaluos/modulos/InformacionBasicaModule.swf";
-				mlBasico.applicationDomain=ApplicationDomain.currentDomain;
-				mlBasico.addEventListener(ModuleEvent.READY, parentApplication.modEventHandler);
-				mlBasico.alpha=100;
-				mlBasico.percentWidth=100;
-				mlBasico.percentHeight=100;
-				mlBasico.avaluo  = avaluo ;
-				
-				newVBoxBasico.addElement(mlBasico);
-				
-				try{					
-					tn.getChildIndex(newVBoxBasico);						
-				}catch(e:Error){
-					tn.addChild(newVBoxBasico); 
-				}*/ 
-				
-				if(avaluo != null){
-					newVBoxBarrio = new VBox();
-					newVBoxBarrio.label = "Inf. Barrio";
-					newVBoxBarrio.alpha=100; 
-					newVBoxBarrio.percentWidth =100;
-					newVBoxBarrio.percentHeight=100;	
-						
-					mlBarrio = new CustomModuleLoader();
-					mlBarrio.url = "com/segurosbolivar/avaluos/modulos/InformacionBarrioModule.swf?estado=adicion";
-					mlBarrio.applicationDomain=ApplicationDomain.currentDomain;
-					mlBarrio.addEventListener(ModuleEvent.READY, parentApplication.modEventHandler);
-					mlBarrio.alpha=100;
-					mlBarrio.percentWidth=100;
-					mlBarrio.percentHeight=100;
-					mlBarrio.avaluo  = avaluo ;
-					
-					newVBoxBarrio.addChild(mlBarrio);
-					
-					try{					
-						tn.getChildIndex(newVBoxBarrio);						
-					}catch(e:Error){
-						tn.addChild(newVBoxBarrio); 
-					}
-					
-					newVBoxInmueble = new VBox();
-					newVBoxInmueble.label = "Inf. Inmueble";
-					newVBoxInmueble.alpha=100; 
-					newVBoxInmueble.percentWidth =100;
-					newVBoxInmueble.percentHeight=100;	
-					
-					mlInmueble = new CustomModuleLoader();
-					mlInmueble.url = "com/segurosbolivar/avaluos/modulos/InformacionInmuebleModule.swf";
-					mlInmueble.applicationDomain=ApplicationDomain.currentDomain;
-					mlInmueble.addEventListener(ModuleEvent.READY, parentApplication.modEventHandler);
-					mlInmueble.alpha=100;
-					mlInmueble.percentWidth=100;
-					mlInmueble.percentHeight=100;
-					mlInmueble.avaluo  = avaluo ;
-					
-					newVBoxInmueble.addChild(mlInmueble);
-					
-					try{					
-						tn.getChildIndex(newVBoxInmueble);						
-					}catch(e:Error){
-						tn.addChild(newVBoxInmueble); 
-					}
-										
-					newVBoxConstruccion = new VBox();
-					newVBoxConstruccion.label = "Inf. Inmueble";
-					newVBoxConstruccion.alpha=100; 
-					newVBoxConstruccion.percentWidth =100;
-					newVBoxConstruccion.percentHeight=100;	
-					
-					mlConstruccion = new CustomModuleLoader();
-					mlConstruccion.url = "com/segurosbolivar/avaluos/modulos/InformacionConstruccionModule.swf";
-					mlConstruccion.applicationDomain=ApplicationDomain.currentDomain;
-					mlConstruccion.addEventListener(ModuleEvent.READY, parentApplication.modEventHandler);
-					mlConstruccion.alpha=100;
-					mlConstruccion.percentWidth=100;
-					mlConstruccion.percentHeight=100;
-					mlConstruccion.avaluo  = avaluo ;
-					
-					newVBoxConstruccion.addChild(mlConstruccion);
-					
-					try{					
-						tn.getChildIndex(newVBoxConstruccion);						
-					}catch(e:Error){
-						tn.addChild(newVBoxConstruccion); 
-					}
-					
-					newVBoxOfertaDemanda = new VBox();
-					newVBoxOfertaDemanda.label = "Inf. Inmueble";
-					newVBoxOfertaDemanda.alpha=100; 
-					newVBoxOfertaDemanda.percentWidth =100;
-					newVBoxOfertaDemanda.percentHeight=100;	
-					
-					mlOfertaDemanda = new CustomModuleLoader();
-					mlOfertaDemanda.url = "com/segurosbolivar/avaluos/modulos/InformacionOfertaDemandaModule.swf";
-					mlOfertaDemanda.applicationDomain=ApplicationDomain.currentDomain;
-					mlOfertaDemanda.addEventListener(ModuleEvent.READY, parentApplication.modEventHandler);
-					mlOfertaDemanda.alpha=100;
-					mlOfertaDemanda.percentWidth=100;
-					mlOfertaDemanda.percentHeight=100;
-					mlOfertaDemanda.avaluo  = avaluo ;
-					
-					newVBoxOfertaDemanda.addChild(mlOfertaDemanda);
-					
-					try{					
-						tn.getChildIndex(newVBoxOfertaDemanda);						
-					}catch(e:Error){
-						tn.addChild(newVBoxOfertaDemanda); 
-					}
-					
-					newVBoxliquidacion = new VBox();
-					newVBoxliquidacion.label = "Inf. Inmueble";
-					newVBoxliquidacion.alpha=100; 
-					newVBoxliquidacion.percentWidth =100;
-					newVBoxliquidacion.percentHeight=100;	
-					
-					mlliquidacion = new CustomModuleLoader();
-					mlliquidacion.url = "com/segurosbolivar/avaluos/modulos/InformacionLiquidacionModule.swf";
-					mlliquidacion.applicationDomain=ApplicationDomain.currentDomain;
-					mlliquidacion.addEventListener(ModuleEvent.READY, parentApplication.modEventHandler);
-					mlliquidacion.alpha=100;
-					mlliquidacion.percentWidth=100;
-					mlliquidacion.percentHeight=100;
-					mlliquidacion.avaluo  = avaluo ;
-					
-					newVBoxliquidacion.addChild(mlliquidacion);
-					
-					try{					
-						tn.getChildIndex(newVBoxliquidacion);						
-					}catch(e:Error){
-						tn.addChild(newVBoxliquidacion); 
-					}
-					
-					newVBoxObservacion = new VBox();
-					newVBoxObservacion.label = "Inf. Inmueble";
-					newVBoxObservacion.alpha=100; 
-					newVBoxObservacion.percentWidth =100;
-					newVBoxObservacion.percentHeight=100;	
-					
-					mlObservacion = new CustomModuleLoader();
-					mlObservacion.url = "com/segurosbolivar/avaluos/modulos/InformacionObsevacionModule.swf";
-					mlObservacion.applicationDomain=ApplicationDomain.currentDomain;
-					mlObservacion.addEventListener(ModuleEvent.READY, parentApplication.modEventHandler);
-					mlObservacion.alpha=100;
-					mlObservacion.percentWidth=100;
-					mlObservacion.percentHeight=100;
-					mlObservacion.avaluo  = avaluo ;
-					
-					newVBoxObservacion.addChild(mlObservacion);
-					
-					try{					
-						tn.getChildIndex(newVBoxObservacion);						
-					}catch(e:Error){
-						tn.addChild(newVBoxObservacion); 
-					}
-					
-					newVBoxRegistro = new VBox();
-					newVBoxRegistro.label = "Inf. Inmueble";
-					newVBoxRegistro.alpha=100; 
-					newVBoxRegistro.percentWidth =100;
-					newVBoxRegistro.percentHeight=100;	
-					
-					mlRegistro = new CustomModuleLoader();
-					mlRegistro.url = "com/segurosbolivar/avaluos/modulos/InformacionRegistroFotografico.swf";
-					mlRegistro.applicationDomain=ApplicationDomain.currentDomain;
-					mlRegistro.addEventListener(ModuleEvent.READY, parentApplication.modEventHandler);
-					mlRegistro.alpha=100;
-					mlRegistro.percentWidth=100;
-					mlRegistro.percentHeight=100;
-					mlRegistro.avaluo  = avaluo ;
-					
-					newVBoxRegistro.addChild(mlRegistro);
-					
-					try{					
-						tn.getChildIndex(newVBoxRegistro);						
-					}catch(e:Error){
-						tn.addChild(newVBoxRegistro); 
-					}
-					
-				}
-				
-				
-				
-			}
-
 
 			protected function tn_currentStateChangeHandler(event:FlexEvent):void
 			{
@@ -614,26 +286,9 @@
 				}
 			}
 
-			private function isEnabledImagesUpload():Boolean{ 
-				if(avaluoVO.idAvaluo == null){
-					return false; 
-				}
-				return true; 
-			}
-			
-
-
 			protected function button2_clickHandler(event:MouseEvent):void
 			{
 				// TODO Auto-generated method stub
-			}
-
-			protected function tn_changeHandler(event:IndexChangedEvent):void
-			{
-				if(event.newIndex == 7 && !isEnabledImagesUpload()){
-					imprimirEstadoProceso("Por favor, guarde el avaluo antes de subir las imagenes");
-					tn.selectedIndex = event.oldIndex;								
-				}
 			}
 			
 			protected function imprimirAvaluoBorrador():void
@@ -721,9 +376,22 @@
 						}						
 					}
 					
-					if(avaluoVO.condicionSalubridad == null || avaluoVO.condicionSalubridad.length == 0){						 
-						imprimirEstadoProceso("Para ejecutar la validación debe seleccionar y guardar sección: Condiciones de salubridad (Sec. Información construcción)");
-						return false ;
+					if(avaluoVO.condicionSalubridad == null || avaluoVO.condicionSalubridad.length == 0){	
+						var condicionSalubridad:CondicionesSalubridad = avaluoVO.condicionSalubridad.getItemAt(0) as CondicionesSalubridad ; 
+						if(condicionSalubridad != null && (condicionSalubridad.aguasServidas != null ||
+														   condicionSalubridad.ambientalArborizacion != null ||
+														   condicionSalubridad.ambientalOtros != null || 
+														   condicionSalubridad.ambientalParques != null ||
+														   condicionSalubridad.ambientalZonaVerde != null || 
+														   condicionSalubridad.impactoNegativoBasura != null ||
+														   condicionSalubridad.impactoNegativoInseguridad != null ||
+														   condicionSalubridad.impactoNegativoOtros != null ||
+														   condicionSalubridad.impactoNegativoPorAire != null ||
+														   condicionSalubridad.impactoNegativoRuido != null ||
+														   condicionSalubridad.requiereCondicionesSalubridad != null )){
+							imprimirEstadoProceso("Para ejecutar la validación debe seleccionar y guardar sección: Condiciones de salubridad (Sec. Información construcción)");
+							return false ;
+						}
 					}
 					
 					prevalidarResult.token = avaluosService.prevalidar(avaluoVO.idAvaluo);
@@ -750,7 +418,7 @@
 				}
 				else {
 					
-					Alert.show(res,"RESULTADO VALIDACION", null, null, null, null, Alert.OK);
+					imprimirEstadoProceso(res);
 					
 					var categoria:int=0;
 					
@@ -789,6 +457,72 @@
 				// setearModulo("Ingreso");
 				// init_bar();
 			}
+			
+			protected function getValoresDominioResult28_resultHandler(event:ResultEvent):void
+			{
+				liquidacionPanelVO.selectdescliq0 = getValoresDominioResult28.lastResult;
+			}
+			
+			public function cargarDescripcionLiquidacion():void
+			{
+				if(avaluoVO != null && 
+					avaluoVO.informacionConstruccion != null && 
+					avaluoVO.informacionConstruccion.length > 0){
+					getValoresDominioResult28.token = dominiosAuxDao.getValoresDescLiquidacion("DESCLIQUIDACION",avaluoVO.informacionConstruccion.getItemAt(0).propiedadHorizontal);
+				}else{
+					getValoresDominioResult28.token = dominiosAuxDao.getValoresDescLiquidacion("DESCLIQUIDACION","2");
+				} 
+			}
+
+
+			protected function iniciarPanels_resultHandler(event:ResultEvent):void
+			{
+				// TODO Auto-generated method stub
+			}
+
+
+			protected function module1_updateCompleteHandler(event:FlexEvent):void
+			{
+				var i:int=0;
+				for(i=0; i<tn.numChildren; i++){
+					tn.selectedIndex = i ; 
+					tn.validateNow(); 
+				}	
+				for(i=tn.numChildren; i > 0; i--){
+					tn.selectedIndex = (i-1) ; 
+					tn.validateNow(); 
+				}
+			}
+			
+			public function valorUvrDiaTextInput_clickHandler(event:MouseEvent):void
+			{
+				var fecha:String = "" ;
+				var dateAvaluo:Date = avaluoVO.fechaAvaluo ; 
+				
+				if(dateAvaluo == null || StringUtil.trim(dateAvaluo.toString()).length == 0){
+					dateAvaluo = new Date(); 
+				}
+				
+				fecha = ""+ (dateAvaluo.date<10?"0":"") + dateAvaluo.date + "/" +((dateAvaluo.month+1)<10?"0":"") + (dateAvaluo.month+1) + "/" +  dateAvaluo.fullYear;
+				getUvrDia(fecha);
+			}
+			
+			protected function getUvrDia(arg0:String):void
+			{
+				getUvrDiaResult.token = liquidacionTotalService.getUvrDia(arg0);
+			}
+			
+			protected function getUvrDiaResult_resultHandler(event:ResultEvent):void
+			{
+				liquidacionPanelVO.liquidacionAvaluoTotalVO.valorUvrDia = getUvrDiaResult.lastResult;
+				
+				if(liquidacionPanelVO.liquidacionAvaluoTotalVO.valorUvrDia == null ||
+					StringUtil.trim(liquidacionPanelVO.liquidacionAvaluoTotalVO.valorUvrDia).length==0 || 
+					liquidacionPanelVO.liquidacionAvaluoTotalVO.valorUvrDia == "0"){
+					imprimirEstadoProceso("Por favor verifique la tarifa de la UVR para la fecha del avaluo");
+					return ; 
+				}
+			}
 
 		]]>
 	</fx:Script>
@@ -802,9 +536,11 @@
 		<services:LiquidacionTotalService id="liquidacionTotalService" fault="genericService_faultHandler(event,'liquidacionTotalService')" showBusyCursor="true"/>
 		<services:DepartamentoService id="departamentoService" fault="genericService_faultHandler(event,'departamentoService')" showBusyCursor="true"/>
 		<services:BarrioService id="barrioService" fault="genericService_faultHandler(event,'barrioService')" showBusyCursor="true"/>
+		<services:InmuebleService id="inmuebleService" fault="genericService_faultHandler(event,'inmuebleService')" showBusyCursor="true"/>
 		
 		<valueObjects:Avaluo id="avaluoVO"></valueObjects:Avaluo>
 		
+		<s:CallResponder id="getValoresDominioResult28" result="getValoresDominioResult28_resultHandler(event)"/>
 		<s:CallResponder id="getValoresDominioResult33" result="getValoresDominioResult33_resultHandler(event)"/>
 		<s:CallResponder id="getValoresDominioResult41" result="getValoresDominioResult41_resultHandler(event)" />
 		<s:CallResponder id="getValoresDominioResult45" result="getValoresDominioResult45_resultHandler(event)" />
@@ -817,44 +553,49 @@
 		<s:CallResponder id="prevalidarResult" result="prevalidarResult_resultHandler(event)"/>
 		<s:CallResponder id="campoRequeridoDTOListResult" result="campoRequeridoDTOListResult_resultHandler(event)"/>
 		
+		<s:CallResponder id="iniciarPanels" result="iniciarPanels_resultHandler(event)" />
+		<s:CallResponder id="getUvrDiaResult" result="getUvrDiaResult_resultHandler(event)"/>
+		
 	</fx:Declarations>
 	
 	<fx:Style source="assets/css/AvaluosBolivar.css"/>
 	<fx:Style source="assets/css/AvaluosBolivarPanel.css"/>
 	
-	<s:VGroup width="100%" height="100%" paddingLeft="10" paddingTop="10">
+	<s:VGroup width="100%" height="100%" paddingLeft="10" paddingTop="3">
+		<s:Label text="Select the tabs to change the panel." paddingLeft="10" width="820" 
+				 id="mensajes" color="#FD0000" fontWeight="bold" textDecoration="underline" height="20" verticalAlign="middle"/>
 		
-		<mx:TabNavigator id="tn"  horizontalAlign="left" horizontalGap="5" width="100%" height="100%" paddingLeft="10" minWidth="0"  change="tn_changeHandler(event)">
+		<mx:TabNavigator id="tn"  horizontalAlign="left" horizontalGap="5" width="820" height="465" paddingLeft="10" minWidth="0" >
 			<s:NavigatorContent label="Inf. Básica" id="tbAvaluoBasico" width="100%" height="100%">
-				<local:CustomModuleLoader id="informacionBasicaPanelVO" url="com/segurosbolivar/avaluos/modulos/InformacionBasicaModule.swf" />				
+				<local:CustomModuleLoader id="informacionBasicaPanelVO" url="{Utilidad.getAvaluoBasicoPath()}" />				
 			</s:NavigatorContent>
 			
 			<s:NavigatorContent label="Inf. Barrio" id="tbAvaluoBarrio" >
-				<local:CustomModuleLoader id="informacionBarrioPanelVO" url="com/segurosbolivar/avaluos/modulos/InformacionBarrioModule.swf" />								
+				<local:CustomModuleLoader id="informacionBarrioPanelVO" url="{Utilidad.getAvaluoBarrioPath()}" />								
 			</s:NavigatorContent>
 			
 			<s:NavigatorContent label="Inf. Inmueble" id="tbAvaluoInmueble">
-				<local:CustomModuleLoader id="informacionInmueblePanelVO" url="com/segurosbolivar/avaluos/modulos/InformacionInmuebleModule.swf" />
+				<local:CustomModuleLoader id="informacionInmueblePanelVO" url="{Utilidad.getAvaluoInmueblePath()}" />
 			</s:NavigatorContent>
 			
 			<s:NavigatorContent label="Inf. Construcción" id="tbAvaluoConstruccion" >
-				<local:CustomModuleLoader id="informacionConstruccionPanelVO" url="com/segurosbolivar/avaluos/modulos/InformacionConstruccionModule.swf" />
+				<local:CustomModuleLoader id="informacionConstruccionPanelVO" url="{Utilidad.getAvaluoConstruccionPath()}" />
 			</s:NavigatorContent>
 			
 			<s:NavigatorContent label="Oferta y Demanda" id="tbAvaluoofertaDemanda" >
-				<local:CustomModuleLoader id="ofertaDemandaPanelVO" url="com/segurosbolivar/avaluos/modulos/InformacionOfertaDemandaModule.swf" />
+				<local:CustomModuleLoader id="ofertaDemandaPanelVO" url="{Utilidad.getAvaluoOfertaPath()}" />
 			</s:NavigatorContent>
 			
 			<s:NavigatorContent label="Liq. Avaluo" id="tbAvaluoliquidacion" >
-				<local:CustomModuleLoader id="liquidacionPanelVO" url="com/segurosbolivar/avaluos/modulos/InformacionLiquidacionModule.swf" />
+				<local:CustomModuleLoader id="liquidacionPanelVO" url="{Utilidad.getAvaluoLiquidacionPath()}" />
 			</s:NavigatorContent>
 			
 			<s:NavigatorContent label="Observaciones" id="tbAvaluoObservacion" >
-				<local:CustomModuleLoader id="observacionPanelVO" url="com/segurosbolivar/avaluos/modulos/InformacionObsevacionModule.swf" />
+				<local:CustomModuleLoader id="observacionPanelVO" url="{Utilidad.getAvaluoObservacionPath()}" />
 			</s:NavigatorContent>
 			
 			<s:NavigatorContent label="Reg. Fotográfico" id="tbAvaluoRegistroFotografico" >
-				<local:CustomModuleLoader id="registroFotograficoPanelVO" url="com/segurosbolivar/avaluos/modulos/InformacionRegistroFotografico.swf" />
+				<local:CustomModuleLoader id="registroFotograficoPanelVO" url="{Utilidad.getAvaluotRegistroPath()}" />
 			</s:NavigatorContent>
 			
 		</mx:TabNavigator>

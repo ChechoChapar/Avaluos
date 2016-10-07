@@ -62,7 +62,11 @@ public class ComportamientoOfertaDemandaDao extends JpaDao<ComportamientoOfertaD
 	try {
 	    objeto.setFechaTransaccion(Calendar.getInstance().getTime());
 	    log.log(Level.INFO, "");
-	    merge(objeto);	    
+	    if(objeto.getIdComportamientoOfertaDemanda() == null){
+	    	persist((ComportamientoOfertaDemanda)objeto); 
+	    }else{
+	    	merge((ComportamientoOfertaDemanda)objeto);
+	    }
 	}
 	catch (Exception e) {
 	    log.log(Level.SEVERE, "[ERROR]", e);

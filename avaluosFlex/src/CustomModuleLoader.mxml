@@ -42,6 +42,9 @@ http://livedocs.adobe.com/flex/3/html/help.html?content=modular_6.html
 			[Bindable]
 			public var selectDepartamento:ArrayCollection = new ArrayCollection() ;
 			
+			[Bindable]
+			public var selectdescliq0:ArrayCollection = new ArrayCollection();
+			
 			/**
 			 * Inicializacion de Eventos del Componente 
 			 **/
@@ -148,11 +151,16 @@ http://livedocs.adobe.com/flex/3/html/help.html?content=modular_6.html
 					descripcionError = error.split(":"); 
 				}
 				
+				Utilidad.imprimirMensaje(errorFull + "|sevice|" + service, "Validación de registros");
+				
 				if(descripcionError.length>1){
 					errorMessage = descripcionError[1];
-					Utilidad.imprimirMensaje(errorMessage, "Validación de registros"); 
+					// Utilidad.imprimirMensaje(errorMessage, "Validación de registros"); 
 					// limpiarControles();  
 				}
+				 
+				trace(errorFull); 
+				trace(error); 
 				//Gardar Log en Tabla 				
 			}
 			
@@ -191,7 +199,7 @@ http://livedocs.adobe.com/flex/3/html/help.html?content=modular_6.html
 			protected function getAvaluosPorIdResult_resultHandler(event:ResultEvent):void
 			{
 				//Se instancian nuevamente todos los objetos
-				avaluoVO = getAvaluosPorIdResult.lastResult as Avaluo;
+				avaluo = getAvaluosPorIdResult.lastResult as Avaluo;
 			}
 			
 			protected function prevalidarResult_resultHandler(event:ResultEvent):void
@@ -245,32 +253,34 @@ http://livedocs.adobe.com/flex/3/html/help.html?content=modular_6.html
 				if(parentDocument.parentDocument.tn.selectedIndex<parentDocument.parentDocument.tn.numChildren){
 					if(parentDocument.parentDocument.tn.selectedIndex<parentDocument.parentDocument.tn.numElements)
 					{
-						if(parentDocument.parentDocument.tn.selectedIndex+1 != 7){
-							parentDocument.parentDocument.tn.selectedIndex = parentDocument.parentDocument.tn.selectedIndex+1;
-						}else {
-							if(isEnabledImagesUpload()){
-								parentDocument.parentDocument.tn.selectedIndex = parentDocument.tn.selectedIndex+1;								
-							}else{
-								// imprimirEstadoProceso("Por favor, guarde el avaluo antes de subir las imagenes"); 
-							}
-						}
-					}
-					
+						parentDocument.parentDocument.tn.selectedIndex = parentDocument.parentDocument.tn.selectedIndex+1;						
+					}					
 				}
-			}
-			
-			private function isEnabledImagesUpload():Boolean{ 
-				if(avaluoVO.idAvaluo == null){
-					return false; 
-				}
-				return true; 
 			}
 			
 		]]>
 	</fx:Script>
 	
 	<fx:Declarations>
-		<valueObjects:Avaluo id="avaluo"></valueObjects:Avaluo>
+		<valueObjects:Avaluo id="avaluo"/>
+		<valueObjects:InformacionBarrio id="informacionBarrioVO"/>
+		<valueObjects:InformacionInmueble id="informacionInmuebleVO"/>
+		<valueObjects:InformacionConstruccion id="informacionConstruccionVO" />
+		<valueObjects:CondicionesSalubridad id="condicionesSalubridadVO"/>
+		<valueObjects:ComportamientoOfertaDemanda id="comportamientoOfertaDemandaVO"/>
+		<valueObjects:Observaciones id="observacionVO" />
+		
+		<valueObjects:LiquidacionAvaluo id="liquidacionAvaluoVO0" />
+		<valueObjects:LiquidacionAvaluo id="liquidacionAvaluoVO1" />
+		<valueObjects:LiquidacionAvaluo id="liquidacionAvaluoVO2" />
+		<valueObjects:LiquidacionAvaluo id="liquidacionAvaluoVO3" />
+		<valueObjects:LiquidacionAvaluo id="liquidacionAvaluoVO4" />
+		<valueObjects:LiquidacionAvaluo id="liquidacionAvaluoVO5" />
+		<valueObjects:LiquidacionAvaluo id="liquidacionAvaluoVO6" />
+		<valueObjects:LiquidacionAvaluo id="liquidacionAvaluoVO7" />
+		<valueObjects:LiquidacionAvaluo id="liquidacionAvaluoVO8" />
+		<valueObjects:LiquidacionAvaluo id="liquidacionAvaluoVO9" />
+		<valueObjects:LiquidacionAvaluoTotal id="liquidacionAvaluoTotalVO" />
 		
 		<services:TercerosWebService id="tercerosWebService" fault="genericService_faultHandler(event,'tercerosWebService')" showBusyCursor="true"/>
 		<services:DominiosAuxDao id="dominiosAuxDao" fault="genericService_faultHandler(event,'dominiosAuxDao')" showBusyCursor="true"/>
@@ -278,8 +288,12 @@ http://livedocs.adobe.com/flex/3/html/help.html?content=modular_6.html
 		<services:LiquidacionTotalService id="liquidacionTotalService" fault="genericService_faultHandler(event,'liquidacionTotalService')" showBusyCursor="true"/>
 		<services:DepartamentoService id="departamentoService" fault="genericService_faultHandler(event,'departamentoService')" showBusyCursor="true"/>
 		<services:BarrioService id="barrioService" fault="genericService_faultHandler(event,'barrioService')" showBusyCursor="true"/>
-		
-		<valueObjects:Avaluo id="avaluoVO"></valueObjects:Avaluo>
+		<services:InmuebleService id="inmuebleService" fault="genericService_faultHandler(event,'inmuebleService')" showBusyCursor="true"/>
+		<services:SalubridadService id="salubridadService" fault="genericService_faultHandler(event,'salubridadService')" showBusyCursor="true"/>
+		<services:ConstruccionService id="construccionService" fault="genericService_faultHandler(event,'construccionService')" showBusyCursor="true"/>
+		<services:OfertaDemandaService id="ofertaDemandaService" fault="genericService_faultHandler(event,'ofertaDemandaService')" showBusyCursor="true"/>
+		<services:LiquidacionService id="liquidacionService" fault="genericService_faultHandler(event,'liquidacionService')" showBusyCursor="true"/>
+		<services:ObservacionesService id="observacionesService" fault="genericService_faultHandler(event,'observacionesService')" showBusyCursor="true"/>
 		
 		<s:CallResponder id="getValoresDominioResult33" result="getValoresDominioResult33_resultHandler(event)"/>
 		<s:CallResponder id="getValoresDominioResult41" result="getValoresDominioResult41_resultHandler(event)" />
